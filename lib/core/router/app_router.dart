@@ -4,6 +4,7 @@ import 'package:bluetooth_finder/features/scanner/presentation/screens/scanner_s
 import 'package:bluetooth_finder/features/radar/presentation/screens/radar_screen.dart';
 import 'package:bluetooth_finder/features/permissions/presentation/screens/permission_screen.dart';
 import 'package:bluetooth_finder/features/paywall/presentation/screens/paywall_screen.dart';
+import 'package:bluetooth_finder/features/settings/presentation/screens/settings_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -30,6 +31,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/paywall',
       builder: (context, state) => const PaywallScreen(),
+    ),
+    GoRoute(
+      path: '/settings',
+      builder: (context, state) => const SettingsScreen(),
     ),
   ],
 );

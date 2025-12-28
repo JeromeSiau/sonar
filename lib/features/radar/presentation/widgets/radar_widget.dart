@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:bluetooth_finder/core/theme/app_colors.dart';
 import 'package:bluetooth_finder/core/utils/rssi_utils.dart';
@@ -19,33 +20,43 @@ class RadarWidget extends StatefulWidget {
 
 class _RadarWidgetState extends State<RadarWidget>
     with TickerProviderStateMixin {
-  late AnimationController _pulseController;
   late AnimationController _sweepController;
-  late Animation<double> _pulseAnimation;
+  late AnimationController _pingController;
+  late AnimationController _glowController;
+  late Animation<double> _glowAnimation;
 
   @override
   void initState() {
     super.initState();
 
-    _pulseController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
-      vsync: this,
-    )..repeat();
-
+    // Sweep rotation - smooth 360° rotation
     _sweepController = AnimationController(
-      duration: const Duration(seconds: 3),
+      duration: const Duration(milliseconds: 2500),
       vsync: this,
     )..repeat();
 
-    _pulseAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    // Ping expanding rings
+    _pingController = AnimationController(
+      duration: const Duration(milliseconds: 2000),
+      vsync: this,
+    )..repeat();
+
+    // Center glow pulsing
+    _glowController = AnimationController(
+      duration: const Duration(milliseconds: 1200),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _glowAnimation = Tween<double>(begin: 0.6, end: 1.0).animate(
+      CurvedAnimation(parent: _glowController, curve: Curves.easeInOut),
     );
   }
 
   @override
   void dispose() {
-    _pulseController.dispose();
     _sweepController.dispose();
+    _pingController.dispose();
+    _glowController.dispose();
     super.dispose();
   }
 
@@ -54,114 +65,435 @@ class _RadarWidgetState extends State<RadarWidget>
     final signalColor = RssiUtils.getSignalColor(widget.rssi);
     final percentage = RssiUtils.getSignalPercentage(widget.rssi);
     final distance = RssiUtils.getDistanceEstimate(widget.rssi);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final radarSize = math.min(screenWidth * 0.85, 320.0);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Radar circles
-        SizedBox(
-          width: 300,
-          height: 300,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              // Concentric circles
-              ...List.generate(4, (index) {
-                final size = 75.0 + (index * 60);
-                return AnimatedBuilder(
-                  animation: _pulseAnimation,
-                  builder: (context, child) {
-                    return Container(
-                      width: size * (index == 3 ? _pulseAnimation.value : 1),
-                      height: size * (index == 3 ? _pulseAnimation.value : 1),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: signalColor.withOpacity(0.3 - (index * 0.05)),
-                          width: 2,
-                        ),
-                      ),
-                    );
-                  },
-                );
-              }),
-              // Sweep line
-              AnimatedBuilder(
-                animation: _sweepController,
-                builder: (context, child) {
-                  return Transform.rotate(
-                    angle: _sweepController.value * 2 * math.pi,
-                    child: Container(
-                      width: 280,
-                      height: 2,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.transparent,
-                            signalColor.withOpacity(0.5),
-                            signalColor,
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
+        // === RADAR DISPLAY ===
+        RepaintBoundary(
+          child: SizedBox(
+            width: radarSize,
+            height: radarSize,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Background glow
+                _buildBackgroundGlow(radarSize, signalColor),
+                // Grid lines
+                CustomPaint(
+                  size: Size(radarSize, radarSize),
+                  painter: _RadarGridPainter(),
+                ),
+                // Concentric circles
+                _buildConcentricCircles(radarSize, signalColor),
+                // Expanding ping rings
+                _buildPingRings(radarSize, signalColor),
+                // Sweep beam
+                _buildSweepBeam(radarSize, signalColor),
+                // Center device indicator
+                _buildCenterIndicator(signalColor),
+                // CRT scanlines overlay
+                _buildScanlines(radarSize),
+              ],
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 48),
+
+        // === DEVICE INFO ===
+        _buildDeviceInfo(context, signalColor, distance, percentage),
+      ],
+    );
+  }
+
+  Widget _buildBackgroundGlow(double size, Color color) {
+    return AnimatedBuilder(
+      animation: _glowAnimation,
+      builder: (context, child) {
+        return Container(
+          width: size * 0.7,
+          height: size * 0.7,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: RadialGradient(
+              colors: [
+                color.withValues(alpha: 0.15 * _glowAnimation.value),
+                color.withValues(alpha: 0.05 * _glowAnimation.value),
+                Colors.transparent,
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildConcentricCircles(double size, Color color) {
+    return Stack(
+      alignment: Alignment.center,
+      children: List.generate(4, (index) {
+        final circleSize = (size * 0.25) + (index * size * 0.2);
+        final opacity = 0.4 - (index * 0.08);
+        return Container(
+          width: circleSize,
+          height: circleSize,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: color.withValues(alpha: opacity),
+              width: index == 0 ? 2 : 1,
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
+  Widget _buildPingRings(double size, Color color) {
+    return AnimatedBuilder(
+      animation: _pingController,
+      builder: (context, child) {
+        return Stack(
+          alignment: Alignment.center,
+          children: List.generate(3, (index) {
+            final delay = index * 0.33;
+            final progress = (_pingController.value + delay) % 1.0;
+            final ringSize = size * 0.2 + (progress * size * 0.7);
+            final opacity = (1.0 - progress) * 0.5;
+
+            return Container(
+              width: ringSize,
+              height: ringSize,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: color.withValues(alpha: opacity),
+                  width: 2,
+                ),
               ),
-              // Center dot (device)
-              Container(
-                width: 20,
-                height: 20,
+            );
+          }),
+        );
+      },
+    );
+  }
+
+  Widget _buildSweepBeam(double size, Color color) {
+    return AnimatedBuilder(
+      animation: _sweepController,
+      builder: (context, child) {
+        return Transform.rotate(
+          angle: _sweepController.value * 2 * math.pi,
+          child: ClipOval(
+            child: SizedBox(
+              width: size,
+              height: size,
+              child: CustomPaint(
+                painter: _SweepBeamPainter(color: color),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCenterIndicator(Color color) {
+    return AnimatedBuilder(
+      animation: _glowAnimation,
+      builder: (context, child) {
+        return Container(
+          width: 24,
+          height: 24,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: color.withValues(alpha: 0.8 * _glowAnimation.value),
+                blurRadius: 24 * _glowAnimation.value,
+                spreadRadius: 8 * _glowAnimation.value,
+              ),
+              BoxShadow(
+                color: color.withValues(alpha: 0.4),
+                blurRadius: 40,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+          child: Center(
+            child: Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                color: AppColors.background,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildScanlines(double size) {
+    return ClipOval(
+      child: SizedBox(
+        width: size,
+        height: size,
+        child: CustomPaint(
+          painter: _ScanlinesPainter(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDeviceInfo(
+    BuildContext context,
+    Color signalColor,
+    String distance,
+    int percentage,
+  ) {
+    return Column(
+      children: [
+        // Device name with glow effect
+        Text(
+          widget.deviceName,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: AppColors.textSecondary,
+              ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+
+        const SizedBox(height: 16),
+
+        // Distance display - large and prominent
+        AnimatedBuilder(
+          animation: _glowAnimation,
+          builder: (context, child) {
+            return ShaderMask(
+              shaderCallback: (bounds) => LinearGradient(
+                colors: [
+                  signalColor,
+                  signalColor.withValues(alpha: 0.7),
+                  signalColor,
+                ],
+                stops: [0.0, 0.5, 1.0],
+              ).createShader(bounds),
+              child: Text(
+                distance,
+                style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w200,
+                      shadows: [
+                        Shadow(
+                          color: signalColor.withValues(
+                            alpha: 0.5 * _glowAnimation.value,
+                          ),
+                          blurRadius: 20,
+                        ),
+                      ],
+                    ),
+              ),
+            );
+          },
+        ),
+
+        const SizedBox(height: 24),
+
+        // Signal strength bar
+        _buildSignalBar(signalColor, percentage),
+
+        const SizedBox(height: 12),
+
+        // RSSI value
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                color: signalColor,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              '${widget.rssi} dBm',
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSignalBar(Color color, int percentage) {
+    return Container(
+      width: 200,
+      height: 6,
+      decoration: BoxDecoration(
+        color: AppColors.surfaceLight,
+        borderRadius: BorderRadius.circular(3),
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Stack(
+            children: [
+              // Animated fill
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOutCubic,
+                width: constraints.maxWidth * (percentage / 100),
+                height: 6,
                 decoration: BoxDecoration(
-                  color: signalColor,
-                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    colors: [
+                      color.withValues(alpha: 0.7),
+                      color,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(3),
                   boxShadow: [
                     BoxShadow(
-                      color: signalColor.withOpacity(0.5),
-                      blurRadius: 20,
-                      spreadRadius: 5,
+                      color: color.withValues(alpha: 0.5),
+                      blurRadius: 8,
+                      offset: const Offset(0, 0),
                     ),
                   ],
                 ),
               ),
             ],
-          ),
-        ),
-        const SizedBox(height: 40),
-        // Device name
-        Text(
-          widget.deviceName,
-          style: Theme.of(context).textTheme.headlineMedium,
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 16),
-        // Distance estimate
-        Text(
-          distance,
-          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                color: signalColor,
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-        const SizedBox(height: 8),
-        // Signal strength bar
-        SizedBox(
-          width: 200,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: LinearProgressIndicator(
-              value: percentage / 100,
-              backgroundColor: AppColors.surfaceLight,
-              valueColor: AlwaysStoppedAnimation<Color>(signalColor),
-              minHeight: 8,
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          '${widget.rssi} dBm',
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-      ],
+          );
+        },
+      ),
     );
   }
+}
+
+// === CUSTOM PAINTERS ===
+
+class _RadarGridPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final paint = Paint()
+      ..color = AppColors.gridLine.withValues(alpha: 0.3)
+      ..strokeWidth = 0.5
+      ..style = PaintingStyle.stroke;
+
+    // Draw cross lines
+    canvas.drawLine(
+      Offset(center.dx, 0),
+      Offset(center.dx, size.height),
+      paint,
+    );
+    canvas.drawLine(
+      Offset(0, center.dy),
+      Offset(size.width, center.dy),
+      paint,
+    );
+
+    // Draw diagonal lines
+    canvas.drawLine(
+      Offset(size.width * 0.15, size.height * 0.15),
+      Offset(size.width * 0.85, size.height * 0.85),
+      paint,
+    );
+    canvas.drawLine(
+      Offset(size.width * 0.85, size.height * 0.15),
+      Offset(size.width * 0.15, size.height * 0.85),
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class _SweepBeamPainter extends CustomPainter {
+  final Color color;
+
+  _SweepBeamPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+
+    // Create sweep gradient for the beam
+    final sweepGradient = ui.Gradient.sweep(
+      center,
+      [
+        Colors.transparent,
+        Colors.transparent,
+        color.withValues(alpha: 0.02),
+        color.withValues(alpha: 0.15),
+        color.withValues(alpha: 0.4),
+        color,
+      ],
+      [0.0, 0.5, 0.7, 0.85, 0.95, 1.0],
+      TileMode.clamp,
+      0,
+      math.pi / 6,
+    );
+
+    final paint = Paint()
+      ..shader = sweepGradient
+      ..style = PaintingStyle.fill;
+
+    // Draw the sweep sector
+    final path = Path()
+      ..moveTo(center.dx, center.dy)
+      ..lineTo(center.dx + radius, center.dy)
+      ..arcTo(
+        Rect.fromCircle(center: center, radius: radius),
+        0,
+        math.pi / 6,
+        false,
+      )
+      ..close();
+
+    canvas.drawPath(path, paint);
+
+    // Draw the bright edge line
+    final linePaint = Paint()
+      ..color = color
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);
+
+    canvas.drawLine(center, Offset(center.dx + radius, center.dy), linePaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _SweepBeamPainter oldDelegate) =>
+      color != oldDelegate.color;
+}
+
+class _ScanlinesPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = AppColors.background.withValues(alpha: 0.1)
+      ..strokeWidth = 1;
+
+    // Draw horizontal scanlines for CRT effect
+    for (double y = 0; y < size.height; y += 3) {
+      canvas.drawLine(
+        Offset(0, y),
+        Offset(size.width, y),
+        paint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

@@ -12,6 +12,7 @@ Future<void> main() async {
   // Initialize Hive
   await Hive.initFlutter();
   Hive.registerAdapter(FavoriteDeviceModelAdapter());
+  await Hive.openBox('settings');
 
   // Initialize Favorites Repository
   await FavoritesRepository.instance.init();
@@ -20,7 +21,7 @@ Future<void> main() async {
   // TODO: Replace with your actual API keys
   try {
     await Purchases.configure(
-      PurchasesConfiguration('your_revenuecat_api_key'),
+      PurchasesConfiguration('test_bNVWFNdQpzUgWdVFtcDArCyKEGF'),
     );
   } catch (_) {
     // Ignore - RevenueCat not configured yet

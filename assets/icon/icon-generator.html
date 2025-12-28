@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>SONAR - Icon Generator v4</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 40px;
+      background: #1a1a1a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      font-family: system-ui;
+      color: white;
+    }
+    h1 { margin: 0; font-size: 18px; opacity: 0.7; }
+    .row { display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap; justify-content: center; }
+    .icon-box { text-align: center; }
+    .icon-box span { display: block; margin-top: 8px; font-size: 12px; opacity: 0.5; }
+    button {
+      background: #5ECFCF;
+      color: #0F2030;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 10px;
+    }
+    button:hover { background: #7EDDDD; }
+    .preview { display: flex; gap: 15px; margin-top: 15px; justify-content: center; }
+    .preview-item { text-align: center; }
+    .preview-item small { display: block; font-size: 10px; opacity: 0.4; margin-top: 4px; }
+    .preview-circle { width: 60px; height: 60px; border-radius: 50%; overflow: hidden; background: #333; }
+    .preview-square { width: 60px; height: 60px; border-radius: 12px; overflow: hidden; background: #333; }
+    .note { font-size: 11px; opacity: 0.5; max-width: 300px; text-align: center; margin-top: 10px; }
+    .compare { display: flex; gap: 10px; margin-top: 20px; padding: 15px; background: #000; border-radius: 12px; }
+    .compare-icon { width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+  </style>
+</head>
+<body>
+  <h1>SONAR - Icon Generator v4 (Light Background)</h1>
+
+  <div class="row">
+    <!-- APP ICON -->
+    <div class="icon-box">
+      <canvas id="icon1024" width="1024" height="1024" style="width: 200px; height: 200px; border-radius: 40px;"></canvas>
+      <span>App Icon (1024x1024)</span>
+      <button onclick="downloadIcon()">📱 Télécharger icon.png</button>
+      <div class="preview">
+        <div class="preview-item">
+          <div class="preview-circle"><canvas id="prev1" width="120" height="120" style="width:60px;height:60px;"></canvas></div>
+          <small>Circle</small>
+        </div>
+        <div class="preview-item">
+          <div class="preview-square"><canvas id="prev2" width="120" height="120" style="width:60px;height:60px;"></canvas></div>
+          <small>Rounded</small>
+        </div>
+      </div>
+      <p class="note">Fond clair comme Gmail, Chrome, etc.</p>
+    </div>
+
+    <!-- SPLASH -->
+    <div class="icon-box">
+      <canvas id="splash" width="1152" height="1152" style="width: 200px; height: 200px; background: #040A12;"></canvas>
+      <span>Splash Logo (1152x1152)</span>
+      <button onclick="downloadSplash()">🌊 Télécharger splash.png</button>
+      <p class="note">Logo sur fond transparent</p>
+    </div>
+  </div>
+
+  <!-- Comparison with other icons -->
+  <div class="compare">
+    <div class="compare-icon">📧</div>
+    <div class="compare-icon">📷</div>
+    <div class="compare-icon">🌐</div>
+    <div class="compare-icon" style="background: linear-gradient(135deg, #E8F4F4 0%, #D0EBEB 100%);">
+      <canvas id="mini" width="40" height="40" style="width:40px;height:40px;"></canvas>
+    </div>
+  </div>
+
+  <script>
+    const PRIMARY = '#2A9D9D';      // Darker teal for contrast on light bg
+    const PRIMARY_LIGHT = '#5ECFCF';
+    const BG_LIGHT = '#E8F4F4';     // Very light teal/mint
+    const BG_LIGHTER = '#F0F8F8';
+
+    // ============ APP ICON (LIGHT) ============
+    function drawIcon(canvas) {
+      const ctx = canvas.getContext('2d');
+      const size = canvas.width;
+      const center = size / 2;
+
+      // LIGHT BACKGROUND - like other Android icons
+      const bgGradient = ctx.createRadialGradient(center, center, 0, center, center, size * 0.8);
+      bgGradient.addColorStop(0, BG_LIGHTER);
+      bgGradient.addColorStop(1, BG_LIGHT);
+      ctx.fillStyle = bgGradient;
+      ctx.fillRect(0, 0, size, size);
+
+      // Scale sonar design
+      const scale = 0.65;
+      ctx.save();
+      ctx.translate(center, center);
+      ctx.scale(scale, scale);
+      ctx.translate(-center, -center);
+
+      // Outer ring
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.40, 0, Math.PI * 2);
+      ctx.strokeStyle = PRIMARY;
+      ctx.globalAlpha = 0.25;
+      ctx.lineWidth = size * 0.028;
+      ctx.stroke();
+
+      // Middle ring
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.28, 0, Math.PI * 2);
+      ctx.globalAlpha = 0.45;
+      ctx.lineWidth = size * 0.028;
+      ctx.stroke();
+
+      // Inner ring
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.16, 0, Math.PI * 2);
+      ctx.globalAlpha = 0.7;
+      ctx.lineWidth = size * 0.032;
+      ctx.stroke();
+
+      // Subtle glow
+      ctx.globalAlpha = 0.3;
+      const glow = ctx.createRadialGradient(center, center, 0, center, center, size * 0.12);
+      glow.addColorStop(0, PRIMARY);
+      glow.addColorStop(1, 'transparent');
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.12, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Center filled circle
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = PRIMARY;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.09, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Inner light dot
+      ctx.fillStyle = BG_LIGHTER;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.035, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    // ============ MINI ICON FOR COMPARE ============
+    function drawMini(canvas) {
+      const ctx = canvas.getContext('2d');
+      const size = canvas.width;
+      const center = size / 2;
+      ctx.clearRect(0, 0, size, size);
+
+      ctx.strokeStyle = PRIMARY;
+      ctx.lineWidth = 2;
+
+      ctx.globalAlpha = 0.3;
+      ctx.beginPath();
+      ctx.arc(center, center, 15, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.globalAlpha = 0.5;
+      ctx.beginPath();
+      ctx.arc(center, center, 10, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = PRIMARY;
+      ctx.beginPath();
+      ctx.arc(center, center, 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // ============ SPLASH ============
+    function drawSplash(canvas) {
+      const ctx = canvas.getContext('2d');
+      const size = canvas.width;
+      const center = size / 2;
+
+      ctx.clearRect(0, 0, size, size);
+
+      const scale = 0.45;
+      ctx.save();
+      ctx.translate(center, center);
+      ctx.scale(scale, scale);
+      ctx.translate(-center, -center);
+
+      ctx.strokeStyle = PRIMARY_LIGHT;
+      ctx.lineWidth = size * 0.022;
+
+      ctx.globalAlpha = 0.35;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.42, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.globalAlpha = 0.55;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.29, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.globalAlpha = 0.85;
+      ctx.lineWidth = size * 0.025;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.16, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.globalAlpha = 1;
+      const glow = ctx.createRadialGradient(center, center, 0, center, center, size * 0.1);
+      glow.addColorStop(0, PRIMARY_LIGHT);
+      glow.addColorStop(0.5, PRIMARY_LIGHT + '88');
+      glow.addColorStop(1, 'transparent');
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.1, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = PRIMARY_LIGHT;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.07, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    // Draw all
+    drawIcon(document.getElementById('icon1024'));
+    drawIcon(document.getElementById('prev1'));
+    drawIcon(document.getElementById('prev2'));
+    drawSplash(document.getElementById('splash'));
+    drawMini(document.getElementById('mini'));
+
+    function downloadIcon() {
+      const link = document.createElement('a');
+      link.download = 'icon.png';
+      link.href = document.getElementById('icon1024').toDataURL('image/png');
+      link.click();
+    }
+
+    function downloadSplash() {
+      const link = document.createElement('a');
+      link.download = 'splash.png';
+      link.href = document.getElementById('splash').toDataURL('image/png');
+      link.click();
+    }
+  </script>
+</body>
+</html>

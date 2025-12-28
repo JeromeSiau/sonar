@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 enum SubscriptionStatus { free, trial, premium }
@@ -20,13 +21,14 @@ class SubscriptionNotifier extends StateNotifier<SubscriptionStatus> {
   Future<void> _checkSubscriptionStatus() async {
     try {
       final customerInfo = await Purchases.getCustomerInfo();
+      if (!mounted) return;
       if (customerInfo.entitlements.active.containsKey('premium')) {
         state = SubscriptionStatus.premium;
       } else {
         state = SubscriptionStatus.free;
       }
     } catch (_) {
-      state = SubscriptionStatus.free;
+      if (mounted) state = SubscriptionStatus.free;
     }
   }
 
@@ -47,4 +49,78 @@ final isPremiumProvider = Provider<bool>((ref) {
 
 // Free tier limits
 final freeDeviceLimitProvider = Provider<int>((ref) => 3);
-final freeRadarSecondsProvider = Provider<int>((ref) => 30);
+
+// Radar trial tracking - uses RevenueCat attributes to persist across reinstalls
+const _radarTrialKey = 'radar_trial_used';
+const _rcTrialAttribute = 'radar_trial_used';
+
+final radarTrialUsedProvider = StateNotifierProvider<RadarTrialNotifier, bool>((ref) {
+  return RadarTrialNotifier();
+});
+
+class RadarTrialNotifier extends StateNotifier<bool> {
+  RadarTrialNotifier() : super(_getInitialValue()) {
+    _syncWithRevenueCat();
+  }
+
+  /// Synchronously get initial value from Hive
+  static bool _getInitialValue() {
+    try {
+      final box = Hive.box('settings');
+      return box.get(_radarTrialKey, defaultValue: false);
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Async sync with RevenueCat (runs after initialization)
+  Future<void> _syncWithRevenueCat() async {
+    if (state) return; // Already used locally
+
+    try {
+      final customerInfo = await Purchases.getCustomerInfo();
+      final rcValue = customerInfo.nonSubscriptionTransactions.isNotEmpty ||
+          (await _getRevenueCatAttribute());
+      if (rcValue && mounted) {
+        final box = Hive.box('settings');
+        await box.put(_radarTrialKey, true);
+        state = true;
+      }
+    } catch (_) {
+      // Use local value if RevenueCat fails
+    }
+  }
+
+  Future<bool> _getRevenueCatAttribute() async {
+    try {
+      final info = await Purchases.getCustomerInfo();
+      // Check if user has the trial attribute set
+      return info.originalAppUserId.isNotEmpty &&
+             Hive.box('settings').get('${_radarTrialKey}_synced', defaultValue: false);
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<void> useRadarTrial() async {
+    final box = Hive.box('settings');
+    await box.put(_radarTrialKey, true);
+    await box.put('${_radarTrialKey}_synced', true);
+
+    // Set RevenueCat subscriber attribute (persists across reinstalls)
+    try {
+      await Purchases.setAttributes({_rcTrialAttribute: 'true'});
+    } catch (_) {
+      // Continue even if RC fails
+    }
+
+    state = true;
+  }
+}
+
+/// Provider that returns true if user can access radar
+final canAccessRadarProvider = Provider<bool>((ref) {
+  final isPremium = ref.watch(isPremiumProvider);
+  final trialUsed = ref.watch(radarTrialUsedProvider);
+  return isPremium || !trialUsed;
+});

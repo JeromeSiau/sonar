@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Android Adaptive Icon Foreground</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 40px;
+      background: repeating-conic-gradient(#333 0% 25%, #444 0% 50%) 50% / 20px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      font-family: system-ui;
+      color: white;
+    }
+    h3 { background: #222; padding: 10px 20px; border-radius: 8px; }
+    button {
+      background: #5ECFCF;
+      color: #040A12;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .note { font-size: 12px; opacity: 0.8; max-width: 400px; text-align: center; background: #222; padding: 12px; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <h3>Android Adaptive Icon - Foreground (transparent)</h3>
+  <canvas id="foreground" width="1024" height="1024"></canvas>
+  <button onclick="download()">Télécharger icon-foreground.png</button>
+  <p class="note">Fond transparent. Logo centré dans la safe zone Android.</p>
+
+  <script>
+    const canvas = document.getElementById('foreground');
+    const ctx = canvas.getContext('2d');
+    const size = 1024;
+    const center = size / 2;
+    const primary = '#5ECFCF';
+
+    // Clear with transparency
+    ctx.clearRect(0, 0, size, size);
+
+    // Scale for Android safe zone (~66% of total)
+    const scale = 0.55;
+
+    ctx.save();
+    ctx.translate(center, center);
+    ctx.scale(scale, scale);
+    ctx.translate(-center, -center);
+
+    // Ring 1 (outer)
+    ctx.beginPath();
+    ctx.arc(center, center, size * 0.40, 0, Math.PI * 2);
+    ctx.strokeStyle = primary;
+    ctx.globalAlpha = 0.3;
+    ctx.lineWidth = size * 0.02;
+    ctx.stroke();
+
+    // Ring 2 (middle)
+    ctx.beginPath();
+    ctx.arc(center, center, size * 0.28, 0, Math.PI * 2);
+    ctx.globalAlpha = 0.5;
+    ctx.lineWidth = size * 0.02;
+    ctx.stroke();
+
+    // Ring 3 (inner)
+    ctx.beginPath();
+    ctx.arc(center, center, size * 0.16, 0, Math.PI * 2);
+    ctx.globalAlpha = 0.7;
+    ctx.lineWidth = size * 0.025;
+    ctx.stroke();
+
+    // Center filled dot
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = primary;
+    ctx.beginPath();
+    ctx.arc(center, center, size * 0.08, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Inner dark dot
+    ctx.fillStyle = '#0F2030';
+    ctx.beginPath();
+    ctx.arc(center, center, size * 0.03, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+
+    function download() {
+      const link = document.createElement('a');
+      link.download = 'icon-foreground.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+  </script>
+</body>
+</html>

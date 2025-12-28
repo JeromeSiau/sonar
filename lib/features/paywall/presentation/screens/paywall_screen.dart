@@ -13,9 +13,9 @@ class PaywallScreen extends ConsumerStatefulWidget {
 }
 
 class _PaywallScreenState extends ConsumerState<PaywallScreen> {
-  Offerings? _offerings;
+  Package? _lifetimePackage;
   bool _isLoading = true;
-  int _selectedIndex = 1; // Annual by default
+  bool _isPurchasing = false;
 
   @override
   void initState() {
@@ -26,8 +26,14 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
   Future<void> _loadOfferings() async {
     try {
       final offerings = await Purchases.getOfferings();
+      // Look for lifetime package (non-consumable)
+      final packages = offerings.current?.availablePackages ?? [];
+      final lifetime = packages.firstWhere(
+        (p) => p.packageType == PackageType.lifetime,
+        orElse: () => packages.isNotEmpty ? packages.first : packages.first,
+      );
       setState(() {
-        _offerings = offerings;
+        _lifetimePackage = packages.isNotEmpty ? lifetime : null;
         _isLoading = false;
       });
     } catch (e) {
@@ -35,14 +41,21 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     }
   }
 
-  Future<void> _purchase(Package package) async {
+  Future<void> _purchase() async {
+    if (_lifetimePackage == null || _isPurchasing) return;
+
+    setState(() => _isPurchasing = true);
     try {
-      await Purchases.purchasePackage(package);
+      await Purchases.purchasePackage(_lifetimePackage!);
       if (mounted) {
         context.pop();
       }
     } catch (e) {
-      // Handle error
+      // Handle error (user cancelled, etc.)
+    } finally {
+      if (mounted) {
+        setState(() => _isPurchasing = false);
+      }
     }
   }
 
@@ -61,32 +74,57 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
           padding: const EdgeInsets.all(24),
           child: Column(
             children: [
-              const Icon(
-                Icons.workspace_premium,
-                size: 80,
-                color: AppColors.primary,
+              const Spacer(flex: 1),
+              // Premium icon with glow effect
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.3),
+                      blurRadius: 30,
+                      spreadRadius: 5,
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.radar_rounded,
+                  size: 64,
+                  color: AppColors.primary,
+                ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
               Text(
-                'Passez Premium',
+                'Débloquez le Radar',
                 style: Theme.of(context).textTheme.headlineLarge,
               ),
-              const SizedBox(height: 16),
-              _buildFeatureList(),
+              const SizedBox(height: 8),
+              Text(
+                'Localisez tous vos appareils Bluetooth',
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 32),
-              if (_isLoading)
-                const CircularProgressIndicator()
-              else
-                _buildPricingOptions(),
-              const Spacer(),
+              _buildFeatureList(),
+              const Spacer(flex: 2),
+              _buildPriceCard(),
+              const SizedBox(height: 20),
               _buildPurchaseButton(),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               TextButton(
                 onPressed: () {
                   ref.read(subscriptionStatusProvider.notifier).restorePurchases();
                 },
-                child: const Text('Restaurer les achats'),
+                child: Text(
+                  'Restaurer les achats',
+                  style: TextStyle(color: AppColors.textSecondary),
+                ),
               ),
+              const SizedBox(height: 8),
             ],
           ),
         ),
@@ -96,21 +134,48 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
 
   Widget _buildFeatureList() {
     final features = [
-      'Scan illimité d\'appareils',
-      'Radar sans limite de temps',
-      'Sauvegarde des favoris',
-      'Historique complet',
+      ('Radar illimité', 'Localisez vos appareils sans restriction'),
+      ('Scan complet', 'Voyez tous les appareils à proximité'),
+      ('Favoris', 'Sauvegardez vos appareils importants'),
+      ('Achat unique', 'Payez une fois, utilisez pour toujours'),
     ];
 
     return Column(
       children: features.map((feature) {
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           child: Row(
             children: [
-              const Icon(Icons.check_circle, color: AppColors.signalStrong),
-              const SizedBox(width: 12),
-              Text(feature, style: Theme.of(context).textTheme.bodyLarge),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.signalStrong.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.check_rounded,
+                  color: AppColors.signalStrong,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      feature.$1,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    Text(
+                      feature.$2,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         );
@@ -118,90 +183,103 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     );
   }
 
-  Widget _buildPricingOptions() {
-    final packages = _offerings?.current?.availablePackages ?? [];
-
-    if (packages.isEmpty) {
-      return const SizedBox.shrink();
+  Widget _buildPriceCard() {
+    if (_isLoading) {
+      return const SizedBox(
+        height: 80,
+        child: Center(child: CircularProgressIndicator()),
+      );
     }
 
-    return Row(
-      children: packages.asMap().entries.map((entry) {
-        final index = entry.key;
-        final package = entry.value;
-        final isSelected = index == _selectedIndex;
-        final isAnnual = package.packageType == PackageType.annual;
+    final priceString = _lifetimePackage?.storeProduct.priceString ?? '4,99 €';
 
-        return Expanded(
-          child: GestureDetector(
-            onTap: () => setState(() => _selectedIndex = index),
-            child: Container(
-              margin: EdgeInsets.only(left: index > 0 ? 12 : 0),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: isSelected ? AppColors.primary.withOpacity(0.1) : AppColors.surface,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: isSelected ? AppColors.primary : Colors.transparent,
-                  width: 2,
-                ),
-              ),
-              child: Column(
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppColors.primary.withValues(alpha: 0.15),
+            AppColors.primary.withValues(alpha: 0.05),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: AppColors.primary.withValues(alpha: 0.3),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (isAnnual)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppColors.signalStrong,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Text(
-                        '-45%',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  const SizedBox(height: 8),
                   Text(
-                    isAnnual ? 'Annuel' : 'Mensuel',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    package.storeProduct.priceString,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    priceString,
+                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                           color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
                         ),
-                  ),
-                  Text(
-                    isAnnual ? '/an' : '/mois',
-                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
               ),
-            ),
+              const SizedBox(height: 4),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppColors.signalStrong,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Text(
+                  'ACHAT UNIQUE',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11,
+                    letterSpacing: 1,
+                  ),
+                ),
+              ),
+            ],
           ),
-        );
-      }).toList(),
+        ],
+      ),
     );
   }
 
   Widget _buildPurchaseButton() {
-    final packages = _offerings?.current?.availablePackages ?? [];
-    if (packages.isEmpty) return const SizedBox.shrink();
-
-    final selectedPackage = packages.length > _selectedIndex
-        ? packages[_selectedIndex]
-        : packages.first;
-
     return SizedBox(
       width: double.infinity,
+      height: 56,
       child: ElevatedButton(
-        onPressed: () => _purchase(selectedPackage),
-        child: const Text('Commencer l\'essai gratuit'),
+        onPressed: _lifetimePackage != null && !_isPurchasing ? _purchase : null,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.black,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        child: _isPurchasing
+            ? const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.black,
+                ),
+              )
+            : const Text(
+                'Débloquer maintenant',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
       ),
     );
   }

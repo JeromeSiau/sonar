@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SONAR - Logo Proposals</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(180deg, #081018 0%, #040A12 50%, #020608 100%);
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      color: #E8EEF4;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    h1 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 32px;
+      letter-spacing: 8px;
+      color: #5ECFCF;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #8A9DB5;
+      font-size: 14px;
+      letter-spacing: 2px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
+      margin-bottom: 60px;
+    }
+
+    .card {
+      background: rgba(12, 24, 36, 0.6);
+      border: 1px solid rgba(94, 207, 207, 0.2);
+      border-radius: 24px;
+      padding: 40px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      border-color: rgba(94, 207, 207, 0.5);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .logo-container {
+      width: 160px;
+      height: 160px;
+      margin: 0 auto 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      color: #5ECFCF;
+      margin-bottom: 8px;
+    }
+
+    .logo-desc {
+      font-size: 13px;
+      color: #8A9DB5;
+      line-height: 1.5;
+    }
+
+    /* Animations */
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.02); }
+    }
+
+    @keyframes sweep {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes ping {
+      0% { transform: scale(0.5); opacity: 0.8; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+
+    .animate-sweep {
+      animation: sweep 3s linear infinite;
+      transform-origin: center;
+    }
+
+    .animate-pulse {
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    /* Dark/Light preview */
+    .preview-section {
+      margin-top: 60px;
+    }
+
+    .preview-section h2 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      letter-spacing: 4px;
+      color: #556677;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .preview-row {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .preview-box {
+      width: 200px;
+      height: 200px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .preview-box.dark {
+      background: #040A12;
+      border: 1px solid #1E3448;
+    }
+
+    .preview-box.light {
+      background: #F5F7FA;
+      border: 1px solid #E0E4E8;
+    }
+
+    .preview-box .wordmark {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 6px;
+    }
+
+    .preview-box.dark .wordmark {
+      color: #5ECFCF;
+    }
+
+    .preview-box.light .wordmark {
+      color: #2A8A8A;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>SONAR</h1>
+      <p class="subtitle">LOGO PROPOSALS • BLUETOOTH FINDER</p>
+    </header>
+
+    <div class="grid">
+
+      <!-- PROPOSAL 1: Concentric Waves -->
+      <div class="card">
+        <div class="logo-container">
+          <svg width="140" height="140" viewBox="0 0 140 140" fill="none">
+            <!-- Outer rings -->
+            <circle cx="70" cy="70" r="65" stroke="#5ECFCF" stroke-width="1.5" stroke-opacity="0.2"/>
+            <circle cx="70" cy="70" r="50" stroke="#5ECFCF" stroke-width="1.5" stroke-opacity="0.3"/>
+            <circle cx="70" cy="70" r="35" stroke="#5ECFCF" stroke-width="1.5" stroke-opacity="0.5"/>
+            <!-- Center dot -->
+            <circle cx="70" cy="70" r="12" fill="#5ECFCF"/>
+            <circle cx="70" cy="70" r="5" fill="#040A12"/>
+            <!-- Glow -->
+            <circle cx="70" cy="70" r="12" fill="#5ECFCF" filter="url(#glow1)"/>
+            <defs>
+              <filter id="glow1" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="8" result="blur"/>
+                <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+              </filter>
+            </defs>
+          </svg>
+        </div>
+        <div class="logo-name">OPTION 1</div>
+        <p class="logo-desc">Ondes concentriques<br/>Minimaliste & épuré</p>
+      </div>
+
+      <!-- PROPOSAL 2: Radar Sweep -->
+      <div class="card">
+        <div class="logo-container">
+          <svg width="140" height="140" viewBox="0 0 140 140" fill="none">
+            <!-- Grid lines -->
+            <line x1="70" y1="10" x2="70" y2="130" stroke="#1E3A5F" stroke-width="0.5"/>
+            <line x1="10" y1="70" x2="130" y2="70" stroke="#1E3A5F" stroke-width="0.5"/>
+            <!-- Circles -->
+            <circle cx="70" cy="70" r="60" stroke="#5ECFCF" stroke-width="1.5" stroke-opacity="0.25"/>
+            <circle cx="70" cy="70" r="40" stroke="#5ECFCF" stroke-width="1.5" stroke-opacity="0.35"/>
+            <circle cx="70" cy="70" r="20" stroke="#5ECFCF" stroke-width="1.5" stroke-opacity="0.5"/>
+            <!-- Sweep beam -->
+            <path d="M70 70 L130 70 A60 60 0 0 1 100 128 Z" fill="url(#sweepGrad)" class="animate-sweep"/>
+            <!-- Center -->
+            <circle cx="70" cy="70" r="8" fill="#5ECFCF"/>
+            <circle cx="70" cy="70" r="3" fill="#040A12"/>
+            <defs>
+              <linearGradient id="sweepGrad" x1="70" y1="70" x2="130" y2="70">
+                <stop offset="0%" stop-color="#5ECFCF" stop-opacity="0.6"/>
+                <stop offset="100%" stop-color="#5ECFCF" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="logo-name">OPTION 2</div>
+        <p class="logo-desc">Radar avec balayage<br/>Dynamique & tech</p>
+      </div>
+
+      <!-- PROPOSAL 3: Abstract S -->
+      <div class="card">
+        <div class="logo-container">
+          <svg width="140" height="140" viewBox="0 0 140 140" fill="none">
+            <!-- Abstract S made of arcs -->
+            <path d="M95 35 A30 30 0 1 0 45 35" stroke="#5ECFCF" stroke-width="3" stroke-linecap="round" fill="none" stroke-opacity="0.3"/>
+            <path d="M95 55 A20 20 0 1 0 55 55" stroke="#5ECFCF" stroke-width="3" stroke-linecap="round" fill="none" stroke-opacity="0.5"/>
+            <path d="M45 105 A30 30 0 1 0 95 105" stroke="#5ECFCF" stroke-width="3" stroke-linecap="round" fill="none" stroke-opacity="0.3"/>
+            <path d="M45 85 A20 20 0 1 0 85 85" stroke="#5ECFCF" stroke-width="3" stroke-linecap="round" fill="none" stroke-opacity="0.5"/>
+            <!-- Center connection -->
+            <circle cx="70" cy="70" r="10" fill="#5ECFCF"/>
+            <circle cx="70" cy="70" r="4" fill="#040A12"/>
+          </svg>
+        </div>
+        <div class="logo-name">OPTION 3</div>
+        <p class="logo-desc">"S" abstrait en ondes<br/>Unique & mémorable</p>
+      </div>
+
+      <!-- PROPOSAL 4: Bluetooth + Sonar -->
+      <div class="card">
+        <div class="logo-container">
+          <svg width="140" height="140" viewBox="0 0 140 140" fill="none">
+            <!-- Sonar rings -->
+            <circle cx="70" cy="70" r="60" stroke="#5ECFCF" stroke-width="1" stroke-opacity="0.15"/>
+            <circle cx="70" cy="70" r="45" stroke="#5ECFCF" stroke-width="1" stroke-opacity="0.25"/>
+            <circle cx="70" cy="70" r="30" stroke="#5ECFCF" stroke-width="1" stroke-opacity="0.35"/>
+            <!-- Stylized Bluetooth B -->
+            <path d="M70 40 L70 100 M70 40 L90 55 L70 70 L90 85 L70 100" stroke="#5ECFCF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M70 70 L50 55 M70 70 L50 85" stroke="#5ECFCF" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="logo-name">OPTION 4</div>
+        <p class="logo-desc">Bluetooth + Sonar<br/>Explicite & fonctionnel</p>
+      </div>
+
+      <!-- PROPOSAL 5: Ping Dot -->
+      <div class="card">
+        <div class="logo-container">
+          <svg width="140" height="140" viewBox="0 0 140 140" fill="none">
+            <!-- Ping waves emanating -->
+            <circle cx="70" cy="70" r="55" stroke="#5ECFCF" stroke-width="2" stroke-opacity="0.15" stroke-dasharray="4 6"/>
+            <circle cx="70" cy="70" r="40" stroke="#5ECFCF" stroke-width="2" stroke-opacity="0.3"/>
+            <circle cx="70" cy="70" r="25" stroke="#5ECFCF" stroke-width="2.5" stroke-opacity="0.5"/>
+            <!-- Main dot with glow -->
+            <circle cx="70" cy="70" r="14" fill="#5ECFCF"/>
+            <circle cx="70" cy="70" r="6" fill="#040A12"/>
+            <!-- Small detection blip -->
+            <circle cx="98" cy="50" r="4" fill="#6EE7A8"/>
+          </svg>
+        </div>
+        <div class="logo-name">OPTION 5</div>
+        <p class="logo-desc">Point de détection<br/>Simple & efficace</p>
+      </div>
+
+      <!-- PROPOSAL 6: Geometric Sonar -->
+      <div class="card">
+        <div class="logo-container">
+          <svg width="140" height="140" viewBox="0 0 140 140" fill="none">
+            <!-- Hexagonal frame -->
+            <polygon points="70,15 115,42.5 115,97.5 70,125 25,97.5 25,42.5" stroke="#5ECFCF" stroke-width="2" fill="none" stroke-opacity="0.3"/>
+            <!-- Inner elements -->
+            <circle cx="70" cy="70" r="35" stroke="#5ECFCF" stroke-width="1.5" stroke-opacity="0.4"/>
+            <circle cx="70" cy="70" r="20" stroke="#5ECFCF" stroke-width="1.5" stroke-opacity="0.6"/>
+            <!-- Directional lines -->
+            <line x1="70" y1="35" x2="70" y2="50" stroke="#5ECFCF" stroke-width="2" stroke-opacity="0.5"/>
+            <line x1="100" y1="70" x2="90" y2="70" stroke="#5ECFCF" stroke-width="2" stroke-opacity="0.5"/>
+            <line x1="70" y1="105" x2="70" y2="90" stroke="#5ECFCF" stroke-width="2" stroke-opacity="0.5"/>
+            <line x1="40" y1="70" x2="50" y2="70" stroke="#5ECFCF" stroke-width="2" stroke-opacity="0.5"/>
+            <!-- Center -->
+            <circle cx="70" cy="70" r="8" fill="#5ECFCF"/>
+          </svg>
+        </div>
+        <div class="logo-name">OPTION 6</div>
+        <p class="logo-desc">Géométrique hexagonal<br/>Moderne & premium</p>
+      </div>
+
+    </div>
+
+    <!-- App Icon Preview -->
+    <div class="preview-section">
+      <h2>APP ICON PREVIEW</h2>
+      <div class="preview-row">
+        <!-- Favorite: Option 5 as app icon -->
+        <div class="preview-box dark">
+          <svg width="80" height="80" viewBox="0 0 140 140" fill="none">
+            <circle cx="70" cy="70" r="40" stroke="#5ECFCF" stroke-width="2.5" stroke-opacity="0.3"/>
+            <circle cx="70" cy="70" r="25" stroke="#5ECFCF" stroke-width="3" stroke-opacity="0.5"/>
+            <circle cx="70" cy="70" r="14" fill="#5ECFCF"/>
+            <circle cx="70" cy="70" r="6" fill="#040A12"/>
+            <circle cx="98" cy="50" r="4" fill="#6EE7A8"/>
+          </svg>
+          <span class="wordmark">SONAR</span>
+        </div>
+
+        <div class="preview-box light">
+          <svg width="80" height="80" viewBox="0 0 140 140" fill="none">
+            <circle cx="70" cy="70" r="40" stroke="#2A8A8A" stroke-width="2.5" stroke-opacity="0.3"/>
+            <circle cx="70" cy="70" r="25" stroke="#2A8A8A" stroke-width="3" stroke-opacity="0.5"/>
+            <circle cx="70" cy="70" r="14" fill="#2A8A8A"/>
+            <circle cx="70" cy="70" r="6" fill="#F5F7FA"/>
+            <circle cx="98" cy="50" r="4" fill="#34A853"/>
+          </svg>
+          <span class="wordmark">SONAR</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wordmark Options -->
+    <div class="preview-section" style="margin-top: 40px;">
+      <h2>WORDMARK OPTIONS</h2>
+      <div style="display: flex; gap: 40px; justify-content: center; flex-wrap: wrap; margin-top: 24px;">
+        <div style="text-align: center;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 36px; font-weight: 700; letter-spacing: 12px; color: #5ECFCF;">SONAR</div>
+          <div style="font-size: 12px; color: #556677; margin-top: 8px;">JetBrains Mono Bold</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="font-family: 'Inter', sans-serif; font-size: 36px; font-weight: 300; letter-spacing: 16px; color: #5ECFCF;">SONAR</div>
+          <div style="font-size: 12px; color: #556677; margin-top: 8px;">Inter Light</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 36px; font-weight: 400; letter-spacing: 8px; color: #5ECFCF;">S<span style="opacity: 0.5;">O</span>N<span style="opacity: 0.5;">A</span>R</div>
+          <div style="font-size: 12px; color: #556677; margin-top: 8px;">Alternating opacity</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

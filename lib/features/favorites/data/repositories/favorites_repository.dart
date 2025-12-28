@@ -4,7 +4,15 @@ import 'package:bluetooth_finder/features/scanner/data/models/bluetooth_device_m
 
 class FavoritesRepository {
   static const String _boxName = 'favorites';
+  static FavoritesRepository? _instance;
   late Box<FavoriteDeviceModel> _box;
+
+  FavoritesRepository._();
+
+  static FavoritesRepository get instance {
+    _instance ??= FavoritesRepository._();
+    return _instance!;
+  }
 
   Future<void> init() async {
     _box = await Hive.openBox<FavoriteDeviceModel>(_boxName);

@@ -4,7 +4,7 @@ import 'package:bluetooth_finder/features/favorites/data/repositories/favorites_
 import 'package:bluetooth_finder/features/scanner/data/models/bluetooth_device_model.dart';
 
 final favoritesRepositoryProvider = Provider<FavoritesRepository>((ref) {
-  return FavoritesRepository();
+  return FavoritesRepository.instance;
 });
 
 final favoritesProvider = StateNotifierProvider<FavoritesNotifier, List<FavoriteDeviceModel>>((ref) {
@@ -15,11 +15,9 @@ final favoritesProvider = StateNotifierProvider<FavoritesNotifier, List<Favorite
 class FavoritesNotifier extends StateNotifier<List<FavoriteDeviceModel>> {
   final FavoritesRepository _repo;
 
-  FavoritesNotifier(this._repo) : super([]) {
-    _loadFavorites();
-  }
+  FavoritesNotifier(this._repo) : super(_repo.getAll());
 
-  void _loadFavorites() {
+  void _refresh() {
     state = _repo.getAll();
   }
 
@@ -27,17 +25,17 @@ class FavoritesNotifier extends StateNotifier<List<FavoriteDeviceModel>> {
 
   Future<void> toggleFavorite(BluetoothDeviceModel device) async {
     await _repo.toggleFavorite(device);
-    _loadFavorites();
+    _refresh();
   }
 
   Future<void> removeFavorite(String deviceId) async {
     await _repo.removeFavorite(deviceId);
-    _loadFavorites();
+    _refresh();
   }
 
   Future<void> updateFromScan(BluetoothDeviceModel device) async {
     await _repo.updateFromScan(device);
-    _loadFavorites();
+    _refresh();
   }
 }
 

@@ -14,14 +14,17 @@ Future<void> main() async {
   Hive.registerAdapter(FavoriteDeviceModelAdapter());
 
   // Initialize Favorites Repository
-  final favoritesRepo = FavoritesRepository();
-  await favoritesRepo.init();
+  await FavoritesRepository.instance.init();
 
-  // Initialize RevenueCat
+  // Initialize RevenueCat (skip if no valid key)
   // TODO: Replace with your actual API keys
-  await Purchases.configure(
-    PurchasesConfiguration('your_revenuecat_api_key'),
-  );
+  try {
+    await Purchases.configure(
+      PurchasesConfiguration('your_revenuecat_api_key'),
+    );
+  } catch (_) {
+    // Ignore - RevenueCat not configured yet
+  }
 
   runApp(
     const ProviderScope(

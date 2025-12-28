@@ -1,4 +1,4 @@
-package com.jeromebaptiste.bluetooth_finder
+package com.sonar.bluetoothfinder
 
 import io.flutter.embedding.android.FlutterActivity
 

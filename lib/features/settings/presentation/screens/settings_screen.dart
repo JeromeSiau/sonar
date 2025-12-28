@@ -2,11 +2,16 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:bluetooth_finder/core/theme/app_colors.dart';
 import 'package:bluetooth_finder/core/providers/locale_provider.dart';
 import 'package:bluetooth_finder/features/paywall/presentation/providers/subscription_provider.dart';
 import 'package:bluetooth_finder/l10n/app_localizations.dart';
+
+final packageInfoProvider = FutureProvider<PackageInfo>((ref) async {
+  return await PackageInfo.fromPlatform();
+});
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -136,9 +141,19 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      l10n.version('1.0.0'),
-                      style: Theme.of(context).textTheme.bodySmall,
+                    ref.watch(packageInfoProvider).when(
+                      data: (info) => Text(
+                        l10n.version(info.version),
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      loading: () => Text(
+                        l10n.version('...'),
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      error: (_, __) => Text(
+                        l10n.version('?'),
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
                     ),
                   ],
                 ),

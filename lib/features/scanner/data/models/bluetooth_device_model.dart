@@ -38,6 +38,21 @@ class BluetoothDeviceModel {
     );
   }
 
+  /// Create from a bonded/paired device (has cached name)
+  factory BluetoothDeviceModel.fromBondedDevice(fbp.BluetoothDevice device) {
+    final name = device.platformName.isNotEmpty
+        ? device.platformName
+        : 'Appareil inconnu';
+
+    return BluetoothDeviceModel(
+      id: device.remoteId.str,
+      name: name,
+      rssi: -100, // Unknown RSSI for bonded devices not currently seen
+      lastSeen: DateTime.now(),
+      type: _inferDeviceType(name),
+    );
+  }
+
   static DeviceType _inferDeviceType(String name) {
     final lowerName = name.toLowerCase();
     if (lowerName.contains('airpod') || lowerName.contains('pod')) {

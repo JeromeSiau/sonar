@@ -20,11 +20,24 @@ class BluetoothRepository {
   Future<void> startScan() async {
     _devices.clear();
 
+    // First, add bonded/paired devices (they have cached names)
+    await _addBondedDevices();
+
     // Listen to scan results
     _scanSubscription = FlutterBluePlus.scanResults.listen((results) {
       for (final result in results) {
         final device = BluetoothDeviceModel.fromScanResult(result);
-        _devices[device.id] = device;
+        // Update device, but keep the name from bonded if scan result has no name
+        final existing = _devices[device.id];
+        if (existing != null && device.name == 'Appareil inconnu' && existing.name != 'Appareil inconnu') {
+          // Keep existing name but update RSSI and lastSeen
+          _devices[device.id] = existing.copyWith(
+            rssi: device.rssi,
+            lastSeen: device.lastSeen,
+          );
+        } else {
+          _devices[device.id] = device;
+        }
       }
       _devicesController.add(currentDevices);
     });
@@ -39,6 +52,21 @@ class BluetoothRepository {
       timeout: const Duration(seconds: 30),
       androidUsesFineLocation: true,
     );
+  }
+
+  Future<void> _addBondedDevices() async {
+    try {
+      final bondedDevices = await FlutterBluePlus.bondedDevices;
+      for (final device in bondedDevices) {
+        final model = BluetoothDeviceModel.fromBondedDevice(device);
+        if (model.name != 'Appareil inconnu') {
+          _devices[model.id] = model;
+        }
+      }
+      _devicesController.add(currentDevices);
+    } catch (e) {
+      // Bonded devices not supported on this platform (iOS)
+    }
   }
 
   Future<void> stopScan() async {

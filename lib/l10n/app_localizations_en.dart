@@ -238,4 +238,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get openSettings => 'OPEN SETTINGS';
+
+  @override
+  String get myDevices => 'My devices';
+
+  @override
+  String get nearbyDevices => 'Nearby';
+
+  @override
+  String get noDevicesFound => 'No devices found';
 }

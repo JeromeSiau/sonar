@@ -82,5 +82,9 @@
 
   "bluetoothDisabled": "Bluetooth disattivato",
   "enableBluetoothDescription": "Attiva il Bluetooth per scansionare i dispositivi nelle vicinanze",
-  "openSettings": "APRI IMPOSTAZIONI"
+  "openSettings": "APRI IMPOSTAZIONI",
+
+  "myDevices": "I miei dispositivi",
+  "nearbyDevices": "Nelle vicinanze",
+  "noDevicesFound": "Nessun dispositivo trovato"
 }

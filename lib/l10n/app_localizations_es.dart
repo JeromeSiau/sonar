@@ -240,4 +240,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get openSettings => 'ABRIR AJUSTES';
+
+  @override
+  String get myDevices => 'Mis dispositivos';
+
+  @override
+  String get nearbyDevices => 'Cercanos';
+
+  @override
+  String get noDevicesFound => 'No se encontraron dispositivos';
 }

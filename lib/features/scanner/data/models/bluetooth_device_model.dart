@@ -1,6 +1,8 @@
 import 'package:flutter_blue_plus/flutter_blue_plus.dart' as fbp;
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart' as fbs;
 
 enum DeviceType { airpods, headphones, watch, speaker, other }
+enum BluetoothSource { ble, classic, both }
 
 class BluetoothDeviceModel {
   final String id;
@@ -8,6 +10,8 @@ class BluetoothDeviceModel {
   final int rssi;
   final DateTime lastSeen;
   final DeviceType type;
+  final bool isBonded;
+  final BluetoothSource source;
 
   const BluetoothDeviceModel({
     required this.id,
@@ -15,9 +19,11 @@ class BluetoothDeviceModel {
     required this.rssi,
     required this.lastSeen,
     required this.type,
+    this.isBonded = false,
+    this.source = BluetoothSource.ble,
   });
 
-  factory BluetoothDeviceModel.fromScanResult(fbp.ScanResult result) {
+  factory BluetoothDeviceModel.fromScanResult(fbp.ScanResult result, {bool isBonded = false}) {
     // Check advertisementData.localName first (often contains the name)
     // Then fall back to platformName, then to unknown
     final advertisedName = result.advertisementData.advName;
@@ -35,10 +41,12 @@ class BluetoothDeviceModel {
       rssi: result.rssi,
       lastSeen: DateTime.now(),
       type: _inferDeviceType(name),
+      isBonded: isBonded,
+      source: BluetoothSource.ble,
     );
   }
 
-  /// Create from a bonded/paired device (has cached name)
+  /// Create from a bonded/paired BLE device (has cached name)
   factory BluetoothDeviceModel.fromBondedDevice(fbp.BluetoothDevice device) {
     final name = device.platformName.isNotEmpty
         ? device.platformName
@@ -50,6 +58,23 @@ class BluetoothDeviceModel {
       rssi: -100, // Unknown RSSI for bonded devices not currently seen
       lastSeen: DateTime.now(),
       type: _inferDeviceType(name),
+      isBonded: true,
+      source: BluetoothSource.ble,
+    );
+  }
+
+  /// Create from Classic Bluetooth discovery (Android only)
+  factory BluetoothDeviceModel.fromClassicDevice(fbs.BluetoothDevice device, {int rssi = -60}) {
+    final name = device.name ?? 'Appareil inconnu';
+
+    return BluetoothDeviceModel(
+      id: device.address,
+      name: name,
+      rssi: rssi,
+      lastSeen: DateTime.now(),
+      type: _inferDeviceType(name),
+      isBonded: device.isBonded,
+      source: BluetoothSource.classic,
     );
   }
 
@@ -79,6 +104,8 @@ class BluetoothDeviceModel {
     int? rssi,
     DateTime? lastSeen,
     DeviceType? type,
+    bool? isBonded,
+    BluetoothSource? source,
   }) {
     return BluetoothDeviceModel(
       id: id ?? this.id,
@@ -86,6 +113,8 @@ class BluetoothDeviceModel {
       rssi: rssi ?? this.rssi,
       lastSeen: lastSeen ?? this.lastSeen,
       type: type ?? this.type,
+      isBonded: isBonded ?? this.isBonded,
+      source: source ?? this.source,
     );
   }
 

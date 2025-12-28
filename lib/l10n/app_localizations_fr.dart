@@ -241,4 +241,13 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get openSettings => 'OUVRIR RÉGLAGES';
+
+  @override
+  String get myDevices => 'Mes appareils';
+
+  @override
+  String get nearbyDevices => 'À proximité';
+
+  @override
+  String get noDevicesFound => 'Aucun appareil trouvé';
 }

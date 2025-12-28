@@ -7,8 +7,9 @@ import 'package:go_router/go_router.dart';
 import 'package:bluetooth_finder/core/theme/app_colors.dart';
 import 'package:bluetooth_finder/features/scanner/presentation/providers/scanner_provider.dart';
 import 'package:bluetooth_finder/features/scanner/presentation/widgets/device_card.dart';
+import 'package:bluetooth_finder/features/scanner/presentation/widgets/section_header.dart';
 import 'package:bluetooth_finder/features/paywall/presentation/providers/subscription_provider.dart'
-    show isPremiumProvider, freeDeviceLimitProvider, canAccessRadarProvider, radarTrialUsedProvider;
+    show isPremiumProvider, canAccessRadarProvider, radarTrialUsedProvider;
 import 'package:bluetooth_finder/shared/widgets/staggered_list_item.dart';
 import 'package:bluetooth_finder/l10n/app_localizations.dart';
 
@@ -64,9 +65,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
   @override
   Widget build(BuildContext context) {
     final isScanning = ref.watch(isScanningProvider);
-    final devicesAsync = ref.watch(devicesStreamProvider);
     final isPremium = ref.watch(isPremiumProvider);
-    final deviceLimit = ref.watch(freeDeviceLimitProvider);
     final bluetoothState = ref.watch(bluetoothAdapterStateProvider);
     final l10n = AppLocalizations.of(context)!;
 
@@ -87,8 +86,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
               if (state != BluetoothAdapterState.on) {
                 return _buildBluetoothOffState(l10n);
               }
-              return _buildScannerContent(
-                context, isScanning, devicesAsync, isPremium, deviceLimit, l10n);
+              return _buildScannerContent(context, isScanning, isPremium, l10n);
             },
             loading: () => _SonarSearchAnimation(isScanning: isScanning, l10n: l10n),
             error: (_, __) => _buildErrorState(l10n),
@@ -147,62 +145,106 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
   Widget _buildScannerContent(
     BuildContext context,
     bool isScanning,
-    AsyncValue<List<dynamic>> devicesAsync,
     bool isPremium,
-    int deviceLimit,
     AppLocalizations l10n,
   ) {
-    return devicesAsync.when(
-            data: (devices) {
-              if (devices.isEmpty && isScanning) {
-                return _SonarSearchAnimation(isScanning: isScanning, l10n: l10n);
-              }
+    final myDevices = ref.watch(myDevicesProvider);
+    final nearbyDevices = ref.watch(nearbyDevicesProvider);
+    final allDevicesEmpty = myDevices.isEmpty && nearbyDevices.isEmpty;
 
-              final displayDevices = isPremium
-                  ? devices
-                  : devices.take(deviceLimit).toList();
+    if (allDevicesEmpty && isScanning) {
+      return _SonarSearchAnimation(isScanning: isScanning, l10n: l10n);
+    }
 
-              final trialUsed = ref.watch(radarTrialUsedProvider);
+    final trialUsed = ref.watch(radarTrialUsedProvider);
 
-              return Column(
-                children: [
-                  // Mini sonar at top when scanning with results
-                  if (isScanning && devices.isNotEmpty)
-                    _MiniSonarIndicator(l10n: l10n),
-                  // Show trial status for free users
-                  if (!isPremium)
-                    _buildTrialBanner(context, trialUsed, l10n),
-                  if (!isPremium && devices.length > deviceLimit)
-                    _buildUpgradeBanner(context, devices.length, l10n),
-                  Expanded(
-                    child: RefreshIndicator(
-                      onRefresh: _startScan,
-                      color: AppColors.primary,
-                      backgroundColor: AppColors.surface,
-                      child: ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-                        itemCount: displayDevices.length,
-                        itemBuilder: (context, index) {
-                          final device = displayDevices[index];
-                          return StaggeredListItem(
-                            index: index,
-                            child: Padding(
-                              padding: const EdgeInsets.only(bottom: 12),
-                              child: DeviceCard(
-                                device: device,
-                                onTap: () => _onDeviceTap(context, ref, device),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+    return Column(
+      children: [
+        // Mini sonar at top when scanning with results
+        if (isScanning && !allDevicesEmpty)
+          _MiniSonarIndicator(l10n: l10n),
+        // Show trial status for free users
+        if (!isPremium)
+          _buildTrialBanner(context, trialUsed, l10n),
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: _startScan,
+            color: AppColors.primary,
+            backgroundColor: AppColors.surface,
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
+              children: [
+                // My devices section
+                if (myDevices.isNotEmpty) ...[
+                  SectionHeader(
+                    icon: Icons.smartphone_rounded,
+                    title: l10n.myDevices,
+                    count: myDevices.length,
                   ),
+                  ...myDevices.asMap().entries.map((entry) {
+                    return StaggeredListItem(
+                      index: entry.key,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: DeviceCard(
+                          device: entry.value,
+                          onTap: () => _onDeviceTap(context, ref, entry.value),
+                        ),
+                      ),
+                    );
+                  }),
                 ],
-              );
-            },
-            loading: () => _SonarSearchAnimation(isScanning: isScanning, l10n: l10n),
-            error: (_, __) => _buildErrorState(l10n),
+                // Nearby devices section
+                if (nearbyDevices.isNotEmpty) ...[
+                  SectionHeader(
+                    icon: Icons.radar_rounded,
+                    title: l10n.nearbyDevices,
+                    count: nearbyDevices.length,
+                  ),
+                  ...nearbyDevices.asMap().entries.map((entry) {
+                    final index = myDevices.length + entry.key;
+                    return StaggeredListItem(
+                      index: index,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: DeviceCard(
+                          device: entry.value,
+                          onTap: () => _onDeviceTap(context, ref, entry.value),
+                        ),
+                      ),
+                    );
+                  }),
+                ],
+                // Empty state
+                if (allDevicesEmpty && !isScanning)
+                  _buildEmptyState(l10n),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEmptyState(AppLocalizations l10n) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          children: [
+            Icon(
+              Icons.bluetooth_searching_rounded,
+              size: 48,
+              color: AppColors.textSecondary,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              l10n.noDevicesFound,
+              style: TextStyle(color: AppColors.textSecondary),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -307,39 +349,6 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
     );
   }
 
-  Widget _buildUpgradeBanner(BuildContext context, int totalDevices, AppLocalizations l10n) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.lock_outline_rounded, color: AppColors.primary),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              l10n.devicesFound(totalDevices),
-              style: const TextStyle(color: AppColors.textPrimary),
-            ),
-          ),
-          TextButton(
-            onPressed: () => context.push('/paywall'),
-            style: TextButton.styleFrom(
-              backgroundColor: AppColors.primary.withValues(alpha: 0.2),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: Text(l10n.premium),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 // === SONAR SEARCH ANIMATION ===

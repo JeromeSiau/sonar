@@ -82,5 +82,9 @@
 
   "bluetoothDisabled": "Bluetooth is off",
   "enableBluetoothDescription": "Enable Bluetooth to scan for nearby devices",
-  "openSettings": "OPEN SETTINGS"
+  "openSettings": "OPEN SETTINGS",
+
+  "myDevices": "My devices",
+  "nearbyDevices": "Nearby",
+  "noDevicesFound": "No devices found"
 }

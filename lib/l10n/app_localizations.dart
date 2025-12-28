@@ -535,6 +535,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'OUVRIR RÉGLAGES'**
   String get openSettings;
+
+  /// No description provided for @myDevices.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes appareils'**
+  String get myDevices;
+
+  /// No description provided for @nearbyDevices.
+  ///
+  /// In fr, this message translates to:
+  /// **'À proximité'**
+  String get nearbyDevices;
+
+  /// No description provided for @noDevicesFound.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun appareil trouvé'**
+  String get noDevicesFound;
 }
 
 class _AppLocalizationsDelegate

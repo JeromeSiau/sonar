@@ -9,6 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
   flutter_riverpod: ^2.6.1
   riverpod_annotation: ^2.6.1
   go_router: ^14.6.2
@@ -47,6 +50,7 @@ flutter_native_splash:
     image: "assets/icon/splash.png"
 
 flutter:
+  generate: true
   uses-material-design: true
   assets:
     - assets/icon/

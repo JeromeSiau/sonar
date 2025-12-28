@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:bluetooth_finder/core/theme/app_colors.dart';
+import 'package:bluetooth_finder/l10n/app_localizations.dart';
 
 class PermissionScreen extends StatelessWidget {
   const PermissionScreen({super.key});
@@ -25,6 +26,8 @@ class PermissionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -47,13 +50,13 @@ class PermissionScreen extends StatelessWidget {
               ),
               const SizedBox(height: 40),
               Text(
-                'Autorisations requises',
+                l10n.permissionsRequired,
                 style: Theme.of(context).textTheme.headlineMedium,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
               Text(
-                'Pour localiser vos appareils Bluetooth, nous avons besoin d\'accéder au Bluetooth et à votre position.',
+                l10n.permissionsDescription,
                 style: Theme.of(context).textTheme.bodyLarge,
                 textAlign: TextAlign.center,
               ),
@@ -61,21 +64,21 @@ class PermissionScreen extends StatelessWidget {
               _buildPermissionItem(
                 context,
                 Icons.bluetooth,
-                'Bluetooth',
-                'Scanner les appareils à proximité',
+                l10n.bluetooth,
+                l10n.bluetoothPermissionDescription,
               ),
               _buildPermissionItem(
                 context,
                 Icons.location_on,
-                'Localisation',
-                'Requis pour le scan Bluetooth',
+                l10n.location,
+                l10n.locationPermissionDescription,
               ),
               const SizedBox(height: 40),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () => _requestPermissions(context),
-                  child: const Text('Autoriser'),
+                  child: Text(l10n.authorize),
                 ),
               ),
             ],

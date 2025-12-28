@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:bluetooth_finder/core/theme/app_colors.dart';
 import 'package:bluetooth_finder/features/paywall/presentation/providers/subscription_provider.dart';
+import 'package:bluetooth_finder/l10n/app_localizations.dart';
 
 class PaywallScreen extends ConsumerStatefulWidget {
   const PaywallScreen({super.key});
@@ -61,6 +62,8 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -97,30 +100,30 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
               ),
               const SizedBox(height: 32),
               Text(
-                'Débloquez le Radar',
+                l10n.unlockRadar,
                 style: Theme.of(context).textTheme.headlineLarge,
               ),
               const SizedBox(height: 8),
               Text(
-                'Localisez tous vos appareils Bluetooth',
+                l10n.locateAllDevices,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: AppColors.textSecondary,
                     ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),
-              _buildFeatureList(),
+              _buildFeatureList(l10n),
               const Spacer(flex: 2),
-              _buildPriceCard(),
+              _buildPriceCard(l10n),
               const SizedBox(height: 20),
-              _buildPurchaseButton(),
+              _buildPurchaseButton(l10n),
               const SizedBox(height: 12),
               TextButton(
                 onPressed: () {
                   ref.read(subscriptionStatusProvider.notifier).restorePurchases();
                 },
                 child: Text(
-                  'Restaurer les achats',
+                  l10n.restorePurchases,
                   style: TextStyle(color: AppColors.textSecondary),
                 ),
               ),
@@ -132,12 +135,12 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     );
   }
 
-  Widget _buildFeatureList() {
+  Widget _buildFeatureList(AppLocalizations l10n) {
     final features = [
-      ('Radar illimité', 'Localisez vos appareils sans restriction'),
-      ('Scan complet', 'Voyez tous les appareils à proximité'),
-      ('Favoris', 'Sauvegardez vos appareils importants'),
-      ('Achat unique', 'Payez une fois, utilisez pour toujours'),
+      (l10n.unlimitedRadar, l10n.unlimitedRadarDescription),
+      (l10n.fullScan, l10n.fullScanDescription),
+      (l10n.favorites, l10n.favoritesDescription),
+      (l10n.oneTimePurchase, l10n.oneTimePurchaseDescription),
     ];
 
     return Column(
@@ -183,7 +186,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     );
   }
 
-  Widget _buildPriceCard() {
+  Widget _buildPriceCard(AppLocalizations l10n) {
     if (_isLoading) {
       return const SizedBox(
         height: 80,
@@ -191,7 +194,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
       );
     }
 
-    final priceString = _lifetimePackage?.storeProduct.priceString ?? '4,99 €';
+    final priceString = _lifetimePackage?.storeProduct.priceString ?? l10n.defaultPrice;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -234,9 +237,9 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   color: AppColors.signalStrong,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Text(
-                  'ACHAT UNIQUE',
-                  style: TextStyle(
+                child: Text(
+                  l10n.oneTimePurchaseBadge,
+                  style: const TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                     fontSize: 11,
@@ -251,7 +254,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     );
   }
 
-  Widget _buildPurchaseButton() {
+  Widget _buildPurchaseButton(AppLocalizations l10n) {
     return SizedBox(
       width: double.infinity,
       height: 56,
@@ -273,9 +276,9 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   color: Colors.black,
                 ),
               )
-            : const Text(
-                'Débloquer maintenant',
-                style: TextStyle(
+            : Text(
+                l10n.unlockNow,
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),

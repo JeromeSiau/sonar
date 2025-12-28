@@ -9,6 +9,7 @@ import 'package:bluetooth_finder/features/favorites/presentation/providers/favor
 import 'package:bluetooth_finder/features/favorites/data/models/favorite_device_model.dart';
 import 'package:bluetooth_finder/shared/widgets/signal_indicator.dart';
 import 'package:bluetooth_finder/shared/widgets/staggered_list_item.dart';
+import 'package:bluetooth_finder/l10n/app_localizations.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -44,6 +45,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   @override
   Widget build(BuildContext context) {
     final favorites = ref.watch(favoritesProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -53,23 +55,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           child: Column(
             children: [
               // Header
-              _buildHeader(context),
+              _buildHeader(context, l10n),
               // Content
               Expanded(
                 child: favorites.isEmpty
-                    ? _buildEmptyState(context)
-                    : _buildFavoritesList(context, ref, favorites),
+                    ? _buildEmptyState(context, l10n)
+                    : _buildFavoritesList(context, ref, favorites, l10n),
               ),
             ],
           ),
         ),
       ),
-      floatingActionButton: _buildAnimatedFAB(context),
+      floatingActionButton: _buildAnimatedFAB(context, l10n),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, AppLocalizations l10n) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
       child: Row(
@@ -86,7 +88,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   ],
                 ).createShader(bounds),
                 child: Text(
-                  'SONAR',
+                  l10n.appName,
                   style: TextStyle(
                     fontFamily: 'SF Mono',
                     fontSize: 28,
@@ -98,7 +100,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               ),
               const SizedBox(height: 2),
               Text(
-                'Bluetooth Finder',
+                l10n.appSubtitle,
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
                       color: AppColors.textMuted,
                       letterSpacing: 1,
@@ -130,7 +132,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
   }
 
-  Widget _buildEmptyState(BuildContext context) {
+  Widget _buildEmptyState(BuildContext context, AppLocalizations l10n) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -141,13 +143,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             _AnimatedRadarIcon(),
             const SizedBox(height: 32),
             Text(
-              'Aucun appareil sauvegardé',
+              l10n.noSavedDevices,
               style: Theme.of(context).textTheme.headlineMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
             Text(
-              'Scannez les appareils Bluetooth à proximité\net ajoutez vos favoris pour les retrouver facilement',
+              l10n.noSavedDevicesDescription,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     height: 1.5,
                   ),
@@ -164,6 +166,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     BuildContext context,
     WidgetRef ref,
     List<FavoriteDeviceModel> favorites,
+    AppLocalizations l10n,
   ) {
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
@@ -189,7 +192,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
   }
 
-  Widget _buildAnimatedFAB(BuildContext context) {
+  Widget _buildAnimatedFAB(BuildContext context, AppLocalizations l10n) {
     return AnimatedBuilder(
       animation: _fabGlowAnimation,
       builder: (context, child) {
@@ -212,7 +215,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             elevation: 0,
             icon: const Icon(Icons.radar_rounded, size: 24),
             label: Text(
-              'SCANNER',
+              l10n.scanner,
               style: TextStyle(
                 fontFamily: 'SF Mono',
                 fontWeight: FontWeight.w700,
@@ -337,12 +340,13 @@ class _FavoriteDeviceCard extends StatelessWidget {
     };
   }
 
-  String _formatLastSeen(DateTime lastSeen) {
+  String _formatLastSeen(BuildContext context, DateTime lastSeen) {
+    final l10n = AppLocalizations.of(context)!;
     final diff = DateTime.now().difference(lastSeen);
-    if (diff.inMinutes < 1) return "à l'instant";
-    if (diff.inHours < 1) return 'il y a ${diff.inMinutes} min';
-    if (diff.inDays < 1) return 'il y a ${diff.inHours}h';
-    return 'il y a ${diff.inDays}j';
+    if (diff.inMinutes < 1) return l10n.justNow;
+    if (diff.inHours < 1) return l10n.minutesAgo(diff.inMinutes);
+    if (diff.inDays < 1) return l10n.hoursAgo(diff.inHours);
+    return l10n.daysAgo(diff.inDays);
   }
 
   @override
@@ -427,7 +431,7 @@ class _FavoriteDeviceCard extends StatelessWidget {
                             ),
                             const SizedBox(width: 6),
                             Text(
-                              _formatLastSeen(favorite.lastSeenAt),
+                              _formatLastSeen(context, favorite.lastSeenAt),
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                           ],

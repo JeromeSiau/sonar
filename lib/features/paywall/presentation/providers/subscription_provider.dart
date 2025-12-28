@@ -10,7 +10,8 @@ final subscriptionStatusProvider = StateNotifierProvider<SubscriptionNotifier, S
 
 class SubscriptionNotifier extends StateNotifier<SubscriptionStatus> {
   SubscriptionNotifier() : super(SubscriptionStatus.free) {
-    _init();
+    // Defer initialization to avoid modifying state during build
+    Future.microtask(_init);
   }
 
   Future<void> _init() async {
@@ -60,7 +61,8 @@ final radarTrialUsedProvider = StateNotifierProvider<RadarTrialNotifier, bool>((
 
 class RadarTrialNotifier extends StateNotifier<bool> {
   RadarTrialNotifier() : super(_getInitialValue()) {
-    _syncWithRevenueCat();
+    // Defer sync to avoid modifying state during build
+    Future.microtask(_syncWithRevenueCat);
   }
 
   /// Synchronously get initial value from Hive

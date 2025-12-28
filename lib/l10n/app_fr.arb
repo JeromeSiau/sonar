@@ -1,0 +1,107 @@
+{
+  "@@locale": "fr",
+
+  "appName": "SONAR",
+  "appSubtitle": "Bluetooth Finder",
+
+  "scanner": "SCANNER",
+  "settings": "RÉGLAGES",
+
+  "noSavedDevices": "Aucun appareil sauvegardé",
+  "noSavedDevicesDescription": "Scannez les appareils Bluetooth à proximité\net ajoutez vos favoris pour les retrouver facilement",
+
+  "justNow": "à l'instant",
+  "minutesAgo": "il y a {minutes} min",
+  "@minutesAgo": {
+    "placeholders": {
+      "minutes": {"type": "int"}
+    }
+  },
+  "hoursAgo": "il y a {hours}h",
+  "@hoursAgo": {
+    "placeholders": {
+      "hours": {"type": "int"}
+    }
+  },
+  "daysAgo": "il y a {days}j",
+  "@daysAgo": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+
+  "permissionsRequired": "Autorisations requises",
+  "permissionsDescription": "Pour localiser vos appareils Bluetooth, nous avons besoin d'accéder au Bluetooth et à votre position.",
+  "bluetooth": "Bluetooth",
+  "bluetoothPermissionDescription": "Scanner les appareils à proximité",
+  "location": "Localisation",
+  "locationPermissionDescription": "Requis pour le scan Bluetooth",
+  "authorize": "Autoriser",
+
+  "scanError": "Erreur de scan",
+  "checkBluetoothEnabled": "Vérifiez que le Bluetooth est activé",
+  "retry": "RÉESSAYER",
+  "trialUsed": "Essai gratuit utilisé",
+  "trialAvailable": "1 essai radar gratuit disponible",
+  "unlock": "DÉBLOQUER",
+  "devicesFound": "{count} appareils trouvés",
+  "@devicesFound": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "premium": "PREMIUM",
+  "scanning": "SCANNING",
+  "searchingDevices": "Recherche d'appareils Bluetooth...",
+  "scanInProgress": "Scan en cours...",
+
+  "deviceNotFound": "Appareil non trouvé",
+  "radarInstruction": "Déplacez-vous et suivez la force du signal pour trouver votre appareil",
+  "signalLost": "Signal perdu",
+  "found": "Trouvé !",
+  "cancel": "Annuler",
+
+  "subscription": "ABONNEMENT",
+  "goPremium": "Passer Premium",
+  "unlockAllFeatures": "Débloquez toutes les fonctionnalités",
+  "restorePurchases": "Restaurer les achats",
+  "restorePurchasesDescription": "Récupérer un abonnement existant",
+  "restoringPurchases": "Restauration en cours...",
+  "about": "À PROPOS",
+  "termsOfService": "Conditions d'utilisation",
+  "privacyPolicy": "Politique de confidentialité",
+  "contactUs": "Nous contacter",
+  "version": "Version {version}",
+  "@version": {
+    "placeholders": {
+      "version": {"type": "String"}
+    }
+  },
+  "premiumStatus": "Premium",
+  "freeStatus": "Gratuit",
+  "premiumDescription": "Accès illimité à toutes les fonctionnalités",
+  "freeDescription": "Fonctionnalités limitées",
+
+  "unlockRadar": "Débloquez le Radar",
+  "locateAllDevices": "Localisez tous vos appareils Bluetooth",
+  "unlimitedRadar": "Radar illimité",
+  "unlimitedRadarDescription": "Localisez vos appareils sans restriction",
+  "fullScan": "Scan complet",
+  "fullScanDescription": "Voyez tous les appareils à proximité",
+  "favorites": "Favoris",
+  "favoritesDescription": "Sauvegardez vos appareils importants",
+  "oneTimePurchase": "Achat unique",
+  "oneTimePurchaseDescription": "Payez une fois, utilisez pour toujours",
+  "oneTimePurchaseBadge": "ACHAT UNIQUE",
+  "unlockNow": "Débloquer maintenant",
+  "defaultPrice": "4,99 €",
+
+  "language": "Langue",
+  "languageDescription": "Choisir la langue de l'application",
+  "systemLanguage": "Langue du système",
+  "french": "Français",
+  "english": "English",
+  "spanish": "Español",
+  "german": "Deutsch",
+  "italian": "Italiano"
+}

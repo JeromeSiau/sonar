@@ -9,6 +9,7 @@ import 'package:bluetooth_finder/features/scanner/presentation/widgets/device_ca
 import 'package:bluetooth_finder/features/paywall/presentation/providers/subscription_provider.dart'
     show isPremiumProvider, freeDeviceLimitProvider, canAccessRadarProvider, radarTrialUsedProvider;
 import 'package:bluetooth_finder/shared/widgets/staggered_list_item.dart';
+import 'package:bluetooth_finder/l10n/app_localizations.dart';
 
 class ScannerScreen extends ConsumerStatefulWidget {
   const ScannerScreen({super.key});
@@ -21,10 +22,12 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
   @override
   void initState() {
     super.initState();
-    _startScan();
+    // Defer scan to avoid modifying provider during build
+    Future.microtask(_startScan);
   }
 
   Future<void> _startScan() async {
+    if (!mounted) return;
     final repo = ref.read(bluetoothRepositoryProvider);
     ref.read(isScanningProvider.notifier).state = true;
     await repo.startScan();
@@ -63,11 +66,12 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
     final devicesAsync = ref.watch(devicesStreamProvider);
     final isPremium = ref.watch(isPremiumProvider);
     final deviceLimit = ref.watch(freeDeviceLimitProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('SCANNER'),
+        title: Text(l10n.scanner),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded),
           onPressed: () => context.pop(),
@@ -79,7 +83,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
           child: devicesAsync.when(
             data: (devices) {
               if (devices.isEmpty && isScanning) {
-                return _SonarSearchAnimation(isScanning: isScanning);
+                return _SonarSearchAnimation(isScanning: isScanning, l10n: l10n);
               }
 
               final displayDevices = isPremium
@@ -92,12 +96,12 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
                 children: [
                   // Mini sonar at top when scanning with results
                   if (isScanning && devices.isNotEmpty)
-                    const _MiniSonarIndicator(),
+                    _MiniSonarIndicator(l10n: l10n),
                   // Show trial status for free users
                   if (!isPremium)
-                    _buildTrialBanner(context, trialUsed),
+                    _buildTrialBanner(context, trialUsed, l10n),
                   if (!isPremium && devices.length > deviceLimit)
-                    _buildUpgradeBanner(context, devices.length),
+                    _buildUpgradeBanner(context, devices.length, l10n),
                   Expanded(
                     child: RefreshIndicator(
                       onRefresh: _startScan,
@@ -125,15 +129,15 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
                 ],
               );
             },
-            loading: () => _SonarSearchAnimation(isScanning: isScanning),
-            error: (_, __) => _buildErrorState(),
+            loading: () => _SonarSearchAnimation(isScanning: isScanning, l10n: l10n),
+            error: (_, __) => _buildErrorState(l10n),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildErrorState() {
+  Widget _buildErrorState(AppLocalizations l10n) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -155,19 +159,19 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
             ),
             const SizedBox(height: 24),
             Text(
-              'Erreur de scan',
+              l10n.scanError,
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 8),
             Text(
-              'Vérifiez que le Bluetooth est activé',
+              l10n.checkBluetoothEnabled,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
               onPressed: _startScan,
               icon: const Icon(Icons.refresh_rounded),
-              label: const Text('RÉESSAYER'),
+              label: Text(l10n.retry),
             ),
           ],
         ),
@@ -175,7 +179,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
     );
   }
 
-  Widget _buildTrialBanner(BuildContext context, bool trialUsed) {
+  Widget _buildTrialBanner(BuildContext context, bool trialUsed, AppLocalizations l10n) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 12),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -201,8 +205,8 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
           Expanded(
             child: Text(
               trialUsed
-                  ? 'Essai gratuit utilisé'
-                  : '1 essai radar gratuit disponible',
+                  ? l10n.trialUsed
+                  : l10n.trialAvailable,
               style: TextStyle(
                 color: trialUsed ? AppColors.textSecondary : AppColors.signalStrong,
                 fontWeight: trialUsed ? FontWeight.normal : FontWeight.w600,
@@ -220,9 +224,9 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text(
-                'DÉBLOQUER',
-                style: TextStyle(
+              child: Text(
+                l10n.unlock,
+                style: const TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 12,
@@ -234,7 +238,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
     );
   }
 
-  Widget _buildUpgradeBanner(BuildContext context, int totalDevices) {
+  Widget _buildUpgradeBanner(BuildContext context, int totalDevices, AppLocalizations l10n) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 12),
       padding: const EdgeInsets.all(16),
@@ -249,7 +253,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              '$totalDevices appareils trouvés',
+              l10n.devicesFound(totalDevices),
               style: const TextStyle(color: AppColors.textPrimary),
             ),
           ),
@@ -261,7 +265,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: const Text('PREMIUM'),
+            child: Text(l10n.premium),
           ),
         ],
       ),
@@ -272,8 +276,9 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
 // === SONAR SEARCH ANIMATION ===
 class _SonarSearchAnimation extends StatefulWidget {
   final bool isScanning;
+  final AppLocalizations l10n;
 
-  const _SonarSearchAnimation({required this.isScanning});
+  const _SonarSearchAnimation({required this.isScanning, required this.l10n});
 
   @override
   State<_SonarSearchAnimation> createState() => _SonarSearchAnimationState();
@@ -350,7 +355,7 @@ class _SonarSearchAnimationState extends State<_SonarSearchAnimation>
 
           // Status text
           Text(
-            'SCANNING',
+            widget.l10n.scanning,
             style: TextStyle(
               fontFamily: 'SF Mono',
               fontSize: 20,
@@ -366,7 +371,7 @@ class _SonarSearchAnimationState extends State<_SonarSearchAnimation>
               return Opacity(
                 opacity: 0.5 + (_pulseController.value * 0.5),
                 child: Text(
-                  'Recherche d\'appareils Bluetooth...',
+                  widget.l10n.searchingDevices,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               );
@@ -490,7 +495,9 @@ class _SonarSearchAnimationState extends State<_SonarSearchAnimation>
 
 // Mini sonar indicator when results are showing
 class _MiniSonarIndicator extends StatefulWidget {
-  const _MiniSonarIndicator();
+  final AppLocalizations l10n;
+
+  const _MiniSonarIndicator({required this.l10n});
 
   @override
   State<_MiniSonarIndicator> createState() => _MiniSonarIndicatorState();
@@ -539,7 +546,7 @@ class _MiniSonarIndicatorState extends State<_MiniSonarIndicator>
           ),
           const SizedBox(width: 12),
           Text(
-            'Scan en cours...',
+            widget.l10n.scanInProgress,
             style: TextStyle(
               color: AppColors.primary,
               fontFamily: 'SF Mono',

@@ -92,8 +92,8 @@ class _RadarWidgetState extends State<RadarWidget>
                 _buildPingRings(radarSize, signalColor),
                 // Sweep beam
                 _buildSweepBeam(radarSize, signalColor),
-                // Center device indicator
-                _buildCenterIndicator(signalColor),
+                // Center device indicator with percentage
+                _buildCenterIndicator(signalColor, percentage),
                 // CRT scanlines overlay
                 _buildScanlines(radarSize),
               ],
@@ -201,36 +201,36 @@ class _RadarWidgetState extends State<RadarWidget>
     );
   }
 
-  Widget _buildCenterIndicator(Color color) {
+  Widget _buildCenterIndicator(Color color, int percentage) {
     return AnimatedBuilder(
       animation: _glowAnimation,
       builder: (context, child) {
         return Container(
-          width: 24,
-          height: 24,
+          width: 120,
+          height: 120,
           decoration: BoxDecoration(
-            color: color,
+            color: Colors.white,
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: color.withValues(alpha: 0.8 * _glowAnimation.value),
-                blurRadius: 24 * _glowAnimation.value,
-                spreadRadius: 8 * _glowAnimation.value,
+                color: color.withValues(alpha: 0.4 * _glowAnimation.value),
+                blurRadius: 30 * _glowAnimation.value,
+                spreadRadius: 5 * _glowAnimation.value,
               ),
               BoxShadow(
-                color: color.withValues(alpha: 0.4),
-                blurRadius: 40,
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 20,
                 spreadRadius: 2,
               ),
             ],
           ),
           child: Center(
-            child: Container(
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(
-                color: AppColors.background,
-                shape: BoxShape.circle,
+            child: Text(
+              '$percentage%',
+              style: TextStyle(
+                fontSize: 36,
+                fontWeight: FontWeight.w600,
+                color: color,
               ),
             ),
           ),
@@ -259,74 +259,24 @@ class _RadarWidgetState extends State<RadarWidget>
   ) {
     return Column(
       children: [
-        // Device name with glow effect
-        Text(
-          widget.deviceName,
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: AppColors.textSecondary,
-              ),
-          textAlign: TextAlign.center,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-
-        const SizedBox(height: 16),
-
-        // Distance display - large and prominent
-        AnimatedBuilder(
-          animation: _glowAnimation,
-          builder: (context, child) {
-            return ShaderMask(
-              shaderCallback: (bounds) => LinearGradient(
-                colors: [
-                  signalColor,
-                  signalColor.withValues(alpha: 0.7),
-                  signalColor,
-                ],
-                stops: [0.0, 0.5, 1.0],
-              ).createShader(bounds),
-              child: Text(
-                distance,
-                style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w200,
-                      shadows: [
-                        Shadow(
-                          color: signalColor.withValues(
-                            alpha: 0.5 * _glowAnimation.value,
-                          ),
-                          blurRadius: 20,
-                        ),
-                      ],
-                    ),
-              ),
-            );
-          },
-        ),
-
-        const SizedBox(height: 24),
-
-        // Signal strength bar
-        _buildSignalBar(signalColor, percentage),
-
-        const SizedBox(height: 12),
-
-        // RSSI value
+        // RSSI value - small for technical users
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 8,
-              height: 8,
+              width: 6,
+              height: 6,
               decoration: BoxDecoration(
-                color: signalColor,
+                color: signalColor.withValues(alpha: 0.7),
                 shape: BoxShape.circle,
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 6),
             Text(
               '${widget.rssi} dBm',
-              style: Theme.of(context).textTheme.labelMedium,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: AppColors.textSecondary.withValues(alpha: 0.7),
+                  ),
             ),
           ],
         ),
@@ -334,47 +284,6 @@ class _RadarWidgetState extends State<RadarWidget>
     );
   }
 
-  Widget _buildSignalBar(Color color, int percentage) {
-    return Container(
-      width: 200,
-      height: 6,
-      decoration: BoxDecoration(
-        color: AppColors.surfaceLight,
-        borderRadius: BorderRadius.circular(3),
-      ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return Stack(
-            children: [
-              // Animated fill
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeOutCubic,
-                width: constraints.maxWidth * (percentage / 100),
-                height: 6,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      color.withValues(alpha: 0.7),
-                      color,
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(3),
-                  boxShadow: [
-                    BoxShadow(
-                      color: color.withValues(alpha: 0.5),
-                      blurRadius: 8,
-                      offset: const Offset(0, 0),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
 }
 
 // === CUSTOM PAINTERS ===

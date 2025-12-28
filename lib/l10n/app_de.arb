@@ -78,5 +78,9 @@
   "english": "English",
   "spanish": "Español",
   "german": "Deutsch",
-  "italian": "Italiano"
+  "italian": "Italiano",
+
+  "bluetoothDisabled": "Bluetooth ist aus",
+  "enableBluetoothDescription": "Aktivieren Sie Bluetooth, um Geräte in der Nähe zu scannen",
+  "openSettings": "EINSTELLUNGEN ÖFFNEN"
 }

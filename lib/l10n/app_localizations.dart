@@ -517,6 +517,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Italiano'**
   String get italian;
+
+  /// No description provided for @bluetoothDisabled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bluetooth désactivé'**
+  String get bluetoothDisabled;
+
+  /// No description provided for @enableBluetoothDescription.
+  ///
+  /// In fr, this message translates to:
+  /// **'Activez le Bluetooth pour scanner les appareils à proximité'**
+  String get enableBluetoothDescription;
+
+  /// No description provided for @openSettings.
+  ///
+  /// In fr, this message translates to:
+  /// **'OUVRIR RÉGLAGES'**
+  String get openSettings;
 }
 
 class _AppLocalizationsDelegate

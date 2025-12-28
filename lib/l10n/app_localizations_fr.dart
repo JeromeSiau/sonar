@@ -231,4 +231,14 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get italian => 'Italiano';
+
+  @override
+  String get bluetoothDisabled => 'Bluetooth désactivé';
+
+  @override
+  String get enableBluetoothDescription =>
+      'Activez le Bluetooth pour scanner les appareils à proximité';
+
+  @override
+  String get openSettings => 'OUVRIR RÉGLAGES';
 }

@@ -103,5 +103,9 @@
   "english": "English",
   "spanish": "Español",
   "german": "Deutsch",
-  "italian": "Italiano"
+  "italian": "Italiano",
+
+  "bluetoothDisabled": "Bluetooth désactivé",
+  "enableBluetoothDescription": "Activez le Bluetooth pour scanner les appareils à proximité",
+  "openSettings": "OUVRIR RÉGLAGES"
 }

@@ -78,5 +78,9 @@
   "english": "English",
   "spanish": "Español",
   "german": "Deutsch",
-  "italian": "Italiano"
+  "italian": "Italiano",
+
+  "bluetoothDisabled": "Bluetooth is off",
+  "enableBluetoothDescription": "Enable Bluetooth to scan for nearby devices",
+  "openSettings": "OPEN SETTINGS"
 }

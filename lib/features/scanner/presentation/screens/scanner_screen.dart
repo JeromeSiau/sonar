@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bluetooth_finder/core/theme/app_colors.dart';
 import 'package:bluetooth_finder/features/scanner/presentation/providers/scanner_provider.dart';
@@ -66,6 +67,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
     final devicesAsync = ref.watch(devicesStreamProvider);
     final isPremium = ref.watch(isPremiumProvider);
     final deviceLimit = ref.watch(freeDeviceLimitProvider);
+    final bluetoothState = ref.watch(bluetoothAdapterStateProvider);
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
@@ -80,7 +82,77 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
       body: Container(
         decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
         child: SafeArea(
-          child: devicesAsync.when(
+          child: bluetoothState.when(
+            data: (state) {
+              if (state != BluetoothAdapterState.on) {
+                return _buildBluetoothOffState(l10n);
+              }
+              return _buildScannerContent(
+                context, isScanning, devicesAsync, isPremium, deviceLimit, l10n);
+            },
+            loading: () => _SonarSearchAnimation(isScanning: isScanning, l10n: l10n),
+            error: (_, __) => _buildErrorState(l10n),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBluetoothOffState(AppLocalizations l10n) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.bluetooth_disabled_rounded,
+                size: 50,
+                color: AppColors.primary,
+              ),
+            ),
+            const SizedBox(height: 32),
+            Text(
+              l10n.bluetoothDisabled,
+              style: Theme.of(context).textTheme.headlineMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              l10n.enableBluetoothDescription,
+              style: Theme.of(context).textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton.icon(
+              onPressed: () async {
+                await FlutterBluePlus.turnOn();
+              },
+              icon: const Icon(Icons.bluetooth_rounded),
+              label: Text(l10n.openSettings),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildScannerContent(
+    BuildContext context,
+    bool isScanning,
+    AsyncValue<List<dynamic>> devicesAsync,
+    bool isPremium,
+    int deviceLimit,
+    AppLocalizations l10n,
+  ) {
+    return devicesAsync.when(
             data: (devices) {
               if (devices.isEmpty && isScanning) {
                 return _SonarSearchAnimation(isScanning: isScanning, l10n: l10n);
@@ -131,9 +203,6 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
             },
             loading: () => _SonarSearchAnimation(isScanning: isScanning, l10n: l10n),
             error: (_, __) => _buildErrorState(l10n),
-          ),
-        ),
-      ),
     );
   }
 

@@ -18,9 +18,16 @@ class BluetoothDeviceModel {
   });
 
   factory BluetoothDeviceModel.fromScanResult(fbp.ScanResult result) {
-    final name = result.device.platformName.isNotEmpty
-        ? result.device.platformName
-        : 'Appareil inconnu';
+    // Check advertisementData.localName first (often contains the name)
+    // Then fall back to platformName, then to unknown
+    final advertisedName = result.advertisementData.advName;
+    final platformName = result.device.platformName;
+
+    final name = advertisedName.isNotEmpty
+        ? advertisedName
+        : platformName.isNotEmpty
+            ? platformName
+            : 'Appareil inconnu';
 
     return BluetoothDeviceModel(
       id: result.device.remoteId.str,

@@ -78,5 +78,9 @@
   "english": "English",
   "spanish": "Español",
   "german": "Deutsch",
-  "italian": "Italiano"
+  "italian": "Italiano",
+
+  "bluetoothDisabled": "Bluetooth disattivato",
+  "enableBluetoothDescription": "Attiva il Bluetooth per scansionare i dispositivi nelle vicinanze",
+  "openSettings": "APRI IMPOSTAZIONI"
 }

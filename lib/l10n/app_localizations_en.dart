@@ -228,4 +228,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get italian => 'Italiano';
+
+  @override
+  String get bluetoothDisabled => 'Bluetooth is off';
+
+  @override
+  String get enableBluetoothDescription =>
+      'Enable Bluetooth to scan for nearby devices';
+
+  @override
+  String get openSettings => 'OPEN SETTINGS';
 }

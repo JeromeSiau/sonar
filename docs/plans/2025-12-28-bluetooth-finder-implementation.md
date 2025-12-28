@@ -1,6 +1,9 @@
-# Bluetooth Finder - Implementation Plan
+# Sonar - Bluetooth Finder - Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+
+**Nom App Store:** Sonar - Bluetooth Finder
+**Sous-titre:** Find Lost Earbuds & Devices
 
 **Goal:** Créer une app Flutter iOS/Android pour localiser des appareils Bluetooth via RSSI, avec radar animé, favoris et monétisation par abonnement.
 
@@ -21,7 +24,7 @@
 
 ```yaml
 name: bluetooth_finder
-description: Find your lost Bluetooth devices
+description: Find lost earbuds & Bluetooth devices
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -1472,7 +1475,7 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Bluetooth Finder'),
+        title: const Text('Sonar'),
       ),
       body: favorites.isEmpty
           ? _buildEmptyState(context)
@@ -2248,7 +2251,7 @@ class BluetoothFinderApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Bluetooth Finder',
+      title: 'Sonar',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
       routerConfig: appRouter,

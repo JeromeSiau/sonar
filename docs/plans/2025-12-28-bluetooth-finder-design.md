@@ -1,6 +1,9 @@
-# Bluetooth Finder - Design Document
+# Sonar - Bluetooth Finder - Design Document
 
 ## Overview
+
+**Nom:** Sonar - Bluetooth Finder
+**Sous-titre:** Find Lost Earbuds & Devices
 
 Application Flutter (iOS + Android) pour localiser des appareils Bluetooth perdus via la force du signal RSSI.
 

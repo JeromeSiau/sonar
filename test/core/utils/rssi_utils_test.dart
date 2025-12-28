@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:bluetooth_finder/core/utils/rssi_utils.dart';
 import 'package:bluetooth_finder/core/theme/app_colors.dart';

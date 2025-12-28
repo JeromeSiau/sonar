@@ -553,6 +553,54 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Aucun appareil trouvé'**
   String get noDevicesFound;
+
+  /// No description provided for @purchaseError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Erreur d\'achat'**
+  String get purchaseError;
+
+  /// No description provided for @purchaseErrorDescription.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une erreur s\'est produite lors de l\'achat. Veuillez réessayer.'**
+  String get purchaseErrorDescription;
+
+  /// No description provided for @purchaseCancelled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Achat annulé'**
+  String get purchaseCancelled;
+
+  /// No description provided for @networkError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Erreur réseau'**
+  String get networkError;
+
+  /// No description provided for @networkErrorDescription.
+  ///
+  /// In fr, this message translates to:
+  /// **'Veuillez vérifier votre connexion internet et réessayer.'**
+  String get networkErrorDescription;
+
+  /// No description provided for @loadingError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger les offres'**
+  String get loadingError;
+
+  /// No description provided for @loadingErrorDescription.
+  ///
+  /// In fr, this message translates to:
+  /// **'Veuillez vérifier votre connexion et réessayer.'**
+  String get loadingErrorDescription;
+
+  /// No description provided for @ok.
+  ///
+  /// In fr, this message translates to:
+  /// **'OK'**
+  String get ok;
 }
 
 class _AppLocalizationsDelegate

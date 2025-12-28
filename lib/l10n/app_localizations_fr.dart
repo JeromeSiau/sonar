@@ -250,4 +250,31 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get noDevicesFound => 'Aucun appareil trouvé';
+
+  @override
+  String get purchaseError => 'Erreur d\'achat';
+
+  @override
+  String get purchaseErrorDescription =>
+      'Une erreur s\'est produite lors de l\'achat. Veuillez réessayer.';
+
+  @override
+  String get purchaseCancelled => 'Achat annulé';
+
+  @override
+  String get networkError => 'Erreur réseau';
+
+  @override
+  String get networkErrorDescription =>
+      'Veuillez vérifier votre connexion internet et réessayer.';
+
+  @override
+  String get loadingError => 'Impossible de charger les offres';
+
+  @override
+  String get loadingErrorDescription =>
+      'Veuillez vérifier votre connexion et réessayer.';
+
+  @override
+  String get ok => 'OK';
 }

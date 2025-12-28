@@ -249,4 +249,31 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get noDevicesFound => 'Nessun dispositivo trovato';
+
+  @override
+  String get purchaseError => 'Errore di acquisto';
+
+  @override
+  String get purchaseErrorDescription =>
+      'Si è verificato un errore durante l\'acquisto. Per favore riprova.';
+
+  @override
+  String get purchaseCancelled => 'Acquisto annullato';
+
+  @override
+  String get networkError => 'Errore di rete';
+
+  @override
+  String get networkErrorDescription =>
+      'Per favore controlla la tua connessione internet e riprova.';
+
+  @override
+  String get loadingError => 'Impossibile caricare le offerte';
+
+  @override
+  String get loadingErrorDescription =>
+      'Per favore controlla la tua connessione e riprova.';
+
+  @override
+  String get ok => 'OK';
 }

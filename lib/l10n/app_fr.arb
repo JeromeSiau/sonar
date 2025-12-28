@@ -111,5 +111,14 @@
 
   "myDevices": "Mes appareils",
   "nearbyDevices": "À proximité",
-  "noDevicesFound": "Aucun appareil trouvé"
+  "noDevicesFound": "Aucun appareil trouvé",
+
+  "purchaseError": "Erreur d'achat",
+  "purchaseErrorDescription": "Une erreur s'est produite lors de l'achat. Veuillez réessayer.",
+  "purchaseCancelled": "Achat annulé",
+  "networkError": "Erreur réseau",
+  "networkErrorDescription": "Veuillez vérifier votre connexion internet et réessayer.",
+  "loadingError": "Impossible de charger les offres",
+  "loadingErrorDescription": "Veuillez vérifier votre connexion et réessayer.",
+  "ok": "OK"
 }

@@ -86,5 +86,14 @@
 
   "myDevices": "Meine Geräte",
   "nearbyDevices": "In der Nähe",
-  "noDevicesFound": "Keine Geräte gefunden"
+  "noDevicesFound": "Keine Geräte gefunden",
+
+  "purchaseError": "Kauffehler",
+  "purchaseErrorDescription": "Beim Kauf ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+  "purchaseCancelled": "Kauf abgebrochen",
+  "networkError": "Netzwerkfehler",
+  "networkErrorDescription": "Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
+  "loadingError": "Angebote konnten nicht geladen werden",
+  "loadingErrorDescription": "Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+  "ok": "OK"
 }

@@ -23,8 +23,8 @@ class FavoriteDeviceModel extends HiveObject {
   @HiveField(5)
   int lastRssi;
 
-  @HiveField(6)
-  String? lastLocation;
+  // Note: @HiveField(6) was lastLocation - removed as unused
+  // Keep field index 6 reserved to maintain Hive compatibility
 
   FavoriteDeviceModel({
     required this.id,
@@ -33,7 +33,6 @@ class FavoriteDeviceModel extends HiveObject {
     required this.addedAt,
     required this.lastSeenAt,
     required this.lastRssi,
-    this.lastLocation,
   });
 
   DeviceType get deviceType => DeviceType.values[deviceTypeIndex];

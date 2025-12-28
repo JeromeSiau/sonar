@@ -17,6 +17,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
   Package? _lifetimePackage;
   bool _isLoading = true;
   bool _isPurchasing = false;
+  String? _loadingError;
 
   @override
   void initState() {
@@ -25,6 +26,11 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
   }
 
   Future<void> _loadOfferings() async {
+    setState(() {
+      _isLoading = true;
+      _loadingError = null;
+    });
+
     try {
       final offerings = await Purchases.getOfferings();
       // Look for lifetime package (non-consumable)
@@ -38,26 +44,60 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      setState(() => _isLoading = false);
+      setState(() {
+        _isLoading = false;
+        _loadingError = e.toString();
+      });
     }
   }
 
   Future<void> _purchase() async {
     if (_lifetimePackage == null || _isPurchasing) return;
 
+    final l10n = AppLocalizations.of(context)!;
     setState(() => _isPurchasing = true);
+
     try {
       await Purchases.purchasePackage(_lifetimePackage!);
       if (mounted) {
         context.pop();
       }
+    } on PurchasesErrorCode catch (e) {
+      if (mounted) {
+        _showErrorSnackBar(_getErrorMessage(l10n, e));
+      }
     } catch (e) {
-      // Handle error (user cancelled, etc.)
+      if (mounted && e.toString().contains('PurchaseCancelledError') == false) {
+        _showErrorSnackBar(l10n.purchaseErrorDescription);
+      }
     } finally {
       if (mounted) {
         setState(() => _isPurchasing = false);
       }
     }
+  }
+
+  String _getErrorMessage(AppLocalizations l10n, PurchasesErrorCode errorCode) {
+    switch (errorCode) {
+      case PurchasesErrorCode.purchaseCancelledError:
+        return l10n.purchaseCancelled;
+      case PurchasesErrorCode.networkError:
+        return l10n.networkErrorDescription;
+      default:
+        return l10n.purchaseErrorDescription;
+    }
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red.shade800,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        margin: const EdgeInsets.all(16),
+      ),
+    );
   }
 
   @override
@@ -106,9 +146,9 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
               const SizedBox(height: 8),
               Text(
                 l10n.locateAllDevices,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),
@@ -120,7 +160,9 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
               const SizedBox(height: 12),
               TextButton(
                 onPressed: () {
-                  ref.read(subscriptionStatusProvider.notifier).restorePurchases();
+                  ref
+                      .read(subscriptionStatusProvider.notifier)
+                      .restorePurchases();
                 },
                 child: Text(
                   l10n.restorePurchases,
@@ -173,8 +215,8 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                     Text(
                       feature.$2,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ],
                 ),
@@ -194,7 +236,48 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
       );
     }
 
-    final priceString = _lifetimePackage?.storeProduct.priceString ?? l10n.defaultPrice;
+    if (_loadingError != null) {
+      return Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.red.shade900.withValues(alpha: 0.3),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: Colors.red.shade700.withValues(alpha: 0.5),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          children: [
+            Icon(Icons.error_outline, color: Colors.red.shade300, size: 32),
+            const SizedBox(height: 12),
+            Text(
+              l10n.loadingError,
+              style: TextStyle(
+                color: Colors.red.shade300,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.loadingErrorDescription,
+              style: TextStyle(color: Colors.red.shade200, fontSize: 12),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            TextButton.icon(
+              onPressed: _loadOfferings,
+              icon: const Icon(Icons.refresh),
+              label: Text(l10n.retry),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final priceString =
+        _lifetimePackage?.storeProduct.priceString ?? l10n.defaultPrice;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -224,15 +307,18 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   Text(
                     priceString,
                     style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: 4),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.signalStrong,
                   borderRadius: BorderRadius.circular(20),
@@ -259,7 +345,9 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
       width: double.infinity,
       height: 56,
       child: ElevatedButton(
-        onPressed: _lifetimePackage != null && !_isPurchasing ? _purchase : null,
+        onPressed: _lifetimePackage != null && !_isPurchasing
+            ? _purchase
+            : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.black,

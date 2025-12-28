@@ -86,5 +86,14 @@
 
   "myDevices": "Mis dispositivos",
   "nearbyDevices": "Cercanos",
-  "noDevicesFound": "No se encontraron dispositivos"
+  "noDevicesFound": "No se encontraron dispositivos",
+
+  "purchaseError": "Error de compra",
+  "purchaseErrorDescription": "Se produjo un error durante la compra. Por favor, inténtalo de nuevo.",
+  "purchaseCancelled": "Compra cancelada",
+  "networkError": "Error de red",
+  "networkErrorDescription": "Por favor, verifica tu conexión a internet e inténtalo de nuevo.",
+  "loadingError": "No se pueden cargar las ofertas",
+  "loadingErrorDescription": "Por favor, verifica tu conexión e inténtalo de nuevo.",
+  "ok": "OK"
 }

@@ -45,5 +45,17 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Cette app utilise le Bluetooth pour localiser vos appareils perdus</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Cette app utilise le Bluetooth pour localiser vos appareils perdus</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>La localisation est requise pour scanner les appareils Bluetooth</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>La localisation est requise pour scanner les appareils Bluetooth</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>bluetooth-central</string>
+	</array>
 </dict>
 </plist>

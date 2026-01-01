@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:bluetooth_finder/core/theme/app_colors.dart';
@@ -8,19 +10,80 @@ class PermissionScreen extends StatelessWidget {
   const PermissionScreen({super.key});
 
   Future<void> _requestPermissions(BuildContext context) async {
-    final statuses = await [
-      Permission.bluetooth,
+    print('[PERM] Button pressed! Requesting permissions...');
+
+    // First check if Bluetooth is enabled at system level
+    final btState = await FlutterBluePlus.adapterState.first;
+    print('[PERM] Bluetooth adapter state: $btState');
+
+    if (btState != BluetoothAdapterState.on) {
+      print('[PERM] Bluetooth is OFF, asking user to enable it...');
+      // On iOS, we can't programmatically enable Bluetooth - show a dialog
+      if (context.mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        await showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text(l10n.bluetooth),
+            content: Text(l10n.pleaseEnableBluetoothSettings),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  openAppSettings();
+                },
+                child: Text(l10n.openSettings),
+              ),
+            ],
+          ),
+        );
+      }
+      return;
+    }
+
+    // Platform-specific permissions
+    if (Platform.isIOS) {
+      // iOS 13+: Bluetooth permission is enough, location not required for BLE
+      // If we got here with Bluetooth ON, we have all we need
+      print('[PERM] iOS: Bluetooth is ON, navigating to home...');
+      if (context.mounted) {
+        context.go('/');
+      }
+      return;
+    }
+
+    // Android 12+ needs bluetoothScan, bluetoothConnect, and location
+    final permissions = <Permission>[
       Permission.bluetoothScan,
       Permission.bluetoothConnect,
       Permission.location,
-    ].request();
+    ];
+
+    final statuses = await permissions.request();
+
+    // Debug: log permission statuses
+    for (final entry in statuses.entries) {
+      print('[PERM] ${entry.key}: ${entry.value}');
+    }
 
     final allGranted = statuses.values.every(
       (status) => status.isGranted || status.isLimited,
     );
 
+    // Check if any permission is permanently denied
+    final hasPermanentlyDenied = statuses.values.any(
+      (status) => status.isPermanentlyDenied,
+    );
+
+    print('[PERM] allGranted: $allGranted, permanentlyDenied: $hasPermanentlyDenied');
+
     if (allGranted && context.mounted) {
+      print('[PERM] Navigating to home...');
       context.go('/');
+    } else if (hasPermanentlyDenied) {
+      // Open app settings so user can enable permissions manually
+      print('[PERM] Opening app settings...');
+      await openAppSettings();
     }
   }
 

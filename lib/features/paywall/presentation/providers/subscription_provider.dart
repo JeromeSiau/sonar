@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
@@ -44,6 +45,9 @@ class SubscriptionNotifier extends StateNotifier<SubscriptionStatus> {
 }
 
 final isPremiumProvider = Provider<bool>((ref) {
+  // In debug mode, always return premium for testing
+  if (kDebugMode) return true;
+
   final status = ref.watch(subscriptionStatusProvider);
   return status == SubscriptionStatus.premium || status == SubscriptionStatus.trial;
 });

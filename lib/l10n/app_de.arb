@@ -36,6 +36,10 @@
   "scanInProgress": "Scan läuft...",
 
   "deviceNotFound": "Gerät nicht gefunden",
+  "searchingForDevice": "Suche nach Gerät...",
+  "deviceNotInRange": "Gerät außer Reichweite",
+  "deviceNotInRangeDescription": "Das Gerät wurde nicht erkannt. Stellen Sie sicher, dass es eingeschaltet und in der Nähe ist.",
+  "backToHome": "Zurück",
   "radarInstruction": "Bewegen Sie sich und folgen Sie der Signalstärke, um Ihr Gerät zu finden",
   "signalLost": "Signal verloren",
   "found": "Gefunden!",
@@ -95,5 +99,16 @@
   "networkErrorDescription": "Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
   "loadingError": "Angebote konnten nicht geladen werden",
   "loadingErrorDescription": "Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
-  "ok": "OK"
+  "ok": "OK",
+
+  "showUnnamedDevices": "Unbenannte Geräte anzeigen",
+  "whyDeviceNotVisible": "Warum sehe ich mein Gerät nicht?",
+  "deviceVisibleConditions": "Damit ein Gerät sichtbar ist:",
+  "deviceMustBeOn": "Das Gerät muss eingeschaltet sein",
+  "bluetoothMustBeEnabledOnDevice": "Bluetooth muss auf dem Gerät aktiviert sein",
+  "deviceMustBeInRange": "Das Gerät muss in Reichweite sein (< 10 Meter)",
+  "someDevicesDontBroadcastName": "Einige Geräte senden ihren Namen nicht",
+  "tipShowUnnamedDevices": "Tipp: Aktivieren Sie \"Unbenannte Geräte anzeigen\", um alle Bluetooth-Geräte in der Nähe zu sehen.",
+  "understood": "Verstanden",
+  "pleaseEnableBluetoothSettings": "Bitte aktivieren Sie Bluetooth in den Geräteeinstellungen."
 }

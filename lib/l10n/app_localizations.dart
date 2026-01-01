@@ -278,6 +278,30 @@ abstract class AppLocalizations {
   /// **'Appareil non trouvé'**
   String get deviceNotFound;
 
+  /// No description provided for @searchingForDevice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recherche de l\'appareil...'**
+  String get searchingForDevice;
+
+  /// No description provided for @deviceNotInRange.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appareil hors de portée'**
+  String get deviceNotInRange;
+
+  /// No description provided for @deviceNotInRangeDescription.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'appareil n\'est pas détecté. Assurez-vous qu\'il est allumé et à proximité.'**
+  String get deviceNotInRangeDescription;
+
+  /// No description provided for @backToHome.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retour'**
+  String get backToHome;
+
   /// No description provided for @radarInstruction.
   ///
   /// In fr, this message translates to:
@@ -601,6 +625,66 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'OK'**
   String get ok;
+
+  /// No description provided for @showUnnamedDevices.
+  ///
+  /// In fr, this message translates to:
+  /// **'Afficher les appareils sans nom'**
+  String get showUnnamedDevices;
+
+  /// No description provided for @whyDeviceNotVisible.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pourquoi je ne vois pas mon appareil ?'**
+  String get whyDeviceNotVisible;
+
+  /// No description provided for @deviceVisibleConditions.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour qu\'un appareil soit visible :'**
+  String get deviceVisibleConditions;
+
+  /// No description provided for @deviceMustBeOn.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'appareil doit être allumé'**
+  String get deviceMustBeOn;
+
+  /// No description provided for @bluetoothMustBeEnabledOnDevice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le Bluetooth doit être activé sur l\'appareil'**
+  String get bluetoothMustBeEnabledOnDevice;
+
+  /// No description provided for @deviceMustBeInRange.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'appareil doit être à portée (< 10 mètres)'**
+  String get deviceMustBeInRange;
+
+  /// No description provided for @someDevicesDontBroadcastName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Certains appareils n\'émettent pas leur nom'**
+  String get someDevicesDontBroadcastName;
+
+  /// No description provided for @tipShowUnnamedDevices.
+  ///
+  /// In fr, this message translates to:
+  /// **'Astuce : Activez \"Afficher les appareils sans nom\" pour voir tous les appareils Bluetooth à proximité.'**
+  String get tipShowUnnamedDevices;
+
+  /// No description provided for @understood.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compris'**
+  String get understood;
+
+  /// No description provided for @pleaseEnableBluetoothSettings.
+  ///
+  /// In fr, this message translates to:
+  /// **'Veuillez activer le Bluetooth dans les réglages de votre appareil.'**
+  String get pleaseEnableBluetoothSettings;
 }
 
 class _AppLocalizationsDelegate

@@ -106,6 +106,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deviceNotFound => 'Device not found';
 
   @override
+  String get searchingForDevice => 'Searching for device...';
+
+  @override
+  String get deviceNotInRange => 'Device out of range';
+
+  @override
+  String get deviceNotInRangeDescription =>
+      'The device was not detected. Make sure it\'s turned on and nearby.';
+
+  @override
+  String get backToHome => 'Back';
+
+  @override
   String get radarInstruction =>
       'Move around and follow the signal strength to find your device';
 
@@ -274,4 +287,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ok => 'OK';
+
+  @override
+  String get showUnnamedDevices => 'Show unnamed devices';
+
+  @override
+  String get whyDeviceNotVisible => 'Why don\'t I see my device?';
+
+  @override
+  String get deviceVisibleConditions => 'For a device to be visible:';
+
+  @override
+  String get deviceMustBeOn => 'The device must be turned on';
+
+  @override
+  String get bluetoothMustBeEnabledOnDevice =>
+      'Bluetooth must be enabled on the device';
+
+  @override
+  String get deviceMustBeInRange =>
+      'The device must be within range (< 10 meters)';
+
+  @override
+  String get someDevicesDontBroadcastName =>
+      'Some devices don\'t broadcast their name';
+
+  @override
+  String get tipShowUnnamedDevices =>
+      'Tip: Enable \"Show unnamed devices\" to see all nearby Bluetooth devices.';
+
+  @override
+  String get understood => 'Got it';
+
+  @override
+  String get pleaseEnableBluetoothSettings =>
+      'Please enable Bluetooth in your device settings.';
 }

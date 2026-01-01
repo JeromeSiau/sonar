@@ -36,6 +36,10 @@
   "scanInProgress": "Escaneo en progreso...",
 
   "deviceNotFound": "Dispositivo no encontrado",
+  "searchingForDevice": "Buscando dispositivo...",
+  "deviceNotInRange": "Dispositivo fuera de alcance",
+  "deviceNotInRangeDescription": "El dispositivo no fue detectado. Asegúrate de que esté encendido y cerca.",
+  "backToHome": "Volver",
   "radarInstruction": "Muévete y sigue la intensidad de la señal para encontrar tu dispositivo",
   "signalLost": "Señal perdida",
   "found": "¡Encontrado!",
@@ -95,5 +99,16 @@
   "networkErrorDescription": "Por favor, verifica tu conexión a internet e inténtalo de nuevo.",
   "loadingError": "No se pueden cargar las ofertas",
   "loadingErrorDescription": "Por favor, verifica tu conexión e inténtalo de nuevo.",
-  "ok": "OK"
+  "ok": "OK",
+
+  "showUnnamedDevices": "Mostrar dispositivos sin nombre",
+  "whyDeviceNotVisible": "¿Por qué no veo mi dispositivo?",
+  "deviceVisibleConditions": "Para que un dispositivo sea visible:",
+  "deviceMustBeOn": "El dispositivo debe estar encendido",
+  "bluetoothMustBeEnabledOnDevice": "El Bluetooth debe estar activado en el dispositivo",
+  "deviceMustBeInRange": "El dispositivo debe estar dentro del alcance (< 10 metros)",
+  "someDevicesDontBroadcastName": "Algunos dispositivos no emiten su nombre",
+  "tipShowUnnamedDevices": "Consejo: Activa \"Mostrar dispositivos sin nombre\" para ver todos los dispositivos Bluetooth cercanos.",
+  "understood": "Entendido",
+  "pleaseEnableBluetoothSettings": "Por favor, activa el Bluetooth en los ajustes de tu dispositivo."
 }

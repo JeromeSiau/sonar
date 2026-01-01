@@ -108,6 +108,19 @@ class AppLocalizationsIt extends AppLocalizations {
   String get deviceNotFound => 'Dispositivo non trovato';
 
   @override
+  String get searchingForDevice => 'Ricerca dispositivo...';
+
+  @override
+  String get deviceNotInRange => 'Dispositivo fuori portata';
+
+  @override
+  String get deviceNotInRangeDescription =>
+      'Il dispositivo non è stato rilevato. Assicurati che sia acceso e nelle vicinanze.';
+
+  @override
+  String get backToHome => 'Indietro';
+
+  @override
   String get radarInstruction =>
       'Muoviti e segui la potenza del segnale per trovare il tuo dispositivo';
 
@@ -276,4 +289,39 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get ok => 'OK';
+
+  @override
+  String get showUnnamedDevices => 'Mostra dispositivi senza nome';
+
+  @override
+  String get whyDeviceNotVisible => 'Perché non vedo il mio dispositivo?';
+
+  @override
+  String get deviceVisibleConditions => 'Per rendere un dispositivo visibile:';
+
+  @override
+  String get deviceMustBeOn => 'Il dispositivo deve essere acceso';
+
+  @override
+  String get bluetoothMustBeEnabledOnDevice =>
+      'Il Bluetooth deve essere attivato sul dispositivo';
+
+  @override
+  String get deviceMustBeInRange =>
+      'Il dispositivo deve essere nel raggio d\'azione (< 10 metri)';
+
+  @override
+  String get someDevicesDontBroadcastName =>
+      'Alcuni dispositivi non trasmettono il loro nome';
+
+  @override
+  String get tipShowUnnamedDevices =>
+      'Consiglio: Attiva \"Mostra dispositivi senza nome\" per vedere tutti i dispositivi Bluetooth nelle vicinanze.';
+
+  @override
+  String get understood => 'Capito';
+
+  @override
+  String get pleaseEnableBluetoothSettings =>
+      'Per favore attiva il Bluetooth nelle impostazioni del dispositivo.';
 }

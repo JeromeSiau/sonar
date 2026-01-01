@@ -107,6 +107,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get deviceNotFound => 'Appareil non trouvé';
 
   @override
+  String get searchingForDevice => 'Recherche de l\'appareil...';
+
+  @override
+  String get deviceNotInRange => 'Appareil hors de portée';
+
+  @override
+  String get deviceNotInRangeDescription =>
+      'L\'appareil n\'est pas détecté. Assurez-vous qu\'il est allumé et à proximité.';
+
+  @override
+  String get backToHome => 'Retour';
+
+  @override
   String get radarInstruction =>
       'Déplacez-vous et suivez la force du signal pour trouver votre appareil';
 
@@ -277,4 +290,39 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get ok => 'OK';
+
+  @override
+  String get showUnnamedDevices => 'Afficher les appareils sans nom';
+
+  @override
+  String get whyDeviceNotVisible => 'Pourquoi je ne vois pas mon appareil ?';
+
+  @override
+  String get deviceVisibleConditions => 'Pour qu\'un appareil soit visible :';
+
+  @override
+  String get deviceMustBeOn => 'L\'appareil doit être allumé';
+
+  @override
+  String get bluetoothMustBeEnabledOnDevice =>
+      'Le Bluetooth doit être activé sur l\'appareil';
+
+  @override
+  String get deviceMustBeInRange =>
+      'L\'appareil doit être à portée (< 10 mètres)';
+
+  @override
+  String get someDevicesDontBroadcastName =>
+      'Certains appareils n\'émettent pas leur nom';
+
+  @override
+  String get tipShowUnnamedDevices =>
+      'Astuce : Activez \"Afficher les appareils sans nom\" pour voir tous les appareils Bluetooth à proximité.';
+
+  @override
+  String get understood => 'Compris';
+
+  @override
+  String get pleaseEnableBluetoothSettings =>
+      'Veuillez activer le Bluetooth dans les réglages de votre appareil.';
 }

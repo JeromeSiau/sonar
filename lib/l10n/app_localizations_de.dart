@@ -106,6 +106,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get deviceNotFound => 'Gerät nicht gefunden';
 
   @override
+  String get searchingForDevice => 'Suche nach Gerät...';
+
+  @override
+  String get deviceNotInRange => 'Gerät außer Reichweite';
+
+  @override
+  String get deviceNotInRangeDescription =>
+      'Das Gerät wurde nicht erkannt. Stellen Sie sicher, dass es eingeschaltet und in der Nähe ist.';
+
+  @override
+  String get backToHome => 'Zurück';
+
+  @override
   String get radarInstruction =>
       'Bewegen Sie sich und folgen Sie der Signalstärke, um Ihr Gerät zu finden';
 
@@ -275,4 +288,39 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get ok => 'OK';
+
+  @override
+  String get showUnnamedDevices => 'Unbenannte Geräte anzeigen';
+
+  @override
+  String get whyDeviceNotVisible => 'Warum sehe ich mein Gerät nicht?';
+
+  @override
+  String get deviceVisibleConditions => 'Damit ein Gerät sichtbar ist:';
+
+  @override
+  String get deviceMustBeOn => 'Das Gerät muss eingeschaltet sein';
+
+  @override
+  String get bluetoothMustBeEnabledOnDevice =>
+      'Bluetooth muss auf dem Gerät aktiviert sein';
+
+  @override
+  String get deviceMustBeInRange =>
+      'Das Gerät muss in Reichweite sein (< 10 Meter)';
+
+  @override
+  String get someDevicesDontBroadcastName =>
+      'Einige Geräte senden ihren Namen nicht';
+
+  @override
+  String get tipShowUnnamedDevices =>
+      'Tipp: Aktivieren Sie \"Unbenannte Geräte anzeigen\", um alle Bluetooth-Geräte in der Nähe zu sehen.';
+
+  @override
+  String get understood => 'Verstanden';
+
+  @override
+  String get pleaseEnableBluetoothSettings =>
+      'Bitte aktivieren Sie Bluetooth in den Geräteeinstellungen.';
 }

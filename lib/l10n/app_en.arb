@@ -36,6 +36,10 @@
   "scanInProgress": "Scan in progress...",
 
   "deviceNotFound": "Device not found",
+  "searchingForDevice": "Searching for device...",
+  "deviceNotInRange": "Device out of range",
+  "deviceNotInRangeDescription": "The device was not detected. Make sure it's turned on and nearby.",
+  "backToHome": "Back",
   "radarInstruction": "Move around and follow the signal strength to find your device",
   "signalLost": "Signal lost",
   "found": "Found!",
@@ -95,5 +99,16 @@
   "networkErrorDescription": "Please check your internet connection and try again.",
   "loadingError": "Unable to load offers",
   "loadingErrorDescription": "Please check your connection and try again.",
-  "ok": "OK"
+  "ok": "OK",
+
+  "showUnnamedDevices": "Show unnamed devices",
+  "whyDeviceNotVisible": "Why don't I see my device?",
+  "deviceVisibleConditions": "For a device to be visible:",
+  "deviceMustBeOn": "The device must be turned on",
+  "bluetoothMustBeEnabledOnDevice": "Bluetooth must be enabled on the device",
+  "deviceMustBeInRange": "The device must be within range (< 10 meters)",
+  "someDevicesDontBroadcastName": "Some devices don't broadcast their name",
+  "tipShowUnnamedDevices": "Tip: Enable \"Show unnamed devices\" to see all nearby Bluetooth devices.",
+  "understood": "Got it",
+  "pleaseEnableBluetoothSettings": "Please enable Bluetooth in your device settings."
 }

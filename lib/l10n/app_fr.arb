@@ -56,6 +56,10 @@
   "scanInProgress": "Scan en cours...",
 
   "deviceNotFound": "Appareil non trouvé",
+  "searchingForDevice": "Recherche de l'appareil...",
+  "deviceNotInRange": "Appareil hors de portée",
+  "deviceNotInRangeDescription": "L'appareil n'est pas détecté. Assurez-vous qu'il est allumé et à proximité.",
+  "backToHome": "Retour",
   "radarInstruction": "Déplacez-vous et suivez la force du signal pour trouver votre appareil",
   "signalLost": "Signal perdu",
   "found": "Trouvé !",
@@ -120,5 +124,16 @@
   "networkErrorDescription": "Veuillez vérifier votre connexion internet et réessayer.",
   "loadingError": "Impossible de charger les offres",
   "loadingErrorDescription": "Veuillez vérifier votre connexion et réessayer.",
-  "ok": "OK"
+  "ok": "OK",
+
+  "showUnnamedDevices": "Afficher les appareils sans nom",
+  "whyDeviceNotVisible": "Pourquoi je ne vois pas mon appareil ?",
+  "deviceVisibleConditions": "Pour qu'un appareil soit visible :",
+  "deviceMustBeOn": "L'appareil doit être allumé",
+  "bluetoothMustBeEnabledOnDevice": "Le Bluetooth doit être activé sur l'appareil",
+  "deviceMustBeInRange": "L'appareil doit être à portée (< 10 mètres)",
+  "someDevicesDontBroadcastName": "Certains appareils n'émettent pas leur nom",
+  "tipShowUnnamedDevices": "Astuce : Activez \"Afficher les appareils sans nom\" pour voir tous les appareils Bluetooth à proximité.",
+  "understood": "Compris",
+  "pleaseEnableBluetoothSettings": "Veuillez activer le Bluetooth dans les réglages de votre appareil."
 }

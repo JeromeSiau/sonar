@@ -97,8 +97,10 @@ class _FoundCelebrationState extends State<FoundCelebration>
 
     await Future.delayed(const Duration(milliseconds: 1200));
 
-    // Complete
-    widget.onComplete();
+    // Complete - check if still mounted before calling
+    if (mounted) {
+      widget.onComplete();
+    }
   }
 
   @override
@@ -188,7 +190,7 @@ class _FoundCelebrationState extends State<FoundCelebration>
               animation: _checkAnimation,
               builder: (context, child) {
                 return Opacity(
-                  opacity: _checkAnimation.value,
+                  opacity: _checkAnimation.value.clamp(0.0, 1.0),
                   child: Transform.translate(
                     offset: Offset(0, 20 * (1 - _checkAnimation.value)),
                     child: Text(

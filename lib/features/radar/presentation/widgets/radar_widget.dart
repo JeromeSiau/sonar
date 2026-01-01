@@ -3,15 +3,18 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:bluetooth_finder/core/theme/app_colors.dart';
 import 'package:bluetooth_finder/core/utils/rssi_utils.dart';
+import 'package:bluetooth_finder/features/scanner/data/models/bluetooth_device_model.dart';
 
 class RadarWidget extends StatefulWidget {
   final int rssi;
   final String deviceName;
+  final DeviceType deviceType;
 
   const RadarWidget({
     super.key,
     required this.rssi,
     required this.deviceName,
+    this.deviceType = DeviceType.other,
   });
 
   @override
@@ -63,7 +66,10 @@ class _RadarWidgetState extends State<RadarWidget>
   @override
   Widget build(BuildContext context) {
     final signalColor = RssiUtils.getSignalColor(widget.rssi);
-    final percentage = RssiUtils.getSignalPercentage(widget.rssi);
+    final percentage = RssiUtils.getSignalPercentage(
+      widget.rssi,
+      type: widget.deviceType,
+    );
     final distance = RssiUtils.getDistanceEstimate(widget.rssi);
     final screenWidth = MediaQuery.of(context).size.width;
     final radarSize = math.min(screenWidth * 0.85, 320.0);
@@ -191,9 +197,7 @@ class _RadarWidgetState extends State<RadarWidget>
             child: SizedBox(
               width: size,
               height: size,
-              child: CustomPaint(
-                painter: _SweepBeamPainter(color: color),
-              ),
+              child: CustomPaint(painter: _SweepBeamPainter(color: color)),
             ),
           ),
         );
@@ -244,9 +248,7 @@ class _RadarWidgetState extends State<RadarWidget>
       child: SizedBox(
         width: size,
         height: size,
-        child: CustomPaint(
-          painter: _ScanlinesPainter(),
-        ),
+        child: CustomPaint(painter: _ScanlinesPainter()),
       ),
     );
   }
@@ -275,15 +277,14 @@ class _RadarWidgetState extends State<RadarWidget>
             Text(
               '${widget.rssi} dBm',
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: AppColors.textSecondary.withValues(alpha: 0.7),
-                  ),
+                color: AppColors.textSecondary.withValues(alpha: 0.7),
+              ),
             ),
           ],
         ),
       ],
     );
   }
-
 }
 
 // === CUSTOM PAINTERS ===
@@ -303,11 +304,7 @@ class _RadarGridPainter extends CustomPainter {
       Offset(center.dx, size.height),
       paint,
     );
-    canvas.drawLine(
-      Offset(0, center.dy),
-      Offset(size.width, center.dy),
-      paint,
-    );
+    canvas.drawLine(Offset(0, center.dy), Offset(size.width, center.dy), paint);
 
     // Draw diagonal lines
     canvas.drawLine(
@@ -395,11 +392,7 @@ class _ScanlinesPainter extends CustomPainter {
 
     // Draw horizontal scanlines for CRT effect
     for (double y = 0; y < size.height; y += 3) {
-      canvas.drawLine(
-        Offset(0, y),
-        Offset(size.width, y),
-        paint,
-      );
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
     }
   }
 

@@ -17,6 +17,14 @@ subprojects {
 }
 subprojects {
     project.evaluationDependsOn(":app")
+
+    // Fix namespace for old plugins that don't have it declared
+    project.pluginManager.withPlugin("com.android.library") {
+        val android = project.extensions.getByName("android") as com.android.build.gradle.LibraryExtension
+        if (android.namespace == null) {
+            android.namespace = project.group.toString().ifEmpty { "com.example.${project.name.replace("-", "_")}" }
+        }
+    }
 }
 
 tasks.register<Delete>("clean") {

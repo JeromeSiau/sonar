@@ -133,6 +133,23 @@ class AppLocalizationsFr extends AppLocalizations {
   String get cancel => 'Annuler';
 
   @override
+  String get playSound => 'Jouer un son';
+
+  @override
+  String get stopSound => 'Arrêter le son';
+
+  @override
+  String get playSoundDescription =>
+      'Fait sonner l\'appareil s\'il est connecté';
+
+  @override
+  String get soundPlaying => 'Son en cours...';
+
+  @override
+  String get deviceMustBeConnected =>
+      'L\'appareil doit être connecté (pas seulement visible)';
+
+  @override
   String get subscription => 'ABONNEMENT';
 
   @override

@@ -326,6 +326,36 @@ abstract class AppLocalizations {
   /// **'Annuler'**
   String get cancel;
 
+  /// No description provided for @playSound.
+  ///
+  /// In fr, this message translates to:
+  /// **'Jouer un son'**
+  String get playSound;
+
+  /// No description provided for @stopSound.
+  ///
+  /// In fr, this message translates to:
+  /// **'Arrêter le son'**
+  String get stopSound;
+
+  /// No description provided for @playSoundDescription.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fait sonner l\'appareil s\'il est connecté'**
+  String get playSoundDescription;
+
+  /// No description provided for @soundPlaying.
+  ///
+  /// In fr, this message translates to:
+  /// **'Son en cours...'**
+  String get soundPlaying;
+
+  /// No description provided for @deviceMustBeConnected.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'appareil doit être connecté (pas seulement visible)'**
+  String get deviceMustBeConnected;
+
   /// No description provided for @subscription.
   ///
   /// In fr, this message translates to:

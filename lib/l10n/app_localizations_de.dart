@@ -132,6 +132,23 @@ class AppLocalizationsDe extends AppLocalizations {
   String get cancel => 'Abbrechen';
 
   @override
+  String get playSound => 'Ton abspielen';
+
+  @override
+  String get stopSound => 'Ton stoppen';
+
+  @override
+  String get playSoundDescription =>
+      'Spielt einen Ton auf dem Gerät ab, wenn verbunden';
+
+  @override
+  String get soundPlaying => 'Ton wird abgespielt...';
+
+  @override
+  String get deviceMustBeConnected =>
+      'Gerät muss verbunden sein (nicht nur sichtbar)';
+
+  @override
   String get subscription => 'ABONNEMENT';
 
   @override

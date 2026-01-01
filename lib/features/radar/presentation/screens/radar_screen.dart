@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bluetooth_finder/core/theme/app_colors.dart';
+import 'package:bluetooth_finder/core/services/locator_sound_service.dart';
 import 'package:bluetooth_finder/features/scanner/presentation/providers/scanner_provider.dart';
 import 'package:bluetooth_finder/features/scanner/data/models/bluetooth_device_model.dart';
 import 'package:bluetooth_finder/features/favorites/presentation/providers/favorites_provider.dart';
@@ -197,6 +198,14 @@ class _RadarScreenState extends ConsumerState<RadarScreen> {
                   padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
                   child: Column(
                     children: [
+                      // Play Sound button
+                      _PlaySoundButton(
+                        deviceName: currentDevice.name,
+                        isBonded: currentDevice.isBonded,
+                      ),
+
+                      const SizedBox(height: 12),
+
                       // Found it! button
                       SizedBox(
                         width: double.infinity,
@@ -358,6 +367,140 @@ class _RadarScreenState extends ConsumerState<RadarScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Button to play a locator sound through connected Bluetooth audio devices.
+class _PlaySoundButton extends ConsumerStatefulWidget {
+  final String deviceName;
+  final bool isBonded;
+
+  const _PlaySoundButton({
+    required this.deviceName,
+    required this.isBonded,
+  });
+
+  @override
+  ConsumerState<_PlaySoundButton> createState() => _PlaySoundButtonState();
+}
+
+class _PlaySoundButtonState extends ConsumerState<_PlaySoundButton> {
+  bool _isPlaying = false;
+  bool _showTooltip = false;
+
+  Future<void> _toggleSound() async {
+    final soundService = ref.read(locatorSoundServiceProvider);
+
+    if (_isPlaying) {
+      await soundService.stop();
+      setState(() => _isPlaying = false);
+    } else {
+      setState(() => _isPlaying = true);
+      try {
+        await soundService.playLocatorSound();
+        // Auto-stop after 10 seconds
+        await Future.delayed(const Duration(seconds: 10));
+        if (mounted) {
+          setState(() => _isPlaying = false);
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() => _isPlaying = false);
+        }
+      }
+    }
+  }
+
+  void _showInfo() {
+    setState(() => _showTooltip = !_showTooltip);
+    if (_showTooltip) {
+      Future.delayed(const Duration(seconds: 3), () {
+        if (mounted) {
+          setState(() => _showTooltip = false);
+        }
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return Column(
+      children: [
+        // Info tooltip
+        AnimatedOpacity(
+          opacity: _showTooltip ? 1.0 : 0.0,
+          duration: const Duration(milliseconds: 200),
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            decoration: BoxDecoration(
+              color: AppColors.surface.withValues(alpha: 0.95),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: AppColors.textMuted.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Text(
+              l10n.deviceMustBeConnected,
+              style: TextStyle(
+                fontSize: 13,
+                color: AppColors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+
+        // Play Sound button
+        SizedBox(
+          width: double.infinity,
+          height: 56,
+          child: ElevatedButton.icon(
+            onPressed: _toggleSound,
+            onLongPress: _showInfo,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _isPlaying
+                  ? AppColors.signalStrong
+                  : AppColors.primary.withValues(alpha: 0.2),
+              foregroundColor: _isPlaying ? Colors.white : AppColors.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              elevation: 0,
+            ),
+            icon: Icon(
+              _isPlaying ? Icons.stop_rounded : Icons.volume_up_rounded,
+              size: 24,
+            ),
+            label: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  _isPlaying ? l10n.stopSound : l10n.playSound,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: _showInfo,
+                  child: Icon(
+                    Icons.info_outline_rounded,
+                    size: 18,
+                    color: _isPlaying
+                        ? Colors.white.withValues(alpha: 0.7)
+                        : AppColors.primary.withValues(alpha: 0.7),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

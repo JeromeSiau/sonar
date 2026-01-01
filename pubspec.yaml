@@ -21,6 +21,7 @@ dependencies:
   purchases_flutter: ^8.1.2
   url_launcher: ^6.2.5
   package_info_plus: ^8.0.0
+  just_audio: ^0.9.40
 
 dev_dependencies:
   flutter_test:
@@ -56,3 +57,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/icon/
+    - assets/sounds/

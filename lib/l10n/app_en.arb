@@ -44,6 +44,11 @@
   "signalLost": "Signal lost",
   "found": "Found!",
   "cancel": "Cancel",
+  "playSound": "Play sound",
+  "stopSound": "Stop sound",
+  "playSoundDescription": "Play a sound on the device if connected",
+  "soundPlaying": "Playing sound...",
+  "deviceMustBeConnected": "Device must be connected (not just visible)",
 
   "subscription": "SUBSCRIPTION",
   "goPremium": "Go Premium",

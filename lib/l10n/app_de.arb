@@ -44,6 +44,11 @@
   "signalLost": "Signal verloren",
   "found": "Gefunden!",
   "cancel": "Abbrechen",
+  "playSound": "Ton abspielen",
+  "stopSound": "Ton stoppen",
+  "playSoundDescription": "Spielt einen Ton auf dem Gerät ab, wenn verbunden",
+  "soundPlaying": "Ton wird abgespielt...",
+  "deviceMustBeConnected": "Gerät muss verbunden sein (nicht nur sichtbar)",
 
   "subscription": "ABONNEMENT",
   "goPremium": "Premium werden",

@@ -132,6 +132,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancel => 'Cancel';
 
   @override
+  String get playSound => 'Play sound';
+
+  @override
+  String get stopSound => 'Stop sound';
+
+  @override
+  String get playSoundDescription => 'Play a sound on the device if connected';
+
+  @override
+  String get soundPlaying => 'Playing sound...';
+
+  @override
+  String get deviceMustBeConnected =>
+      'Device must be connected (not just visible)';
+
+  @override
   String get subscription => 'SUBSCRIPTION';
 
   @override

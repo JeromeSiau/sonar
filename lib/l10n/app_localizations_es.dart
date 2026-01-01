@@ -238,6 +238,33 @@ class AppLocalizationsEs extends AppLocalizations {
   String get defaultPrice => '4,99 €';
 
   @override
+  String get weekly => 'Semanal';
+
+  @override
+  String get monthly => 'Mensual';
+
+  @override
+  String get lifetimePlan => 'De por vida';
+
+  @override
+  String get bestValue => 'MEJOR VALOR';
+
+  @override
+  String get perWeek => '/semana';
+
+  @override
+  String get perMonth => '/mes';
+
+  @override
+  String get weeklyPrice => '2,99 €';
+
+  @override
+  String get monthlyPrice => '5,99 €';
+
+  @override
+  String get lifetimePrice => '14,99 €';
+
+  @override
   String get language => 'Idioma';
 
   @override

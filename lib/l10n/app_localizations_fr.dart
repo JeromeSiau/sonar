@@ -239,6 +239,33 @@ class AppLocalizationsFr extends AppLocalizations {
   String get defaultPrice => '4,99 €';
 
   @override
+  String get weekly => 'Hebdomadaire';
+
+  @override
+  String get monthly => 'Mensuel';
+
+  @override
+  String get lifetimePlan => 'À vie';
+
+  @override
+  String get bestValue => 'MEILLEUR CHOIX';
+
+  @override
+  String get perWeek => '/semaine';
+
+  @override
+  String get perMonth => '/mois';
+
+  @override
+  String get weeklyPrice => '2,99 €';
+
+  @override
+  String get monthlyPrice => '5,99 €';
+
+  @override
+  String get lifetimePrice => '14,99 €';
+
+  @override
   String get language => 'Langue';
 
   @override

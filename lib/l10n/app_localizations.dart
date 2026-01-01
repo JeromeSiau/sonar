@@ -524,6 +524,60 @@ abstract class AppLocalizations {
   /// **'4,99 €'**
   String get defaultPrice;
 
+  /// No description provided for @weekly.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hebdomadaire'**
+  String get weekly;
+
+  /// No description provided for @monthly.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mensuel'**
+  String get monthly;
+
+  /// No description provided for @lifetimePlan.
+  ///
+  /// In fr, this message translates to:
+  /// **'À vie'**
+  String get lifetimePlan;
+
+  /// No description provided for @bestValue.
+  ///
+  /// In fr, this message translates to:
+  /// **'MEILLEUR CHOIX'**
+  String get bestValue;
+
+  /// No description provided for @perWeek.
+  ///
+  /// In fr, this message translates to:
+  /// **'/semaine'**
+  String get perWeek;
+
+  /// No description provided for @perMonth.
+  ///
+  /// In fr, this message translates to:
+  /// **'/mois'**
+  String get perMonth;
+
+  /// No description provided for @weeklyPrice.
+  ///
+  /// In fr, this message translates to:
+  /// **'2,99 €'**
+  String get weeklyPrice;
+
+  /// No description provided for @monthlyPrice.
+  ///
+  /// In fr, this message translates to:
+  /// **'5,99 €'**
+  String get monthlyPrice;
+
+  /// No description provided for @lifetimePrice.
+  ///
+  /// In fr, this message translates to:
+  /// **'14,99 €'**
+  String get lifetimePrice;
+
   /// No description provided for @language.
   ///
   /// In fr, this message translates to:

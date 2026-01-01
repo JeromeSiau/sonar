@@ -6,6 +6,8 @@ import 'package:bluetooth_finder/core/theme/app_colors.dart';
 import 'package:bluetooth_finder/features/paywall/presentation/providers/subscription_provider.dart';
 import 'package:bluetooth_finder/l10n/app_localizations.dart';
 
+enum PricingTier { weekly, monthly, lifetime }
+
 class PaywallScreen extends ConsumerStatefulWidget {
   const PaywallScreen({super.key});
 
@@ -14,7 +16,8 @@ class PaywallScreen extends ConsumerStatefulWidget {
 }
 
 class _PaywallScreenState extends ConsumerState<PaywallScreen> {
-  Package? _lifetimePackage;
+  Map<PricingTier, Package?> _packages = {};
+  PricingTier _selectedTier = PricingTier.lifetime;
   bool _isLoading = true;
   bool _isPurchasing = false;
   String? _loadingError;
@@ -33,15 +36,48 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
 
     try {
       final offerings = await Purchases.getOfferings();
-      // Look for lifetime package (non-consumable)
       final packages = offerings.current?.availablePackages ?? [];
-      final lifetime = packages.firstWhere(
-        (p) => p.packageType == PackageType.lifetime,
-        orElse: () => packages.isNotEmpty ? packages.first : packages.first,
-      );
+
+      // Map packages to tiers
+      final Map<PricingTier, Package?> tierPackages = {};
+
+      for (final package in packages) {
+        switch (package.packageType) {
+          case PackageType.weekly:
+            tierPackages[PricingTier.weekly] = package;
+            break;
+          case PackageType.monthly:
+            tierPackages[PricingTier.monthly] = package;
+            break;
+          case PackageType.lifetime:
+            tierPackages[PricingTier.lifetime] = package;
+            break;
+          default:
+            // Check identifier for custom packages
+            if (package.identifier.contains('weekly')) {
+              tierPackages[PricingTier.weekly] = package;
+            } else if (package.identifier.contains('monthly')) {
+              tierPackages[PricingTier.monthly] = package;
+            } else if (package.identifier.contains('lifetime')) {
+              tierPackages[PricingTier.lifetime] = package;
+            }
+        }
+      }
+
+      // Fallback: if only one package, use it as lifetime
+      if (tierPackages.isEmpty && packages.isNotEmpty) {
+        tierPackages[PricingTier.lifetime] = packages.first;
+      }
+
       setState(() {
-        _lifetimePackage = packages.isNotEmpty ? lifetime : null;
+        _packages = tierPackages;
         _isLoading = false;
+        // Default to lifetime if available
+        if (tierPackages.containsKey(PricingTier.lifetime)) {
+          _selectedTier = PricingTier.lifetime;
+        } else if (tierPackages.isNotEmpty) {
+          _selectedTier = tierPackages.keys.first;
+        }
       });
     } catch (e) {
       setState(() {
@@ -52,13 +88,14 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
   }
 
   Future<void> _purchase() async {
-    if (_lifetimePackage == null || _isPurchasing) return;
+    final selectedPackage = _packages[_selectedTier];
+    if (selectedPackage == null || _isPurchasing) return;
 
     final l10n = AppLocalizations.of(context)!;
     setState(() => _isPurchasing = true);
 
     try {
-      await Purchases.purchasePackage(_lifetimePackage!);
+      await Purchases.purchasePackage(selectedPackage);
       if (mounted) {
         context.pop();
       }
@@ -113,11 +150,10 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
         ),
       ),
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Column(
             children: [
-              const Spacer(flex: 1),
               // Premium icon with glow effect
               Container(
                 padding: const EdgeInsets.all(20),
@@ -134,28 +170,35 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                 ),
                 child: const Icon(
                   Icons.radar_rounded,
-                  size: 64,
+                  size: 56,
                   color: AppColors.primary,
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
               Text(
                 l10n.unlockRadar,
-                style: Theme.of(context).textTheme.headlineLarge,
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
               const SizedBox(height: 8),
               Text(
                 l10n.locateAllDevices,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge
+                    ?.copyWith(color: AppColors.textSecondary),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),
-              _buildFeatureList(l10n),
-              const Spacer(flex: 2),
-              _buildPriceCard(l10n),
-              const SizedBox(height: 20),
+              // Pricing tiers
+              _isLoading
+                  ? const SizedBox(
+                      height: 200,
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  : _loadingError != null
+                      ? _buildErrorState(l10n)
+                      : _buildPricingTiers(l10n),
+              const SizedBox(height: 24),
               _buildPurchaseButton(l10n),
               const SizedBox(height: 12),
               TextButton(
@@ -169,7 +212,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   style: TextStyle(color: AppColors.textSecondary),
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 16),
             ],
           ),
         ),
@@ -177,108 +220,111 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     );
   }
 
-  Widget _buildFeatureList(AppLocalizations l10n) {
-    final features = [
-      (l10n.unlimitedRadar, l10n.unlimitedRadarDescription),
-      (l10n.fullScan, l10n.fullScanDescription),
-      (l10n.favorites, l10n.favoritesDescription),
-      (l10n.oneTimePurchase, l10n.oneTimePurchaseDescription),
-    ];
-
-    return Column(
-      children: features.map((feature) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppColors.signalStrong.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(
-                  Icons.check_rounded,
-                  color: AppColors.signalStrong,
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      feature.$1,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    Text(
-                      feature.$2,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+  Widget _buildErrorState(AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.red.shade900.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.red.shade700.withValues(alpha: 0.5),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.error_outline, color: Colors.red.shade300, size: 32),
+          const SizedBox(height: 12),
+          Text(
+            l10n.loadingError,
+            style: TextStyle(
+              color: Colors.red.shade300,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
           ),
-        );
-      }).toList(),
+          const SizedBox(height: 8),
+          Text(
+            l10n.loadingErrorDescription,
+            style: TextStyle(color: Colors.red.shade200, fontSize: 12),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 12),
+          TextButton.icon(
+            onPressed: _loadOfferings,
+            icon: const Icon(Icons.refresh),
+            label: Text(l10n.retry),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildPriceCard(AppLocalizations l10n) {
-    if (_isLoading) {
-      return const SizedBox(
-        height: 80,
-        child: Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    if (_loadingError != null) {
-      return Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.red.shade900.withValues(alpha: 0.3),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: Colors.red.shade700.withValues(alpha: 0.5),
-            width: 1,
+  Widget _buildPricingTiers(AppLocalizations l10n) {
+    return Column(
+      children: [
+        // Lifetime (Best Value) - Featured
+        if (_packages.containsKey(PricingTier.lifetime))
+          _PricingTierCard(
+            tier: PricingTier.lifetime,
+            title: l10n.lifetimePlan,
+            price: _packages[PricingTier.lifetime]?.storeProduct.priceString ??
+                l10n.lifetimePrice,
+            period: l10n.oneTimePurchaseBadge,
+            isSelected: _selectedTier == PricingTier.lifetime,
+            isBestValue: true,
+            onTap: () => setState(() => _selectedTier = PricingTier.lifetime),
           ),
-        ),
-        child: Column(
+        const SizedBox(height: 12),
+        // Row for weekly and monthly
+        Row(
           children: [
-            Icon(Icons.error_outline, color: Colors.red.shade300, size: 32),
-            const SizedBox(height: 12),
-            Text(
-              l10n.loadingError,
-              style: TextStyle(
-                color: Colors.red.shade300,
-                fontWeight: FontWeight.bold,
+            if (_packages.containsKey(PricingTier.weekly))
+              Expanded(
+                child: _PricingTierCard(
+                  tier: PricingTier.weekly,
+                  title: l10n.weekly,
+                  price: _packages[PricingTier.weekly]
+                          ?.storeProduct
+                          .priceString ??
+                      l10n.weeklyPrice,
+                  period: l10n.perWeek,
+                  isSelected: _selectedTier == PricingTier.weekly,
+                  onTap: () =>
+                      setState(() => _selectedTier = PricingTier.weekly),
+                ),
               ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              l10n.loadingErrorDescription,
-              style: TextStyle(color: Colors.red.shade200, fontSize: 12),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 12),
-            TextButton.icon(
-              onPressed: _loadOfferings,
-              icon: const Icon(Icons.refresh),
-              label: Text(l10n.retry),
-            ),
+            if (_packages.containsKey(PricingTier.weekly) &&
+                _packages.containsKey(PricingTier.monthly))
+              const SizedBox(width: 12),
+            if (_packages.containsKey(PricingTier.monthly))
+              Expanded(
+                child: _PricingTierCard(
+                  tier: PricingTier.monthly,
+                  title: l10n.monthly,
+                  price: _packages[PricingTier.monthly]
+                          ?.storeProduct
+                          .priceString ??
+                      l10n.monthlyPrice,
+                  period: l10n.perMonth,
+                  isSelected: _selectedTier == PricingTier.monthly,
+                  onTap: () =>
+                      setState(() => _selectedTier = PricingTier.monthly),
+                ),
+              ),
           ],
         ),
-      );
-    }
+        // Fallback if no tiers loaded (show single lifetime option)
+        if (_packages.isEmpty ||
+            (!_packages.containsKey(PricingTier.weekly) &&
+             !_packages.containsKey(PricingTier.monthly) &&
+             !_packages.containsKey(PricingTier.lifetime)))
+          _buildFallbackPriceCard(l10n),
+      ],
+    );
+  }
 
-    final priceString =
-        _lifetimePackage?.storeProduct.priceString ?? l10n.defaultPrice;
-
+  Widget _buildFallbackPriceCard(AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -293,47 +339,33 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: AppColors.primary.withValues(alpha: 0.3),
-          width: 1,
         ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Column(
         children: [
-          Column(
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    priceString,
-                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
+          Text(
+            l10n.lifetimePrice,
+            style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: AppColors.signalStrong,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              l10n.oneTimePurchaseBadge,
+              style: const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 11,
+                letterSpacing: 1,
               ),
-              const SizedBox(height: 4),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.signalStrong,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  l10n.oneTimePurchaseBadge,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 11,
-                    letterSpacing: 1,
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ],
       ),
@@ -341,11 +373,13 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
   }
 
   Widget _buildPurchaseButton(AppLocalizations l10n) {
+    final hasPackage = _packages[_selectedTier] != null;
+
     return SizedBox(
       width: double.infinity,
       height: 56,
       child: ElevatedButton(
-        onPressed: _lifetimePackage != null && !_isPurchasing
+        onPressed: (hasPackage || _packages.isEmpty) && !_isPurchasing
             ? _purchase
             : null,
         style: ElevatedButton.styleFrom(
@@ -371,6 +405,130 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+      ),
+    );
+  }
+}
+
+class _PricingTierCard extends StatelessWidget {
+  final PricingTier tier;
+  final String title;
+  final String price;
+  final String period;
+  final bool isSelected;
+  final bool isBestValue;
+  final VoidCallback onTap;
+
+  const _PricingTierCard({
+    required this.tier,
+    required this.title,
+    required this.price,
+    required this.period,
+    required this.isSelected,
+    this.isBestValue = false,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: isSelected
+              ? LinearGradient(
+                  colors: [
+                    AppColors.primary.withValues(alpha: 0.2),
+                    AppColors.primary.withValues(alpha: 0.1),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                )
+              : null,
+          color: isSelected ? null : AppColors.surface.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected ? AppColors.primary : AppColors.glassBorder,
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Column(
+          children: [
+            // Best Value badge
+            if (isBestValue)
+              Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppColors.signalStrong,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  l10n.bestValue,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 10,
+                    letterSpacing: 1,
+                  ),
+                ),
+              ),
+            // Title
+            Text(
+              title,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: isSelected
+                        ? AppColors.textPrimary
+                        : AppColors.textSecondary,
+                  ),
+            ),
+            const SizedBox(height: 8),
+            // Price
+            Text(
+              price,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    color:
+                        isSelected ? AppColors.primary : AppColors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 4),
+            // Period
+            Text(
+              period,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: AppColors.textMuted,
+                    fontSize: 11,
+                  ),
+            ),
+            // Selection indicator
+            const SizedBox(height: 12),
+            Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isSelected ? AppColors.primary : AppColors.textMuted,
+                  width: 2,
+                ),
+                color: isSelected ? AppColors.primary : Colors.transparent,
+              ),
+              child: isSelected
+                  ? const Icon(
+                      Icons.check,
+                      size: 16,
+                      color: Colors.black,
+                    )
+                  : null,
+            ),
+          ],
+        ),
       ),
     );
   }

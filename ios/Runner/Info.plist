@@ -50,9 +50,9 @@
 		<key>NSBluetoothPeripheralUsageDescription</key>
 		<string>Cette app utilise le Bluetooth pour localiser vos appareils perdus</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>La localisation est requise pour scanner les appareils Bluetooth</string>
+		<string>La localisation permet de mémoriser où vos appareils ont été vus pour la dernière fois</string>
 		<key>NSLocationAlwaysUsageDescription</key>
-		<string>La localisation est requise pour scanner les appareils Bluetooth</string>
+		<string>La localisation permet de mémoriser où vos appareils ont été vus pour la dernière fois</string>
 		<key>UIBackgroundModes</key>
 		<array>
 			<string>bluetooth-central</string>

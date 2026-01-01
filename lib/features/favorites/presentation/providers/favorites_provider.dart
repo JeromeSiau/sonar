@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:bluetooth_finder/core/services/location_service.dart';
 import 'package:bluetooth_finder/features/favorites/data/models/favorite_device_model.dart';
 import 'package:bluetooth_finder/features/favorites/data/repositories/favorites_repository.dart';
 import 'package:bluetooth_finder/features/scanner/data/models/bluetooth_device_model.dart';
@@ -9,13 +10,15 @@ final favoritesRepositoryProvider = Provider<FavoritesRepository>((ref) {
 
 final favoritesProvider = StateNotifierProvider<FavoritesNotifier, List<FavoriteDeviceModel>>((ref) {
   final repo = ref.watch(favoritesRepositoryProvider);
-  return FavoritesNotifier(repo);
+  final locationService = ref.watch(locationServiceProvider);
+  return FavoritesNotifier(repo, locationService);
 });
 
 class FavoritesNotifier extends StateNotifier<List<FavoriteDeviceModel>> {
   final FavoritesRepository _repo;
+  final LocationService _locationService;
 
-  FavoritesNotifier(this._repo) : super(_repo.getAll());
+  FavoritesNotifier(this._repo, this._locationService) : super(_repo.getAll());
 
   void _refresh() {
     state = _repo.getAll();
@@ -33,8 +36,17 @@ class FavoritesNotifier extends StateNotifier<List<FavoriteDeviceModel>> {
     _refresh();
   }
 
+  /// Updates a favorite from scan data, capturing current GPS location.
   Future<void> updateFromScan(BluetoothDeviceModel device) async {
-    await _repo.updateFromScan(device);
+    // Get current location (non-blocking, returns null if unavailable)
+    final location = await _locationService.getCurrentLocationWithName();
+
+    await _repo.updateFromScan(
+      device,
+      latitude: location?.latitude,
+      longitude: location?.longitude,
+      locationName: location?.placeName,
+    );
     _refresh();
   }
 }

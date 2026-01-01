@@ -23,13 +23,16 @@ class FavoriteDeviceModelAdapter extends TypeAdapter<FavoriteDeviceModel> {
       addedAt: fields[3] as DateTime,
       lastSeenAt: fields[4] as DateTime,
       lastRssi: fields[5] as int,
+      lastLatitude: fields[6] as double?,
+      lastLongitude: fields[7] as double?,
+      lastLocationName: fields[8] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, FavoriteDeviceModel obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -41,7 +44,13 @@ class FavoriteDeviceModelAdapter extends TypeAdapter<FavoriteDeviceModel> {
       ..writeByte(4)
       ..write(obj.lastSeenAt)
       ..writeByte(5)
-      ..write(obj.lastRssi);
+      ..write(obj.lastRssi)
+      ..writeByte(6)
+      ..write(obj.lastLatitude)
+      ..writeByte(7)
+      ..write(obj.lastLongitude)
+      ..writeByte(8)
+      ..write(obj.lastLocationName);
   }
 
   @override

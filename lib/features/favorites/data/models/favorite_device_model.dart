@@ -23,8 +23,14 @@ class FavoriteDeviceModel extends HiveObject {
   @HiveField(5)
   int lastRssi;
 
-  // Note: @HiveField(6) was lastLocation - removed as unused
-  // Keep field index 6 reserved to maintain Hive compatibility
+  @HiveField(6)
+  double? lastLatitude;
+
+  @HiveField(7)
+  double? lastLongitude;
+
+  @HiveField(8)
+  String? lastLocationName;
 
   FavoriteDeviceModel({
     required this.id,
@@ -33,6 +39,9 @@ class FavoriteDeviceModel extends HiveObject {
     required this.addedAt,
     required this.lastSeenAt,
     required this.lastRssi,
+    this.lastLatitude,
+    this.lastLongitude,
+    this.lastLocationName,
   });
 
   DeviceType get deviceType => DeviceType.values[deviceTypeIndex];
@@ -48,9 +57,22 @@ class FavoriteDeviceModel extends HiveObject {
     );
   }
 
-  void updateFromScan(BluetoothDeviceModel device) {
+  void updateFromScan(
+    BluetoothDeviceModel device, {
+    double? latitude,
+    double? longitude,
+    String? locationName,
+  }) {
     lastSeenAt = device.lastSeen;
     lastRssi = device.rssi;
+    if (latitude != null && longitude != null) {
+      lastLatitude = latitude;
+      lastLongitude = longitude;
+      lastLocationName = locationName;
+    }
     save();
   }
+
+  /// Returns true if we have a valid last known location
+  bool get hasLastLocation => lastLatitude != null && lastLongitude != null;
 }

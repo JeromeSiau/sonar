@@ -48,10 +48,20 @@ class FavoritesRepository {
     return _box.get(deviceId);
   }
 
-  Future<void> updateFromScan(BluetoothDeviceModel device) async {
+  Future<void> updateFromScan(
+    BluetoothDeviceModel device, {
+    double? latitude,
+    double? longitude,
+    String? locationName,
+  }) async {
     final favorite = _box.get(device.id);
     if (favorite != null) {
-      favorite.updateFromScan(device);
+      favorite.updateFromScan(
+        device,
+        latitude: latitude,
+        longitude: longitude,
+        locationName: locationName,
+      );
     }
   }
 

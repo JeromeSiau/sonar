@@ -340,13 +340,26 @@ class _FavoriteDeviceCard extends StatelessWidget {
     };
   }
 
-  String _formatLastSeen(BuildContext context, DateTime lastSeen) {
+  String _formatLastSeenWithLocation(BuildContext context, FavoriteDeviceModel favorite) {
     final l10n = AppLocalizations.of(context)!;
-    final diff = DateTime.now().difference(lastSeen);
-    if (diff.inMinutes < 1) return l10n.justNow;
-    if (diff.inHours < 1) return l10n.minutesAgo(diff.inMinutes);
-    if (diff.inDays < 1) return l10n.hoursAgo(diff.inHours);
-    return l10n.daysAgo(diff.inDays);
+    final diff = DateTime.now().difference(favorite.lastSeenAt);
+
+    String timeAgo;
+    if (diff.inMinutes < 1) {
+      timeAgo = l10n.justNow;
+    } else if (diff.inHours < 1) {
+      timeAgo = l10n.minutesAgo(diff.inMinutes);
+    } else if (diff.inDays < 1) {
+      timeAgo = l10n.hoursAgo(diff.inHours);
+    } else {
+      timeAgo = l10n.daysAgo(diff.inDays);
+    }
+
+    // Add location if available
+    if (favorite.lastLocationName != null && favorite.lastLocationName!.isNotEmpty) {
+      return '$timeAgo • ${favorite.lastLocationName}';
+    }
+    return timeAgo;
   }
 
   @override
@@ -430,9 +443,13 @@ class _FavoriteDeviceCard extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 6),
-                            Text(
-                              _formatLastSeen(context, favorite.lastSeenAt),
-                              style: Theme.of(context).textTheme.bodySmall,
+                            Flexible(
+                              child: Text(
+                                _formatLastSeenWithLocation(context, favorite),
+                                style: Theme.of(context).textTheme.bodySmall,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ],
                         ),

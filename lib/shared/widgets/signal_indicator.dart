@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:bluetooth_finder/core/theme/app_colors.dart';
 import 'package:bluetooth_finder/core/utils/rssi_utils.dart';
+import 'package:bluetooth_finder/features/scanner/data/models/bluetooth_device_model.dart';
 
 class SignalIndicator extends StatefulWidget {
   final int rssi;
+  final int? txPowerLevel;
+  final DeviceType deviceType;
   final bool showDistance;
   final double height;
   final bool animate;
@@ -11,6 +14,8 @@ class SignalIndicator extends StatefulWidget {
   const SignalIndicator({
     super.key,
     required this.rssi,
+    this.txPowerLevel,
+    this.deviceType = DeviceType.other,
     this.showDistance = true,
     this.height = 20,
     this.animate = true,
@@ -33,9 +38,10 @@ class _SignalIndicatorState extends State<SignalIndicator>
       vsync: this,
     );
 
-    _pulseAnimation = Tween<double>(begin: 0.7, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _pulseAnimation = Tween<double>(
+      begin: 0.7,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     if (widget.animate) {
       _controller.repeat(reverse: true);
@@ -51,7 +57,11 @@ class _SignalIndicatorState extends State<SignalIndicator>
   @override
   Widget build(BuildContext context) {
     final color = RssiUtils.getSignalColor(widget.rssi);
-    final percentage = RssiUtils.getSignalPercentage(widget.rssi);
+    final percentage = RssiUtils.getSignalPercentage(
+      widget.rssi,
+      txPowerLevel: widget.txPowerLevel,
+      type: widget.deviceType,
+    );
     final distance = RssiUtils.getDistanceEstimate(widget.rssi);
     final signalStrength = RssiUtils.getSignalStrength(widget.rssi);
 
@@ -69,7 +79,8 @@ class _SignalIndicatorState extends State<SignalIndicator>
                       boxShadow: [
                         BoxShadow(
                           color: color.withValues(
-                              alpha: 0.3 * _pulseAnimation.value),
+                            alpha: 0.3 * _pulseAnimation.value,
+                          ),
                           blurRadius: 8,
                           spreadRadius: 0,
                         ),
@@ -97,10 +108,7 @@ class _SignalIndicatorState extends State<SignalIndicator>
                               ? LinearGradient(
                                   begin: Alignment.bottomCenter,
                                   end: Alignment.topCenter,
-                                  colors: [
-                                    color.withValues(alpha: 0.7),
-                                    color,
-                                  ],
+                                  colors: [color.withValues(alpha: 0.7), color],
                                 )
                               : null,
                           color: isActive
@@ -111,7 +119,8 @@ class _SignalIndicatorState extends State<SignalIndicator>
                               ? [
                                   BoxShadow(
                                     color: color.withValues(
-                                        alpha: 0.4 * _pulseAnimation.value),
+                                      alpha: 0.4 * _pulseAnimation.value,
+                                    ),
                                     blurRadius: 4,
                                     spreadRadius: 0,
                                   ),
@@ -135,10 +144,7 @@ class _SignalIndicatorState extends State<SignalIndicator>
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(6),
-              border: Border.all(
-                color: color.withValues(alpha: 0.3),
-                width: 1,
-              ),
+              border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
             ),
             child: Text(
               distance,
@@ -160,13 +166,24 @@ class _SignalIndicatorState extends State<SignalIndicator>
 /// Compact signal indicator for tight spaces
 class SignalDots extends StatelessWidget {
   final int rssi;
+  final int? txPowerLevel;
+  final DeviceType deviceType;
 
-  const SignalDots({super.key, required this.rssi});
+  const SignalDots({
+    super.key,
+    required this.rssi,
+    this.txPowerLevel,
+    this.deviceType = DeviceType.other,
+  });
 
   @override
   Widget build(BuildContext context) {
     final color = RssiUtils.getSignalColor(rssi);
-    final percentage = RssiUtils.getSignalPercentage(rssi);
+    final percentage = RssiUtils.getSignalPercentage(
+      rssi,
+      txPowerLevel: txPowerLevel,
+      type: deviceType,
+    );
 
     return Row(
       mainAxisSize: MainAxisSize.min,

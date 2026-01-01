@@ -43,3 +43,12 @@ final isFavoriteProvider = Provider.family<bool, String>((ref, deviceId) {
   final favorites = ref.watch(favoritesProvider);
   return favorites.any((f) => f.id == deviceId);
 });
+
+final favoriteByIdProvider = Provider.family<FavoriteDeviceModel?, String>((ref, deviceId) {
+  final favorites = ref.watch(favoritesProvider);
+  try {
+    return favorites.firstWhere((f) => f.id == deviceId);
+  } catch (_) {
+    return null;
+  }
+});

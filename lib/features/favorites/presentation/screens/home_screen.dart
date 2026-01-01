@@ -179,7 +179,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             padding: const EdgeInsets.only(bottom: 12),
             child: _FavoriteDeviceCard(
               favorite: favorite,
-              onTap: () => context.push('/scanner'),
+              onTap: () => context.push('/radar/${favorite.id}'),
               onDismiss: () {
                 ref
                     .read(favoritesProvider.notifier)

@@ -7,19 +7,75 @@ import 'package:bluetooth_finder/features/scanner/data/models/bluetooth_device_m
 class BluetoothRepository {
   final Map<String, BluetoothDeviceModel> _devices = {};
   final _devicesController = StreamController<List<BluetoothDeviceModel>>.broadcast();
+  // Real-time RSSI stream for radar (not debounced)
+  final _rssiController = StreamController<Map<String, int>>.broadcast();
   StreamSubscription<List<ScanResult>>? _bleScanSubscription;
   StreamSubscription<classic.BluetoothDiscoveryResult>? _classicScanSubscription;
   Timer? _cleanupTimer;
+  Timer? _rssiPollingTimer;
+  Timer? _updateDebounceTimer;
+  DateTime? _lastEmit;
 
-  // Set of bonded device IDs for quick lookup
-  final Set<String> _bondedDeviceIds = {};
+  // Map of bonded device IDs to their cached names
+  final Map<String, String> _bondedDeviceNames = {};
+  // List of bonded BLE devices for RSSI polling
+  final List<BluetoothDevice> _bondedBleDevices = [];
+
+  // Debounce interval for UI updates (prevents constant jumping)
+  static const _updateInterval = Duration(milliseconds: 1500);
 
   Stream<List<BluetoothDeviceModel>> get devicesStream => _devicesController.stream;
 
+  /// Real-time RSSI stream for radar - emits immediately without debouncing
+  Stream<Map<String, int>> get rssiStream => _rssiController.stream;
+
+  /// Emit real-time RSSI update (no debouncing, for radar)
+  void _emitRssi(String deviceId, int rssi) {
+    _rssiController.add({deviceId: rssi});
+  }
+
+  /// Emit update to stream with debouncing to prevent UI jumping
+  void _emitUpdate({bool force = false}) {
+    final now = DateTime.now();
+
+    // If forced or first emit, do it immediately
+    if (force || _lastEmit == null) {
+      _lastEmit = now;
+      _devicesController.add(currentDevices);
+      return;
+    }
+
+    // Cancel any pending debounce
+    _updateDebounceTimer?.cancel();
+
+    // If enough time has passed, emit immediately
+    if (now.difference(_lastEmit!) >= _updateInterval) {
+      _lastEmit = now;
+      _devicesController.add(currentDevices);
+    } else {
+      // Schedule an update for later
+      _updateDebounceTimer = Timer(_updateInterval, () {
+        _lastEmit = DateTime.now();
+        _devicesController.add(currentDevices);
+      });
+    }
+  }
+
   List<BluetoothDeviceModel> get currentDevices {
     final sorted = _devices.values.toList();
-    // Sort by signal strength (higher RSSI = closer)
-    sorted.sort((a, b) => b.rssi.compareTo(a.rssi));
+    // Sort by: 1) bonded devices first, 2) named devices, 3) signal strength
+    sorted.sort((a, b) {
+      // Bonded devices first
+      if (a.isBonded && !b.isBonded) return -1;
+      if (!a.isBonded && b.isBonded) return 1;
+      // Then named devices
+      final aHasName = a.name != 'Appareil inconnu';
+      final bHasName = b.name != 'Appareil inconnu';
+      if (aHasName && !bHasName) return -1;
+      if (!aHasName && bHasName) return 1;
+      // Then by signal strength (higher RSSI = closer)
+      return b.rssi.compareTo(a.rssi);
+    });
     return sorted;
   }
 
@@ -29,9 +85,9 @@ class BluetoothRepository {
 
   Future<void> startScan() async {
     _devices.clear();
-    _bondedDeviceIds.clear();
+    _bondedDeviceNames.clear();
 
-    // First, add bonded/paired devices (they have cached names)
+    // First, collect bonded/paired device names
     await _addBondedDevices();
 
     // Start BLE scan (iOS + Android)
@@ -51,29 +107,76 @@ class BluetoothRepository {
   void _startBleScan() {
     _bleScanSubscription = FlutterBluePlus.scanResults.listen((results) {
       for (final result in results) {
-        final isBonded = _bondedDeviceIds.contains(result.device.remoteId.str);
-        final device = BluetoothDeviceModel.fromScanResult(result, isBonded: isBonded);
+        final deviceId = result.device.remoteId.str.toUpperCase();
+        final cachedName = _bondedDeviceNames[deviceId];
+        final isBonded = cachedName != null;
+
+        // Debug: log advertisement data for devices with manufacturer data
+        final msd = result.advertisementData.manufacturerData;
+        if (msd.isNotEmpty && _devices.length < 20) {
+          final name = result.advertisementData.advName;
+          final platformName = result.device.platformName;
+          print('[BT] MSD device: $deviceId');
+          print('[BT]   advName: "$name", platformName: "$platformName"');
+          for (final entry in msd.entries) {
+            final companyId = entry.key;
+            final data = entry.value;
+            print('[BT]   Company 0x${companyId.toRadixString(16)}: ${data.map((b) => b.toRadixString(16).padLeft(2, '0')).join(' ')}');
+            // Apple company ID
+            if (companyId == 0x004C) {
+              print('[BT]   -> APPLE DEVICE DETECTED!');
+            }
+          }
+        }
+
+        var device = BluetoothDeviceModel.fromScanResult(result, isBonded: isBonded);
+        // Use cached name if scan didn't provide one
+        if (device.name == 'Appareil inconnu' && cachedName != null) {
+          device = device.copyWith(name: cachedName);
+        }
         _mergeDevice(device);
+        // Emit real-time RSSI for radar
+        _emitRssi(device.id, device.rssi);
       }
-      _devicesController.add(currentDevices);
+      _emitUpdate();
     });
 
+    // Start continuous scan (no timeout - stops when stopScan is called)
     FlutterBluePlus.startScan(
-      timeout: const Duration(seconds: 30),
       androidUsesFineLocation: true,
+      // Android specific: scan in low latency mode for better results
+      androidScanMode: AndroidScanMode.lowLatency,
+      // Continuous updates for RSSI changes
+      continuousUpdates: true,
     );
   }
 
   void _startClassicScan() {
+    print('[BT] Starting Classic scan...');
     _classicScanSubscription = classic.FlutterBluetoothSerial.instance
         .startDiscovery()
         .listen((result) {
-      final device = BluetoothDeviceModel.fromClassicDevice(
+      final deviceId = result.device.address.toUpperCase();
+      final cachedName = _bondedDeviceNames[deviceId];
+      final isBonded = cachedName != null;
+      var model = BluetoothDeviceModel.fromClassicDevice(
         result.device,
         rssi: result.rssi,
+        isBonded: isBonded,
       );
-      _mergeDevice(device);
-      _devicesController.add(currentDevices);
+      // Use cached name if scan didn't provide one
+      if (model.name == 'Appareil inconnu' && cachedName != null) {
+        model = model.copyWith(name: cachedName);
+      }
+      print('[BT] Classic scan: ${model.id} -> ${model.name} (bonded: $isBonded, rssi: ${model.rssi})');
+      _mergeDevice(model);
+      // Emit real-time RSSI for radar
+      _emitRssi(model.id, model.rssi);
+      _emitUpdate();
+    }, onError: (e) {
+      print('[BT] Classic scan error: $e');
+    }, onDone: () {
+      print('[BT] Classic scan done');
     });
   }
 
@@ -129,37 +232,150 @@ class BluetoothRepository {
   }
 
   Future<void> _addBondedDevices() async {
-    // Add BLE bonded devices
+    _bondedBleDevices.clear();
+
+    // Get bonded BLE devices and add them to the list immediately
     try {
       final bondedDevices = await FlutterBluePlus.bondedDevices;
+      print('[BT] Found ${bondedDevices.length} BLE bonded devices');
       for (final device in bondedDevices) {
-        _bondedDeviceIds.add(device.remoteId.str);
-        final model = BluetoothDeviceModel.fromBondedDevice(device);
-        if (model.name != 'Appareil inconnu') {
-          _devices[model.id] = model;
+        final name = device.platformName;
+        final id = device.remoteId.str.toUpperCase();
+        print('[BT] BLE bonded: $id -> $name');
+        if (name.isNotEmpty) {
+          _bondedDeviceNames[id] = name;
+          _bondedBleDevices.add(device);
+
+          // Add bonded device to the list immediately with unknown RSSI
+          final model = BluetoothDeviceModel(
+            id: id,
+            name: name,
+            rssi: -100, // Will be updated when we connect
+            lastSeen: DateTime.now(),
+            type: BluetoothDeviceModel.inferDeviceType(name),
+            isBonded: true,
+            source: BluetoothSource.ble,
+          );
+          _devices[id] = model;
         }
       }
     } catch (e) {
-      // Bonded devices not supported on this platform
+      print('[BT] Error getting BLE bonded: $e');
     }
 
-    // Add Classic bonded devices (Android only)
+    // Collect Classic bonded device names (Android only)
     if (Platform.isAndroid) {
       try {
         final classicBonded = await classic.FlutterBluetoothSerial.instance.getBondedDevices();
+        print('[BT] Found ${classicBonded.length} Classic bonded devices');
         for (final device in classicBonded) {
-          _bondedDeviceIds.add(device.address);
-          final model = BluetoothDeviceModel.fromClassicDevice(device);
-          if (model.name != 'Appareil inconnu') {
-            _mergeDevice(model);
+          final name = device.name;
+          final id = device.address.toUpperCase();
+          print('[BT] Classic bonded: $id -> $name');
+          if (name != null && name.isNotEmpty) {
+            _bondedDeviceNames[id] = name;
+
+            // Add Classic bonded device if not already added via BLE
+            if (!_devices.containsKey(id)) {
+              final model = BluetoothDeviceModel(
+                id: id,
+                name: name,
+                rssi: -100,
+                lastSeen: DateTime.now(),
+                type: BluetoothDeviceModel.inferDeviceType(name),
+                isBonded: true,
+                source: BluetoothSource.classic,
+              );
+              _devices[id] = model;
+            }
           }
         }
       } catch (e) {
-        // Classic Bluetooth not available
+        print('[BT] Error getting Classic bonded: $e');
       }
     }
 
-    _devicesController.add(currentDevices);
+    print('[BT] Total bonded devices: ${_devices.length}');
+    _emitUpdate(force: true);
+
+    // Start polling RSSI for bonded devices
+    _startRssiPolling();
+  }
+
+  /// Poll RSSI for bonded devices by connecting briefly
+  void _startRssiPolling() {
+    _rssiPollingTimer?.cancel();
+    _rssiPollingTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+      _pollBondedDevicesRssi();
+    });
+    // Also poll immediately
+    _pollBondedDevicesRssi();
+  }
+
+  Future<void> _pollBondedDevicesRssi() async {
+    // First check system-connected BLE devices
+    try {
+      final connectedDevices = await FlutterBluePlus.connectedDevices;
+      for (final device in connectedDevices) {
+        final id = device.remoteId.str.toUpperCase();
+        try {
+          final rssi = await device.readRssi();
+          print('[BT] Connected device RSSI ${device.platformName}: $rssi');
+          final existing = _devices[id];
+          if (existing != null) {
+            _devices[id] = existing.copyWith(
+              rssi: rssi,
+              lastSeen: DateTime.now(),
+            );
+            // Emit real-time RSSI for radar
+            _emitRssi(id, rssi);
+          }
+        } catch (e) {
+          print('[BT] Cannot read RSSI for connected ${device.platformName}: $e');
+        }
+      }
+    } catch (e) {
+      print('[BT] Error getting connected devices: $e');
+    }
+
+    // Then try to connect to bonded devices that aren't system-connected
+    for (final device in _bondedBleDevices) {
+      try {
+        final id = device.remoteId.str.toUpperCase();
+
+        // Skip if already has recent RSSI (was found via scan or connected devices)
+        final existing = _devices[id];
+        if (existing != null && existing.rssi > -90 &&
+            DateTime.now().difference(existing.lastSeen).inSeconds < 5) {
+          continue;
+        }
+
+        // Only try to connect if device reports as connectable
+        if (!device.isConnected) {
+          try {
+            await device.connect(timeout: const Duration(seconds: 3), autoConnect: true);
+          } catch (_) {
+            // Connection failed - device might not be reachable
+          }
+        }
+
+        if (device.isConnected) {
+          final rssi = await device.readRssi();
+          print('[BT] RSSI for ${device.platformName}: $rssi');
+          if (existing != null) {
+            _devices[id] = existing.copyWith(
+              rssi: rssi,
+              lastSeen: DateTime.now(),
+            );
+            // Emit real-time RSSI for radar
+            _emitRssi(id, rssi);
+          }
+        }
+      } catch (e) {
+        print('[BT] Cannot reach ${device.platformName}: $e');
+      }
+    }
+    _emitUpdate();
   }
 
   Future<void> stopScan() async {
@@ -179,19 +395,40 @@ class BluetoothRepository {
 
     _cleanupTimer?.cancel();
     _cleanupTimer = null;
+
+    _rssiPollingTimer?.cancel();
+    _rssiPollingTimer = null;
+
+    _updateDebounceTimer?.cancel();
+    _updateDebounceTimer = null;
+
+    // Disconnect from all bonded devices
+    for (final device in _bondedBleDevices) {
+      try {
+        if (device.isConnected) {
+          await device.disconnect();
+        }
+      } catch (_) {}
+    }
   }
 
   void _removeStaleDevices() {
     final now = DateTime.now();
-    const staleThreshold = Duration(seconds: 10);
+    // Increase threshold to 30 seconds for regular devices
+    const staleThreshold = Duration(seconds: 30);
+
+    final countBefore = _devices.length;
 
     _devices.removeWhere((_, device) {
-      // Don't remove bonded devices even if stale
+      // Never remove bonded devices - they should always be visible
       if (device.isBonded) return false;
       return now.difference(device.lastSeen) > staleThreshold;
     });
 
-    _devicesController.add(currentDevices);
+    // Only emit if something changed
+    if (_devices.length != countBefore) {
+      _emitUpdate();
+    }
   }
 
   Stream<int> getRssiStream(String deviceId) async* {
@@ -206,5 +443,6 @@ class BluetoothRepository {
   void dispose() {
     stopScan();
     _devicesController.close();
+    _rssiController.close();
   }
 }

@@ -24,25 +24,17 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
   @override
   void initState() {
     super.initState();
-    // Defer scan to avoid modifying provider during build
     Future.microtask(_startScan);
   }
 
   Future<void> _startScan() async {
     if (!mounted) return;
-    final repo = ref.read(bluetoothRepositoryProvider);
     ref.read(isScanningProvider.notifier).state = true;
-    await repo.startScan();
-    if (mounted) {
-      ref.read(isScanningProvider.notifier).state = false;
-    }
+    await ref.read(bluetoothRepositoryProvider).startScan();
   }
 
-  @override
-  void dispose() {
-    ref.read(bluetoothRepositoryProvider).stopScan();
-    super.dispose();
-  }
+  // No dispose needed - scan will be stopped by provider when app closes
+  // Trying to access ref in dispose causes StateError
 
   void _onDeviceTap(BuildContext context, WidgetRef ref, device) {
     final canAccessRadar = ref.read(canAccessRadarProvider);
@@ -148,11 +140,10 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
     bool isPremium,
     AppLocalizations l10n,
   ) {
-    final myDevices = ref.watch(myDevicesProvider);
-    final nearbyDevices = ref.watch(nearbyDevicesProvider);
-    final allDevicesEmpty = myDevices.isEmpty && nearbyDevices.isEmpty;
+    final devices = ref.watch(allDevicesProvider);
+    final isEmpty = devices.isEmpty;
 
-    if (allDevicesEmpty && isScanning) {
+    if (isEmpty && isScanning) {
       return _SonarSearchAnimation(isScanning: isScanning, l10n: l10n);
     }
 
@@ -161,7 +152,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
     return Column(
       children: [
         // Mini sonar at top when scanning with results
-        if (isScanning && !allDevicesEmpty)
+        if (isScanning && !isEmpty)
           _MiniSonarIndicator(l10n: l10n),
         // Show trial status for free users
         if (!isPremium)
@@ -172,16 +163,16 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
             color: AppColors.primary,
             backgroundColor: AppColors.surface,
             child: ListView(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
               children: [
-                // My devices section
-                if (myDevices.isNotEmpty) ...[
+                // All devices sorted by proximity
+                if (devices.isNotEmpty) ...[
                   SectionHeader(
-                    icon: Icons.smartphone_rounded,
-                    title: l10n.myDevices,
-                    count: myDevices.length,
+                    icon: Icons.radar_rounded,
+                    title: l10n.nearbyDevices,
+                    count: devices.length,
                   ),
-                  ...myDevices.asMap().entries.map((entry) {
+                  ...devices.asMap().entries.map((entry) {
                     return StaggeredListItem(
                       index: entry.key,
                       child: Padding(
@@ -194,35 +185,119 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
                     );
                   }),
                 ],
-                // Nearby devices section
-                if (nearbyDevices.isNotEmpty) ...[
-                  SectionHeader(
-                    icon: Icons.radar_rounded,
-                    title: l10n.nearbyDevices,
-                    count: nearbyDevices.length,
-                  ),
-                  ...nearbyDevices.asMap().entries.map((entry) {
-                    final index = myDevices.length + entry.key;
-                    return StaggeredListItem(
-                      index: index,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: DeviceCard(
-                          device: entry.value,
-                          onTap: () => _onDeviceTap(context, ref, entry.value),
-                        ),
-                      ),
-                    );
-                  }),
-                ],
                 // Empty state
-                if (allDevicesEmpty && !isScanning)
+                if (isEmpty && !isScanning)
                   _buildEmptyState(l10n),
               ],
             ),
           ),
         ),
+        // Floating bottom panel
+        _buildBottomPanel(context),
       ],
+    );
+  }
+
+  Widget _buildBottomPanel(BuildContext context) {
+    final showUnnamed = ref.watch(showUnnamedDevicesProvider);
+
+    return Container(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Checkbox for unnamed devices
+          Row(
+            children: [
+              SizedBox(
+                width: 24,
+                height: 24,
+                child: Checkbox(
+                  value: showUnnamed,
+                  onChanged: (value) {
+                    ref.read(showUnnamedDevicesProvider.notifier).state = value ?? false;
+                  },
+                  activeColor: AppColors.primary,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  AppLocalizations.of(context)!.showUnnamedDevices,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // Help text
+          GestureDetector(
+            onTap: () => _showHelpDialog(context),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.help_outline_rounded,
+                  size: 20,
+                  color: AppColors.primary,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  AppLocalizations.of(context)!.whyDeviceNotVisible,
+                  style: TextStyle(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showHelpDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        title: Text(l10n.whyDeviceNotVisible),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('${l10n.deviceVisibleConditions}\n'),
+            Text('• ${l10n.deviceMustBeOn}'),
+            Text('• ${l10n.bluetoothMustBeEnabledOnDevice}'),
+            Text('• ${l10n.deviceMustBeInRange}'),
+            Text('• ${l10n.someDevicesDontBroadcastName}'),
+            const SizedBox(height: 12),
+            Text(
+              l10n.tipShowUnnamedDevices,
+              style: const TextStyle(fontStyle: FontStyle.italic),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(l10n.understood),
+          ),
+        ],
+      ),
     );
   }
 

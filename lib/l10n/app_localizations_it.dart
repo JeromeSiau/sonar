@@ -12,7 +12,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get appName => 'SONAR';
 
   @override
-  String get appSubtitle => 'Bluetooth Finder';
+  String get appSubtitle => 'Find AirPods & Headphones';
 
   @override
   String get scanner => 'SCANNER';

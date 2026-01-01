@@ -10,14 +10,10 @@ class PermissionScreen extends StatelessWidget {
   const PermissionScreen({super.key});
 
   Future<void> _requestPermissions(BuildContext context) async {
-    print('[PERM] Button pressed! Requesting permissions...');
-
     // First check if Bluetooth is enabled at system level
     final btState = await FlutterBluePlus.adapterState.first;
-    print('[PERM] Bluetooth adapter state: $btState');
 
     if (btState != BluetoothAdapterState.on) {
-      print('[PERM] Bluetooth is OFF, asking user to enable it...');
       // On iOS, we can't programmatically enable Bluetooth - show a dialog
       if (context.mounted) {
         final l10n = AppLocalizations.of(context)!;
@@ -45,7 +41,6 @@ class PermissionScreen extends StatelessWidget {
     if (Platform.isIOS) {
       // iOS 13+: Bluetooth permission is enough, location not required for BLE
       // If we got here with Bluetooth ON, we have all we need
-      print('[PERM] iOS: Bluetooth is ON, navigating to home...');
       if (context.mounted) {
         context.go('/');
       }
@@ -61,11 +56,6 @@ class PermissionScreen extends StatelessWidget {
 
     final statuses = await permissions.request();
 
-    // Debug: log permission statuses
-    for (final entry in statuses.entries) {
-      print('[PERM] ${entry.key}: ${entry.value}');
-    }
-
     final allGranted = statuses.values.every(
       (status) => status.isGranted || status.isLimited,
     );
@@ -75,14 +65,10 @@ class PermissionScreen extends StatelessWidget {
       (status) => status.isPermanentlyDenied,
     );
 
-    print('[PERM] allGranted: $allGranted, permanentlyDenied: $hasPermanentlyDenied');
-
     if (allGranted && context.mounted) {
-      print('[PERM] Navigating to home...');
       context.go('/');
     } else if (hasPermanentlyDenied) {
       // Open app settings so user can enable permissions manually
-      print('[PERM] Opening app settings...');
       await openAppSettings();
     }
   }

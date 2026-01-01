@@ -113,7 +113,7 @@ abstract class AppLocalizations {
   /// No description provided for @appSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'Bluetooth Finder'**
+  /// **'Find AirPods & Headphones'**
   String get appSubtitle;
 
   /// No description provided for @scanner.

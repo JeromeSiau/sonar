@@ -44,18 +44,24 @@ class _HeartButtonState extends State<HeartButton>
 
     _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween(begin: 1.0, end: 0.8)
-            .chain(CurveTween(curve: Curves.easeOut)),
+        tween: Tween(
+          begin: 1.0,
+          end: 0.8,
+        ).chain(CurveTween(curve: Curves.easeOut)),
         weight: 30,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 0.8, end: 1.2)
-            .chain(CurveTween(curve: Curves.easeOut)),
+        tween: Tween(
+          begin: 0.8,
+          end: 1.2,
+        ).chain(CurveTween(curve: Curves.easeOut)),
         weight: 40,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 1.2, end: 1.0)
-            .chain(CurveTween(curve: Curves.elasticOut)),
+        tween: Tween(
+          begin: 1.2,
+          end: 1.0,
+        ).chain(CurveTween(curve: Curves.elasticOut)),
         weight: 30,
       ),
     ]).animate(_scaleController);
@@ -169,10 +175,7 @@ class _ParticlePainter extends CustomPainter {
 
   static const int _particleCount = 8;
 
-  _ParticlePainter({
-    required this.progress,
-    required this.color,
-  });
+  _ParticlePainter({required this.progress, required this.color});
 
   @override
   void paint(Canvas canvas, Size size) {

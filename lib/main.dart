@@ -7,6 +7,9 @@ import 'package:bluetooth_finder/features/favorites/data/models/favorite_device_
 import 'package:bluetooth_finder/features/favorites/data/repositories/favorites_repository.dart';
 import 'package:bluetooth_finder/core/services/review_service.dart';
 import 'package:bluetooth_finder/features/onboarding/data/repositories/onboarding_repository.dart';
+import 'package:bluetooth_finder/core/services/widget_service.dart';
+import 'package:bluetooth_finder/core/services/background_scan_service.dart';
+import 'package:bluetooth_finder/core/services/location_tracking_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +28,18 @@ Future<void> main() async {
   // Initialize Onboarding Repository
   await OnboardingRepository.instance.init();
 
+  // Initialize Widget Service for home screen widgets
+  await WidgetService.instance.init();
+  await WidgetService.instance.updateWidget();
+
+  // Initialize Background Scan Service for periodic location updates (Android only)
+  await BackgroundScanService.initialize();
+  await BackgroundScanService.registerPeriodicTask();
+
+  // Start location tracking for significant location changes (iOS + Android)
+  // This updates favorite locations when user moves significantly (~500m)
+  await LocationTrackingService.instance.startTracking();
+
   // Initialize RevenueCat (skip if no valid key)
   // TODO: Replace with your actual API keys
   try {
@@ -35,9 +50,5 @@ Future<void> main() async {
     // Ignore - RevenueCat not configured yet
   }
 
-  runApp(
-    const ProviderScope(
-      child: BluetoothFinderApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: BluetoothFinderApp()));
 }

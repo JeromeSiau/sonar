@@ -14,32 +14,41 @@ import 'package:bluetooth_finder/features/map/presentation/screens/device_map_sc
 
 /// Checks if Bluetooth is enabled and all required permissions are granted
 Future<bool> _arePermissionsGranted() async {
-  // First check if Bluetooth is enabled at system level
+  if (Platform.isIOS) {
+    // iOS: The system Bluetooth permission dialog appears when we first try to scan.
+    // Here we just check if Bluetooth is physically ON. If state is unknown/unavailable,
+    // let the user proceed - the permission dialog will appear when scanning.
+    try {
+      final btState = await FlutterBluePlus.adapterState.first.timeout(
+        const Duration(seconds: 2),
+        onTimeout: () => BluetoothAdapterState.unknown,
+      );
+
+      // Only block if Bluetooth is definitely OFF
+      if (btState == BluetoothAdapterState.off) {
+        return false;
+      }
+      // For .on, .unknown, .turningOn, .unavailable - let user proceed
+      return true;
+    } catch (e) {
+      // On error, let user proceed - they'll see appropriate message when scanning
+      return true;
+    }
+  }
+
+  // Android: Check adapter state first
   try {
-    // Wait for a definitive Bluetooth state (not unknown/turningOn/turningOff)
-    // with a timeout to avoid blocking forever
-    final btState = await FlutterBluePlus.adapterState
-        .where((state) =>
-            state == BluetoothAdapterState.on ||
-            state == BluetoothAdapterState.off)
-        .first
-        .timeout(const Duration(seconds: 3), onTimeout: () async {
-      // If timeout, check current state
-      return await FlutterBluePlus.adapterState.first;
-    });
-    if (btState != BluetoothAdapterState.on) {
+    final btState = await FlutterBluePlus.adapterState.first.timeout(
+      const Duration(seconds: 2),
+      onTimeout: () => BluetoothAdapterState.unknown,
+    );
+
+    // Only block if Bluetooth is definitely OFF
+    if (btState == BluetoothAdapterState.off) {
       return false;
     }
   } catch (e) {
-    // If we can't check, assume Bluetooth is off
-    return false;
-  }
-
-  // Platform-specific permissions
-  if (Platform.isIOS) {
-    // iOS 13+: Bluetooth permission is enough, location not required for BLE
-    // If Bluetooth is ON (checked above), we have all permissions we need
-    return true;
+    // On error, check permissions anyway
   }
 
   // Android 12+ needs bluetoothScan, bluetoothConnect, and location

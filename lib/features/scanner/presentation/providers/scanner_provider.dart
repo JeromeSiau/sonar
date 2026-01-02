@@ -28,7 +28,10 @@ final deviceRssiStreamProvider = StreamProvider.family<int, String>((ref, device
   return repo.getRssiStream(deviceId);
 });
 
-/// "My devices" = bonded OR favorite, sorted by signal strength
+/// "My devices" = bonded OR favorite, sorted by signal strength.
+/// 
+/// Performance: Uses cached favoriteIdsSetProvider for O(1) favorite lookups
+/// instead of creating a new Set on every rebuild.
 final myDevicesProvider = Provider<List<BluetoothDeviceModel>>((ref) {
   final devicesAsync = ref.watch(devicesStreamProvider);
   final favoriteIds = ref.watch(favoriteIdsSetProvider);
@@ -46,7 +49,10 @@ final myDevicesProvider = Provider<List<BluetoothDeviceModel>>((ref) {
   );
 });
 
-/// "Nearby devices" = NOT bonded AND NOT favorite, sorted by signal strength
+/// "Nearby devices" = NOT bonded AND NOT favorite, sorted by signal strength.
+/// 
+/// Performance: Uses cached favoriteIdsSetProvider for O(1) favorite lookups
+/// instead of creating a new Set on every rebuild.
 final nearbyDevicesProvider = Provider<List<BluetoothDeviceModel>>((ref) {
   final devicesAsync = ref.watch(devicesStreamProvider);
   final favoriteIds = ref.watch(favoriteIdsSetProvider);

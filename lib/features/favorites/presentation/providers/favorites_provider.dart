@@ -39,13 +39,22 @@ class FavoritesNotifier extends StateNotifier<List<FavoriteDeviceModel>> {
   }
 }
 
-/// Optimized cached set of favorite IDs for O(1) lookups
+/// Optimized cached set of favorite IDs for efficient O(1) lookups.
+/// 
+/// Performance optimization: This provider caches the Set of favorite device IDs
+/// so that multiple providers can perform O(1) contains() checks without 
+/// recreating the Set on every access. This is significantly more efficient than
+/// calling favorites.any() which is O(n) linear search.
+/// 
+/// Used by: myDevicesProvider, nearbyDevicesProvider, isFavoriteProvider
 final favoriteIdsSetProvider = Provider<Set<String>>((ref) {
   final favorites = ref.watch(favoritesProvider);
   return favorites.map((f) => f.id).toSet();
 });
 
-/// Efficient O(1) lookup for checking if a device is a favorite
+/// Efficient O(1) lookup for checking if a device is a favorite.
+/// 
+/// Performance: Uses Set.contains() which is O(1) instead of List.any() which is O(n).
 final isFavoriteProvider = Provider.family<bool, String>((ref, deviceId) {
   final favoriteIds = ref.watch(favoriteIdsSetProvider);
   return favoriteIds.contains(deviceId);

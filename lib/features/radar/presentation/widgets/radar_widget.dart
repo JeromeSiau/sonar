@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:bluetooth_finder/core/theme/app_colors.dart';
 import 'package:bluetooth_finder/core/utils/rssi_utils.dart';
 import 'package:bluetooth_finder/features/scanner/data/models/bluetooth_device_model.dart';
+import 'package:bluetooth_finder/l10n/app_localizations.dart';
 
 class RadarWidget extends StatefulWidget {
   final int rssi;
@@ -65,6 +66,7 @@ class _RadarWidgetState extends State<RadarWidget>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final signalColor = RssiUtils.getSignalColor(widget.rssi);
     final percentage = RssiUtils.getSignalPercentage(
       widget.rssi,
@@ -74,44 +76,52 @@ class _RadarWidgetState extends State<RadarWidget>
     final screenWidth = MediaQuery.of(context).size.width;
     final radarSize = math.min(screenWidth * 0.85, 320.0);
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        // === RADAR DISPLAY ===
-        RepaintBoundary(
-          child: SizedBox(
-            width: radarSize,
-            height: radarSize,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                // Background glow
-                _buildBackgroundGlow(radarSize, signalColor),
-                // Grid lines
-                CustomPaint(
-                  size: Size(radarSize, radarSize),
-                  painter: _RadarGridPainter(),
+    return Semantics(
+      // Accessibility: describe device, signal percentage, and distance estimate
+      label: '${widget.deviceName}, ${l10n.signal} $percentage%, $distance',
+      liveRegion: true,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // === RADAR DISPLAY ===
+          // ExcludeSemantics to avoid redundant descriptions of visual elements
+          ExcludeSemantics(
+            child: RepaintBoundary(
+              child: SizedBox(
+                width: radarSize,
+                height: radarSize,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Background glow
+                    _buildBackgroundGlow(radarSize, signalColor),
+                    // Grid lines
+                    CustomPaint(
+                      size: Size(radarSize, radarSize),
+                      painter: _RadarGridPainter(),
+                    ),
+                    // Concentric circles
+                    _buildConcentricCircles(radarSize, signalColor),
+                    // Expanding ping rings
+                    _buildPingRings(radarSize, signalColor),
+                    // Sweep beam
+                    _buildSweepBeam(radarSize, signalColor),
+                    // Center device indicator with percentage
+                    _buildCenterIndicator(signalColor, percentage, l10n),
+                    // CRT scanlines overlay
+                    _buildScanlines(radarSize),
+                  ],
                 ),
-                // Concentric circles
-                _buildConcentricCircles(radarSize, signalColor),
-                // Expanding ping rings
-                _buildPingRings(radarSize, signalColor),
-                // Sweep beam
-                _buildSweepBeam(radarSize, signalColor),
-                // Center device indicator with percentage
-                _buildCenterIndicator(signalColor, percentage),
-                // CRT scanlines overlay
-                _buildScanlines(radarSize),
-              ],
+              ),
             ),
           ),
-        ),
 
-        const SizedBox(height: 48),
+          const SizedBox(height: 48),
 
-        // === DEVICE INFO ===
-        _buildDeviceInfo(context, signalColor, distance, percentage),
-      ],
+          // === DEVICE INFO ===
+          _buildDeviceInfo(context, signalColor, distance, percentage),
+        ],
+      ),
     );
   }
 
@@ -205,37 +215,65 @@ class _RadarWidgetState extends State<RadarWidget>
     );
   }
 
-  Widget _buildCenterIndicator(Color color, int percentage) {
+  Widget _buildCenterIndicator(
+    Color color,
+    int percentage,
+    AppLocalizations l10n,
+  ) {
     return AnimatedBuilder(
       animation: _glowAnimation,
       builder: (context, child) {
         return Container(
-          width: 120,
-          height: 120,
+          width: 100,
+          height: 100,
           decoration: BoxDecoration(
-            color: Colors.white,
+            gradient: const LinearGradient(
+              begin: Alignment(-0.5, -0.5),
+              end: Alignment(0.5, 0.5),
+              colors: [Color(0xFFFFFFFF), Color(0xFFF0F0F0)],
+            ),
             shape: BoxShape.circle,
             boxShadow: [
+              // Outer glow based on signal color
               BoxShadow(
-                color: color.withValues(alpha: 0.4 * _glowAnimation.value),
-                blurRadius: 30 * _glowAnimation.value,
+                color: color.withValues(alpha: 0.5 * _glowAnimation.value),
+                blurRadius: 40 * _glowAnimation.value,
                 spreadRadius: 5 * _glowAnimation.value,
               ),
+              // Subtle shadow for depth
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
+                color: Colors.black.withValues(alpha: 0.15),
                 blurRadius: 20,
                 spreadRadius: 2,
               ),
+              // Inner highlight (inset effect simulated with positioned gradient)
             ],
           ),
           child: Center(
-            child: Text(
-              '$percentage%',
-              style: TextStyle(
-                fontSize: 36,
-                fontWeight: FontWeight.w600,
-                color: color,
-              ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '$percentage%',
+                  style: TextStyle(
+                    fontFamily: 'SF Mono',
+                    fontSize: 32,
+                    fontWeight: FontWeight.w700,
+                    color: color,
+                    height: 1,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  l10n.signal,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF666666),
+                    letterSpacing: 1,
+                  ),
+                ),
+              ],
             ),
           ),
         );

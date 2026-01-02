@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bluetooth_finder/core/theme/app_colors.dart';
 import 'package:bluetooth_finder/core/services/review_service.dart';
+import 'package:bluetooth_finder/core/utils/rssi_utils.dart';
 import 'package:bluetooth_finder/features/scanner/presentation/providers/scanner_provider.dart';
 import 'package:bluetooth_finder/features/scanner/data/models/bluetooth_device_model.dart';
 import 'package:bluetooth_finder/features/favorites/presentation/providers/favorites_provider.dart';
@@ -26,6 +28,9 @@ class _RadarScreenState extends ConsumerState<RadarScreen> {
   bool _isSearching = true;
   bool _deviceNotFound = false;
   Timer? _searchTimeout;
+  Timer? _hapticTimer;
+  int _currentRssi = -100;
+  SignalStrength? _lastSignalStrength;
 
   @override
   void initState() {
@@ -39,7 +44,52 @@ class _RadarScreenState extends ConsumerState<RadarScreen> {
   @override
   void dispose() {
     _searchTimeout?.cancel();
+    _hapticTimer?.cancel();
     super.dispose();
+  }
+
+  /// Updates haptic feedback based on RSSI signal strength.
+  /// Stronger signal = faster/more intense vibrations.
+  void _updateHapticFeedback(int rssi) {
+    _currentRssi = rssi;
+    final signalStrength = RssiUtils.getSignalStrength(rssi);
+
+    // Only restart timer if signal strength category changed
+    if (signalStrength == _lastSignalStrength) return;
+    _lastSignalStrength = signalStrength;
+
+    _hapticTimer?.cancel();
+
+    // Set haptic interval based on signal strength
+    final interval = switch (signalStrength) {
+      SignalStrength.strong => const Duration(milliseconds: 200), // Fast pulse
+      SignalStrength.medium => const Duration(
+        milliseconds: 500,
+      ), // Medium pulse
+      SignalStrength.weak => const Duration(milliseconds: 1000), // Slow pulse
+    };
+
+    // Start periodic haptic feedback
+    _hapticTimer = Timer.periodic(interval, (_) {
+      if (!mounted || _showCelebration) return;
+
+      // Use different haptic intensity based on signal
+      switch (RssiUtils.getSignalStrength(_currentRssi)) {
+        case SignalStrength.strong:
+          HapticFeedback.heavyImpact();
+        case SignalStrength.medium:
+          HapticFeedback.mediumImpact();
+        case SignalStrength.weak:
+          HapticFeedback.lightImpact();
+      }
+    });
+  }
+
+  /// Stops haptic feedback.
+  void _stopHapticFeedback() {
+    _hapticTimer?.cancel();
+    _hapticTimer = null;
+    _lastSignalStrength = null;
   }
 
   void _startScanAndSearch() {
@@ -63,6 +113,9 @@ class _RadarScreenState extends ConsumerState<RadarScreen> {
   }
 
   void _onFoundIt() {
+    _stopHapticFeedback();
+    // Final strong haptic to confirm "found"
+    HapticFeedback.heavyImpact();
     setState(() {
       _showCelebration = true;
     });
@@ -89,7 +142,8 @@ class _RadarScreenState extends ConsumerState<RadarScreen> {
     // Try to find device in current scan results (case-insensitive comparison)
     final deviceIdUpper = widget.deviceId.toUpperCase();
     final scannedDevice = devicesAsync.whenOrNull(
-      data: (devices) => devices.where((d) => d.id.toUpperCase() == deviceIdUpper).firstOrNull,
+      data: (devices) =>
+          devices.where((d) => d.id.toUpperCase() == deviceIdUpper).firstOrNull,
     );
 
     // Use scanned device, selected device, or create from favorite
@@ -128,13 +182,15 @@ class _RadarScreenState extends ConsumerState<RadarScreen> {
 
     // Show searching screen while waiting
     if (_isSearching && scannedDevice == null) {
-      return _buildSearchingScreen(context, l10n, device?.name ?? favorite?.customName);
+      return _buildSearchingScreen(
+        context,
+        l10n,
+        device?.name ?? favorite?.customName,
+      );
     }
 
     if (device == null) {
-      return Scaffold(
-        body: Center(child: Text(l10n.deviceNotFound)),
-      );
+      return Scaffold(body: Center(child: Text(l10n.deviceNotFound)));
     }
 
     // Use real-time RSSI for faster radar updates (use uppercase ID for consistency)
@@ -153,7 +209,9 @@ class _RadarScreenState extends ConsumerState<RadarScreen> {
                     isFavorite: isFavorite,
                     size: 28,
                     onPressed: () {
-                      ref.read(favoritesProvider.notifier).toggleFavorite(currentDevice);
+                      ref
+                          .read(favoritesProvider.notifier)
+                          .toggleFavorite(currentDevice);
                     },
                   ),
                 ),
@@ -168,32 +226,44 @@ class _RadarScreenState extends ConsumerState<RadarScreen> {
               children: [
                 // Instruction text
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 16,
+                  ),
                   child: Text(
                     l10n.radarInstruction,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
+                      color: AppColors.textSecondary,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ),
 
-                // Radar widget
+                // Radar widget with haptic feedback
                 Expanded(
                   child: rssiAsync.when(
-                    data: (rssi) => RadarWidget(
-                      rssi: rssi,
-                      deviceName: currentDevice.name,
-                      deviceType: currentDevice.type,
-                    ),
+                    data: (rssi) {
+                      // Trigger haptic feedback based on RSSI
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (mounted && !_showCelebration) {
+                          _updateHapticFeedback(rssi);
+                        }
+                      });
+                      return RadarWidget(
+                        rssi: rssi,
+                        deviceName: currentDevice.name,
+                        deviceType: currentDevice.type,
+                      );
+                    },
                     loading: () => RadarWidget(
                       rssi: currentDevice.rssi,
                       deviceName: currentDevice.name,
                       deviceType: currentDevice.type,
                     ),
-                    error: (_, __) => Center(
-                      child: Text(l10n.signalLost),
-                    ),
+                    error: (_, __) {
+                      _stopHapticFeedback();
+                      return Center(child: Text(l10n.signalLost));
+                    },
                   ),
                 ),
 
@@ -255,11 +325,13 @@ class _RadarScreenState extends ConsumerState<RadarScreen> {
     );
   }
 
-  Widget _buildSearchingScreen(BuildContext context, AppLocalizations l10n, String? deviceName) {
+  Widget _buildSearchingScreen(
+    BuildContext context,
+    AppLocalizations l10n,
+    String? deviceName,
+  ) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(deviceName ?? ''),
-      ),
+      appBar: AppBar(title: Text(deviceName ?? '')),
       body: Container(
         decoration: BoxDecoration(gradient: AppColors.backgroundGradient),
         child: Center(
@@ -283,8 +355,8 @@ class _RadarScreenState extends ConsumerState<RadarScreen> {
               Text(
                 deviceName ?? '',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
+                  color: AppColors.textSecondary,
+                ),
               ),
             ],
           ),
@@ -293,11 +365,13 @@ class _RadarScreenState extends ConsumerState<RadarScreen> {
     );
   }
 
-  Widget _buildNotFoundScreen(BuildContext context, AppLocalizations l10n, String? deviceName) {
+  Widget _buildNotFoundScreen(
+    BuildContext context,
+    AppLocalizations l10n,
+    String? deviceName,
+  ) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(deviceName ?? ''),
-      ),
+      appBar: AppBar(title: Text(deviceName ?? '')),
       body: Container(
         decoration: BoxDecoration(gradient: AppColors.backgroundGradient),
         child: Center(
@@ -321,8 +395,8 @@ class _RadarScreenState extends ConsumerState<RadarScreen> {
                 Text(
                   l10n.deviceNotInRangeDescription,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
+                    color: AppColors.textSecondary,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 32),

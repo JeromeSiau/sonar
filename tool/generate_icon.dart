@@ -3,92 +3,143 @@ import 'dart:math' as math;
 import 'package:image/image.dart' as img;
 
 void main() {
-  print('Generating SONAR icon (light background)...');
+  print('Generating SONAR Neon icon...');
 
   const size = 1024;
   const center = size ~/ 2;
 
-  // Create image with light mint background
+  const bgColor = 0xFF000000;
+  const neonCyan = 0xFF00FFFF;
+
   final image = img.Image(width: size, height: size);
+  img.fill(image, color: img.ColorRgba8(0x00, 0x00, 0x00, 0xFF));
 
-  // Colors - bold and vibrant
-  const bgColor = 0xFFFFFFFF;    // Pure white background
-  const primary = 0xFF00A896;    // Vibrant teal
-  const primaryDark = 0xFF007A6E; // Darker teal for depth
+  _drawGlow(image, center, center, (size * 0.5).toInt(), neonCyan, 0.15);
+  _drawGlow(image, center, center, (size * 0.35).toInt(), neonCyan, 0.1);
 
-  // Fill with white background
-  img.fill(image, color: img.ColorRgba8(0xFF, 0xFF, 0xFF, 0xFF));
+  _drawCircle(
+    image,
+    center,
+    center,
+    (size * 0.40).toInt(),
+    neonCyan,
+    0.4,
+    (size * 0.015).toInt(),
+  );
+  _drawCircle(
+    image,
+    center,
+    center,
+    (size * 0.28).toInt(),
+    neonCyan,
+    0.6,
+    (size * 0.02).toInt(),
+  );
+  _drawCircle(
+    image,
+    center,
+    center,
+    (size * 0.16).toInt(),
+    neonCyan,
+    0.9,
+    (size * 0.025).toInt(),
+  );
 
-  // Draw concentric circles - BOLD
-  final scale = 0.62;
-  final scaledCenter = center;
+  _drawGlow(image, center, center, (size * 0.12).toInt(), neonCyan, 0.4);
+  _fillCircle(image, center, center, (size * 0.07).toInt(), neonCyan, 1.0);
 
-  // Outer ring - visible
-  _drawCircle(image, scaledCenter, scaledCenter, (size * 0.42 * scale).toInt(), primary, 0.5, (size * 0.035 * scale).toInt());
-
-  // Middle ring - more visible
-  _drawCircle(image, scaledCenter, scaledCenter, (size * 0.28 * scale).toInt(), primary, 0.75, (size * 0.038 * scale).toInt());
-
-  // Inner ring - strong
-  _drawCircle(image, scaledCenter, scaledCenter, (size * 0.15 * scale).toInt(), primaryDark, 1.0, (size * 0.042 * scale).toInt());
-
-  // Center filled circle - bold
-  _fillCircle(image, scaledCenter, scaledCenter, (size * 0.095 * scale).toInt(), primaryDark, 1.0);
-
-  // Inner white dot
-  _fillCircle(image, scaledCenter, scaledCenter, (size * 0.035 * scale).toInt(), bgColor, 1.0);
-
-  // Save icon
   final iconFile = File('assets/icon/icon.png');
   iconFile.writeAsBytesSync(img.encodePng(image));
   print('✓ Icon saved to assets/icon/icon.png');
 
-  // Generate FOREGROUND for adaptive icons (transparent background)
-  // Android adaptive icons: 108dp canvas, 66dp safe zone = 61% scale
-  // Content must stay within safe zone to avoid being clipped by mask
   print('Generating adaptive icon foreground...');
   final foreground = img.Image(width: size, height: size);
-  img.fill(foreground, color: img.ColorRgba8(0, 0, 0, 0)); // Transparent
+  img.fill(foreground, color: img.ColorRgba8(0, 0, 0, 0));
 
-  // Fill 75-80% of the icon
-  final fgScale = 0.78;
+  final fgScale = 0.75;
 
-  // Outer ring - fills most of the safe zone
-  _drawCircle(foreground, center, center, (size * 0.42 * fgScale).toInt(), primary, 0.55, (size * 0.035 * fgScale).toInt());
-
-  // Middle ring
-  _drawCircle(foreground, center, center, (size * 0.28 * fgScale).toInt(), primary, 0.75, (size * 0.038 * fgScale).toInt());
-
-  // Inner ring
-  _drawCircle(foreground, center, center, (size * 0.15 * fgScale).toInt(), primaryDark, 1.0, (size * 0.045 * fgScale).toInt());
-
-  // Center filled circle
-  _fillCircle(foreground, center, center, (size * 0.095 * fgScale).toInt(), primaryDark, 1.0);
-
-  // Inner white dot
-  _fillCircle(foreground, center, center, (size * 0.035 * fgScale).toInt(), 0xFFFFFFFF, 1.0);
+  _drawCircle(
+    foreground,
+    center,
+    center,
+    (size * 0.40 * fgScale).toInt(),
+    neonCyan,
+    0.4,
+    (size * 0.015 * fgScale).toInt(),
+  );
+  _drawCircle(
+    foreground,
+    center,
+    center,
+    (size * 0.28 * fgScale).toInt(),
+    neonCyan,
+    0.6,
+    (size * 0.02 * fgScale).toInt(),
+  );
+  _drawCircle(
+    foreground,
+    center,
+    center,
+    (size * 0.16 * fgScale).toInt(),
+    neonCyan,
+    0.9,
+    (size * 0.025 * fgScale).toInt(),
+  );
+  _fillCircle(
+    foreground,
+    center,
+    center,
+    (size * 0.07 * fgScale).toInt(),
+    neonCyan,
+    1.0,
+  );
 
   final fgFile = File('assets/icon/icon-foreground.png');
   fgFile.writeAsBytesSync(img.encodePng(foreground));
   print('✓ Foreground saved to assets/icon/icon-foreground.png');
 
-  // Generate splash (transparent background)
   print('Generating splash...');
   final splash = img.Image(width: 1152, height: 1152);
   final splashCenter = 576;
   final splashScale = 0.45;
-  const splashPrimary = 0xFF5ECFCF;
 
-  // Transparent background
   img.fill(splash, color: img.ColorRgba8(0, 0, 0, 0));
 
-  // Draw rings
-  _drawCircle(splash, splashCenter, splashCenter, (1152 * 0.42 * splashScale).toInt(), splashPrimary, 0.35, (1152 * 0.022 * splashScale).toInt());
-  _drawCircle(splash, splashCenter, splashCenter, (1152 * 0.29 * splashScale).toInt(), splashPrimary, 0.55, (1152 * 0.022 * splashScale).toInt());
-  _drawCircle(splash, splashCenter, splashCenter, (1152 * 0.16 * splashScale).toInt(), splashPrimary, 0.85, (1152 * 0.025 * splashScale).toInt());
-
-  // Center dot
-  _fillCircle(splash, splashCenter, splashCenter, (1152 * 0.07 * splashScale).toInt(), splashPrimary, 1.0);
+  _drawCircle(
+    splash,
+    splashCenter,
+    splashCenter,
+    (1152 * 0.40 * splashScale).toInt(),
+    neonCyan,
+    0.4,
+    (1152 * 0.018 * splashScale).toInt(),
+  );
+  _drawCircle(
+    splash,
+    splashCenter,
+    splashCenter,
+    (1152 * 0.28 * splashScale).toInt(),
+    neonCyan,
+    0.6,
+    (1152 * 0.02 * splashScale).toInt(),
+  );
+  _drawCircle(
+    splash,
+    splashCenter,
+    splashCenter,
+    (1152 * 0.16 * splashScale).toInt(),
+    neonCyan,
+    0.9,
+    (1152 * 0.022 * splashScale).toInt(),
+  );
+  _fillCircle(
+    splash,
+    splashCenter,
+    splashCenter,
+    (1152 * 0.07 * splashScale).toInt(),
+    neonCyan,
+    1.0,
+  );
 
   final splashFile = File('assets/icon/splash.png');
   splashFile.writeAsBytesSync(img.encodePng(splash));
@@ -99,7 +150,45 @@ void main() {
   print('  dart run flutter_native_splash:create');
 }
 
-void _drawCircle(img.Image image, int cx, int cy, int radius, int color, double opacity, int thickness) {
+void _drawGlow(
+  img.Image image,
+  int cx,
+  int cy,
+  int radius,
+  int color,
+  double maxOpacity,
+) {
+  final r = (color >> 16) & 0xFF;
+  final g = (color >> 8) & 0xFF;
+  final b = color & 0xFF;
+
+  for (int y = cy - radius; y <= cy + radius; y++) {
+    for (int x = cx - radius; x <= cx + radius; x++) {
+      final dx = x - cx;
+      final dy = y - cy;
+      final dist = math.sqrt(dx * dx + dy * dy);
+      if (dist <= radius &&
+          x >= 0 &&
+          x < image.width &&
+          y >= 0 &&
+          y < image.height) {
+        final opacity = maxOpacity * (1 - dist / radius);
+        final a = (opacity * 255).toInt();
+        _blendPixel(image, x, y, r, g, b, a);
+      }
+    }
+  }
+}
+
+void _drawCircle(
+  img.Image image,
+  int cx,
+  int cy,
+  int radius,
+  int color,
+  double opacity,
+  int thickness,
+) {
   final r = (color >> 16) & 0xFF;
   final g = (color >> 8) & 0xFF;
   final b = color & 0xFF;
@@ -117,7 +206,14 @@ void _drawCircle(img.Image image, int cx, int cy, int radius, int color, double 
   }
 }
 
-void _fillCircle(img.Image image, int cx, int cy, int radius, int color, double opacity) {
+void _fillCircle(
+  img.Image image,
+  int cx,
+  int cy,
+  int radius,
+  int color,
+  double opacity,
+) {
   final r = (color >> 16) & 0xFF;
   final g = (color >> 8) & 0xFF;
   final b = color & 0xFF;

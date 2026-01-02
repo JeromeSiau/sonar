@@ -1,368 +1,1125 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SONAR - Logo Proposals</title>
+  <title>Sonar - App Icon Proposals v2</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap');
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
     body {
-      background: linear-gradient(180deg, #081018 0%, #040A12 50%, #020608 100%);
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #0a0a0a;
+      color: #fff;
       min-height: 100vh;
-      font-family: 'Inter', sans-serif;
-      color: #E8EEF4;
       padding: 40px 20px;
     }
-
+    
     .container {
       max-width: 1200px;
       margin: 0 auto;
     }
-
+    
     header {
       text-align: center;
       margin-bottom: 60px;
     }
-
+    
     h1 {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 32px;
-      letter-spacing: 8px;
-      color: #5ECFCF;
-      margin-bottom: 8px;
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #5ECFCF, #7EDDDD);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-
-    .subtitle {
-      color: #8A9DB5;
-      font-size: 14px;
-      letter-spacing: 2px;
+    
+    header p {
+      color: #888;
+      font-size: 1.1rem;
     }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 32px;
-      margin-bottom: 60px;
-    }
-
-    .card {
-      background: rgba(12, 24, 36, 0.6);
-      border: 1px solid rgba(94, 207, 207, 0.2);
+    
+    .current-section {
+      background: #1a1a1a;
       border-radius: 24px;
       padding: 40px;
-      text-align: center;
-      backdrop-filter: blur(10px);
-      transition: all 0.3s ease;
+      margin-bottom: 60px;
+      border: 1px solid #333;
     }
-
-    .card:hover {
-      border-color: rgba(94, 207, 207, 0.5);
-      transform: translateY(-4px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-    }
-
-    .logo-container {
-      width: 160px;
-      height: 160px;
-      margin: 0 auto 24px;
+    
+    .current-section h2 {
+      font-size: 1.2rem;
+      color: #FF6B6B;
+      margin-bottom: 24px;
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 8px;
     }
-
-    .logo-name {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 3px;
-      color: #5ECFCF;
-      margin-bottom: 8px;
-    }
-
-    .logo-desc {
-      font-size: 13px;
-      color: #8A9DB5;
-      line-height: 1.5;
-    }
-
-    /* Animations */
-    @keyframes pulse {
-      0%, 100% { opacity: 0.4; transform: scale(1); }
-      50% { opacity: 0.8; transform: scale(1.02); }
-    }
-
-    @keyframes sweep {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    @keyframes ping {
-      0% { transform: scale(0.5); opacity: 0.8; }
-      100% { transform: scale(1.5); opacity: 0; }
-    }
-
-    .animate-sweep {
-      animation: sweep 3s linear infinite;
-      transform-origin: center;
-    }
-
-    .animate-pulse {
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    /* Dark/Light preview */
-    .preview-section {
-      margin-top: 60px;
-    }
-
-    .preview-section h2 {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 16px;
-      letter-spacing: 4px;
-      color: #556677;
-      margin-bottom: 24px;
-      text-align: center;
-    }
-
-    .preview-row {
+    
+    .current-icons {
       display: flex;
-      gap: 24px;
-      justify-content: center;
+      gap: 30px;
+      align-items: center;
       flex-wrap: wrap;
     }
-
-    .preview-box {
-      width: 200px;
-      height: 200px;
-      border-radius: 20px;
+    
+    .current-icon-item {
+      text-align: center;
+    }
+    
+    .current-icon-item span {
+      display: block;
+      margin-top: 8px;
+      font-size: 12px;
+      color: #666;
+    }
+    
+    .issues {
+      background: rgba(255, 107, 107, 0.1);
+      border: 1px solid rgba(255, 107, 107, 0.3);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-top: 24px;
+    }
+    
+    .issues h3 {
+      font-size: 14px;
+      color: #FF6B6B;
+      margin-bottom: 12px;
+    }
+    
+    .issues ul {
+      list-style: none;
+      font-size: 13px;
+      color: #ccc;
+    }
+    
+    .issues li {
+      margin-bottom: 6px;
+      padding-left: 20px;
+      position: relative;
+    }
+    
+    .issues li::before {
+      content: '✗';
+      position: absolute;
+      left: 0;
+      color: #FF6B6B;
+    }
+    
+    .proposals-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 30px;
+    }
+    
+    .proposal-card {
+      background: #141414;
+      border-radius: 24px;
+      padding: 30px;
+      border: 1px solid #2a2a2a;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    
+    .proposal-card:hover {
+      border-color: #5ECFCF;
+      transform: translateY(-4px);
+    }
+    
+    .proposal-card.recommended {
+      border-color: #6EE7A8;
+      position: relative;
+    }
+    
+    .proposal-card.recommended::before {
+      content: 'RECOMMENDED';
+      position: absolute;
+      top: -12px;
+      left: 24px;
+      background: #6EE7A8;
+      color: #000;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 12px;
+      letter-spacing: 1px;
+    }
+    
+    .proposal-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    
+    .proposal-number {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #5ECFCF, #3BA8A8);
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .preview-box.dark {
-      background: #040A12;
-      border: 1px solid #1E3448;
-    }
-
-    .preview-box.light {
-      background: #F5F7FA;
-      border: 1px solid #E0E4E8;
-    }
-
-    .preview-box .wordmark {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 18px;
       font-weight: 700;
-      letter-spacing: 6px;
+      font-size: 14px;
+      color: #000;
     }
-
-    .preview-box.dark .wordmark {
-      color: #5ECFCF;
+    
+    .proposal-header h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
     }
-
-    .preview-box.light .wordmark {
-      color: #2A8A8A;
+    
+    .proposal-desc {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+    
+    .icon-preview {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+    
+    .icon-size {
+      text-align: center;
+    }
+    
+    .icon-size span {
+      display: block;
+      margin-top: 8px;
+      font-size: 11px;
+      color: #555;
+    }
+    
+    .pros {
+      background: rgba(110, 231, 168, 0.1);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    
+    .pros h4 {
+      font-size: 12px;
+      color: #6EE7A8;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .pros ul {
+      list-style: none;
+      font-size: 12px;
+      color: #aaa;
+    }
+    
+    .pros li {
+      margin-bottom: 4px;
+      padding-left: 16px;
+      position: relative;
+    }
+    
+    .pros li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #6EE7A8;
+    }
+    
+    .home-screen-sim {
+      background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+      border-radius: 40px;
+      padding: 60px 20px 40px;
+      margin: 60px auto;
+      max-width: 380px;
+      position: relative;
+    }
+    
+    .home-screen-sim::before {
+      content: '';
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 24px;
+      background: #000;
+      border-radius: 20px;
+    }
+    
+    .home-screen-sim h3 {
+      text-align: center;
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 20px;
+    }
+    
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      padding: 0 10px;
+    }
+    
+    .app-icon {
+      text-align: center;
+    }
+    
+    .app-icon-img {
+      width: 60px;
+      height: 60px;
+      border-radius: 14px;
+      margin: 0 auto 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+    
+    .app-icon span {
+      font-size: 10px;
+      color: #fff;
+      opacity: 0.8;
+    }
+    
+    .splash-section {
+      margin-top: 60px;
+      padding: 40px;
+      background: #141414;
+      border-radius: 24px;
+      border: 1px solid #2a2a2a;
+    }
+    
+    .splash-section h2 {
+      font-size: 1.5rem;
+      margin-bottom: 24px;
+    }
+    
+    .splash-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+    }
+    
+    .splash-item {
+      text-align: center;
+    }
+    
+    .splash-preview {
+      width: 180px;
+      height: 320px;
+      border-radius: 24px;
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #333;
+    }
+    
+    .splash-item h4 {
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    
+    .splash-item p {
+      font-size: 12px;
+      color: #666;
+    }
+    
+    canvas {
+      display: block;
+    }
+    
+    .download-btn {
+      background: #5ECFCF;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 12px;
+      font-size: 13px;
+    }
+    
+    .download-btn:hover {
+      background: #7EDDDD;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>SONAR</h1>
-      <p class="subtitle">LOGO PROPOSALS • BLUETOOTH FINDER</p>
+      <h1>Sonar App Icon Proposals v2</h1>
+      <p>New icon designs to stand out in the App Store</p>
     </header>
-
-    <div class="grid">
-
-      <!-- PROPOSAL 1: Concentric Waves -->
-      <div class="card">
-        <div class="logo-container">
-          <svg width="140" height="140" viewBox="0 0 140 140" fill="none">
-            <!-- Outer rings -->
-            <circle cx="70" cy="70" r="65" stroke="#5ECFCF" stroke-width="1.5" stroke-opacity="0.2"/>
-            <circle cx="70" cy="70" r="50" stroke="#5ECFCF" stroke-width="1.5" stroke-opacity="0.3"/>
-            <circle cx="70" cy="70" r="35" stroke="#5ECFCF" stroke-width="1.5" stroke-opacity="0.5"/>
-            <!-- Center dot -->
-            <circle cx="70" cy="70" r="12" fill="#5ECFCF"/>
-            <circle cx="70" cy="70" r="5" fill="#040A12"/>
-            <!-- Glow -->
-            <circle cx="70" cy="70" r="12" fill="#5ECFCF" filter="url(#glow1)"/>
-            <defs>
-              <filter id="glow1" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="8" result="blur"/>
-                <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-              </filter>
-            </defs>
-          </svg>
+    
+    <section class="current-section">
+      <h2>Current Icon - Why It Doesn't Work</h2>
+      <div class="current-icons">
+        <div class="current-icon-item">
+          <canvas id="currentIcon" width="120" height="120" style="border-radius: 26px;"></canvas>
+          <span>Current Icon</span>
         </div>
-        <div class="logo-name">OPTION 1</div>
-        <p class="logo-desc">Ondes concentriques<br/>Minimaliste & épuré</p>
-      </div>
-
-      <!-- PROPOSAL 2: Radar Sweep -->
-      <div class="card">
-        <div class="logo-container">
-          <svg width="140" height="140" viewBox="0 0 140 140" fill="none">
-            <!-- Grid lines -->
-            <line x1="70" y1="10" x2="70" y2="130" stroke="#1E3A5F" stroke-width="0.5"/>
-            <line x1="10" y1="70" x2="130" y2="70" stroke="#1E3A5F" stroke-width="0.5"/>
-            <!-- Circles -->
-            <circle cx="70" cy="70" r="60" stroke="#5ECFCF" stroke-width="1.5" stroke-opacity="0.25"/>
-            <circle cx="70" cy="70" r="40" stroke="#5ECFCF" stroke-width="1.5" stroke-opacity="0.35"/>
-            <circle cx="70" cy="70" r="20" stroke="#5ECFCF" stroke-width="1.5" stroke-opacity="0.5"/>
-            <!-- Sweep beam -->
-            <path d="M70 70 L130 70 A60 60 0 0 1 100 128 Z" fill="url(#sweepGrad)" class="animate-sweep"/>
-            <!-- Center -->
-            <circle cx="70" cy="70" r="8" fill="#5ECFCF"/>
-            <circle cx="70" cy="70" r="3" fill="#040A12"/>
-            <defs>
-              <linearGradient id="sweepGrad" x1="70" y1="70" x2="130" y2="70">
-                <stop offset="0%" stop-color="#5ECFCF" stop-opacity="0.6"/>
-                <stop offset="100%" stop-color="#5ECFCF" stop-opacity="0"/>
-              </linearGradient>
-            </defs>
-          </svg>
+        <div class="current-icon-item">
+          <canvas id="currentIconSmall" width="60" height="60" style="border-radius: 14px;"></canvas>
+          <span>Home Screen Size</span>
         </div>
-        <div class="logo-name">OPTION 2</div>
-        <p class="logo-desc">Radar avec balayage<br/>Dynamique & tech</p>
       </div>
-
-      <!-- PROPOSAL 3: Abstract S -->
-      <div class="card">
-        <div class="logo-container">
-          <svg width="140" height="140" viewBox="0 0 140 140" fill="none">
-            <!-- Abstract S made of arcs -->
-            <path d="M95 35 A30 30 0 1 0 45 35" stroke="#5ECFCF" stroke-width="3" stroke-linecap="round" fill="none" stroke-opacity="0.3"/>
-            <path d="M95 55 A20 20 0 1 0 55 55" stroke="#5ECFCF" stroke-width="3" stroke-linecap="round" fill="none" stroke-opacity="0.5"/>
-            <path d="M45 105 A30 30 0 1 0 95 105" stroke="#5ECFCF" stroke-width="3" stroke-linecap="round" fill="none" stroke-opacity="0.3"/>
-            <path d="M45 85 A20 20 0 1 0 85 85" stroke="#5ECFCF" stroke-width="3" stroke-linecap="round" fill="none" stroke-opacity="0.5"/>
-            <!-- Center connection -->
-            <circle cx="70" cy="70" r="10" fill="#5ECFCF"/>
-            <circle cx="70" cy="70" r="4" fill="#040A12"/>
-          </svg>
+      <div class="issues">
+        <h3>Problems</h3>
+        <ul>
+          <li>Light background blends with iOS wallpapers</li>
+          <li>Flat monochrome design lacks depth</li>
+          <li>Generic concentric circles - every radar app uses this</li>
+          <li>Low contrast - hard to spot quickly</li>
+          <li>No emotional impact or brand personality</li>
+        </ul>
+      </div>
+    </section>
+    
+    <div class="proposals-grid">
+      
+      <div class="proposal-card recommended">
+        <div class="proposal-header">
+          <div class="proposal-number">1</div>
+          <h3>Deep Ocean Gradient</h3>
         </div>
-        <div class="logo-name">OPTION 3</div>
-        <p class="logo-desc">"S" abstrait en ondes<br/>Unique & mémorable</p>
-      </div>
-
-      <!-- PROPOSAL 4: Bluetooth + Sonar -->
-      <div class="card">
-        <div class="logo-container">
-          <svg width="140" height="140" viewBox="0 0 140 140" fill="none">
-            <!-- Sonar rings -->
-            <circle cx="70" cy="70" r="60" stroke="#5ECFCF" stroke-width="1" stroke-opacity="0.15"/>
-            <circle cx="70" cy="70" r="45" stroke="#5ECFCF" stroke-width="1" stroke-opacity="0.25"/>
-            <circle cx="70" cy="70" r="30" stroke="#5ECFCF" stroke-width="1" stroke-opacity="0.35"/>
-            <!-- Stylized Bluetooth B -->
-            <path d="M70 40 L70 100 M70 40 L90 55 L70 70 L90 85 L70 100" stroke="#5ECFCF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M70 70 L50 55 M70 70 L50 85" stroke="#5ECFCF" stroke-width="4" stroke-linecap="round"/>
-          </svg>
+        <p class="proposal-desc">
+          Dark gradient background matching the app's submarine theme. 
+          Bright teal radar with glow effect. Premium feel that stands out on any wallpaper.
+        </p>
+        <div class="icon-preview">
+          <div class="icon-size">
+            <canvas id="icon1Large" width="120" height="120" style="border-radius: 26px;"></canvas>
+            <span>1024px</span>
+          </div>
+          <div class="icon-size">
+            <canvas id="icon1Small" width="60" height="60" style="border-radius: 14px;"></canvas>
+            <span>Home Screen</span>
+          </div>
         </div>
-        <div class="logo-name">OPTION 4</div>
-        <p class="logo-desc">Bluetooth + Sonar<br/>Explicite & fonctionnel</p>
-      </div>
-
-      <!-- PROPOSAL 5: Ping Dot -->
-      <div class="card">
-        <div class="logo-container">
-          <svg width="140" height="140" viewBox="0 0 140 140" fill="none">
-            <!-- Ping waves emanating -->
-            <circle cx="70" cy="70" r="55" stroke="#5ECFCF" stroke-width="2" stroke-opacity="0.15" stroke-dasharray="4 6"/>
-            <circle cx="70" cy="70" r="40" stroke="#5ECFCF" stroke-width="2" stroke-opacity="0.3"/>
-            <circle cx="70" cy="70" r="25" stroke="#5ECFCF" stroke-width="2.5" stroke-opacity="0.5"/>
-            <!-- Main dot with glow -->
-            <circle cx="70" cy="70" r="14" fill="#5ECFCF"/>
-            <circle cx="70" cy="70" r="6" fill="#040A12"/>
-            <!-- Small detection blip -->
-            <circle cx="98" cy="50" r="4" fill="#6EE7A8"/>
-          </svg>
+        <div class="pros">
+          <h4>Why It Works</h4>
+          <ul>
+            <li>Dark background = pops on any wallpaper</li>
+            <li>Matches app's internal submarine theme</li>
+            <li>Glowing effect adds premium feel</li>
+            <li>High contrast, easy to spot</li>
+          </ul>
         </div>
-        <div class="logo-name">OPTION 5</div>
-        <p class="logo-desc">Point de détection<br/>Simple & efficace</p>
+        <button class="download-btn" onclick="downloadIcon('icon1Large', 'sonar-icon-ocean.png')">Download PNG</button>
       </div>
-
-      <!-- PROPOSAL 6: Geometric Sonar -->
-      <div class="card">
-        <div class="logo-container">
-          <svg width="140" height="140" viewBox="0 0 140 140" fill="none">
-            <!-- Hexagonal frame -->
-            <polygon points="70,15 115,42.5 115,97.5 70,125 25,97.5 25,42.5" stroke="#5ECFCF" stroke-width="2" fill="none" stroke-opacity="0.3"/>
-            <!-- Inner elements -->
-            <circle cx="70" cy="70" r="35" stroke="#5ECFCF" stroke-width="1.5" stroke-opacity="0.4"/>
-            <circle cx="70" cy="70" r="20" stroke="#5ECFCF" stroke-width="1.5" stroke-opacity="0.6"/>
-            <!-- Directional lines -->
-            <line x1="70" y1="35" x2="70" y2="50" stroke="#5ECFCF" stroke-width="2" stroke-opacity="0.5"/>
-            <line x1="100" y1="70" x2="90" y2="70" stroke="#5ECFCF" stroke-width="2" stroke-opacity="0.5"/>
-            <line x1="70" y1="105" x2="70" y2="90" stroke="#5ECFCF" stroke-width="2" stroke-opacity="0.5"/>
-            <line x1="40" y1="70" x2="50" y2="70" stroke="#5ECFCF" stroke-width="2" stroke-opacity="0.5"/>
-            <!-- Center -->
-            <circle cx="70" cy="70" r="8" fill="#5ECFCF"/>
-          </svg>
+      
+      <div class="proposal-card">
+        <div class="proposal-header">
+          <div class="proposal-number">2</div>
+          <h3>Signal Pulse</h3>
         </div>
-        <div class="logo-name">OPTION 6</div>
-        <p class="logo-desc">Géométrique hexagonal<br/>Moderne & premium</p>
+        <p class="proposal-desc">
+          Dynamic asymmetric design suggesting movement and discovery. 
+          Gradient from teal to mint creates energy and optimism.
+        </p>
+        <div class="icon-preview">
+          <div class="icon-size">
+            <canvas id="icon2Large" width="120" height="120" style="border-radius: 26px;"></canvas>
+            <span>1024px</span>
+          </div>
+          <div class="icon-size">
+            <canvas id="icon2Small" width="60" height="60" style="border-radius: 14px;"></canvas>
+            <span>Home Screen</span>
+          </div>
+        </div>
+        <div class="pros">
+          <h4>Why It Works</h4>
+          <ul>
+            <li>Dynamic shape = memorable silhouette</li>
+            <li>Asymmetry creates visual interest</li>
+            <li>Vibrant gradient catches eye</li>
+            <li>Unique among competitors</li>
+          </ul>
+        </div>
+        <button class="download-btn" onclick="downloadIcon('icon2Large', 'sonar-icon-pulse.png')">Download PNG</button>
       </div>
-
+      
+      <div class="proposal-card">
+        <div class="proposal-header">
+          <div class="proposal-number">3</div>
+          <h3>Finder Beacon</h3>
+        </div>
+        <p class="proposal-desc">
+          Combines location pin with radar waves. Immediately communicates 
+          "finding" functionality. Warm-to-cool gradient for emotional appeal.
+        </p>
+        <div class="icon-preview">
+          <div class="icon-size">
+            <canvas id="icon3Large" width="120" height="120" style="border-radius: 26px;"></canvas>
+            <span>1024px</span>
+          </div>
+          <div class="icon-size">
+            <canvas id="icon3Small" width="60" height="60" style="border-radius: 14px;"></canvas>
+            <span>Home Screen</span>
+          </div>
+        </div>
+        <div class="pros">
+          <h4>Why It Works</h4>
+          <ul>
+            <li>Pin icon = universal "location" symbol</li>
+            <li>Warm gradient = friendly, approachable</li>
+            <li>Combines radar + finding concept</li>
+            <li>Works well at small sizes</li>
+          </ul>
+        </div>
+        <button class="download-btn" onclick="downloadIcon('icon3Large', 'sonar-icon-beacon.png')">Download PNG</button>
+      </div>
+      
+      <div class="proposal-card">
+        <div class="proposal-header">
+          <div class="proposal-number">4</div>
+          <h3>Neon Sonar</h3>
+        </div>
+        <p class="proposal-desc">
+          Bold, striking design with neon glow effect. 
+          Stands out dramatically in a sea of app icons. Tech-forward aesthetic.
+        </p>
+        <div class="icon-preview">
+          <div class="icon-size">
+            <canvas id="icon4Large" width="120" height="120" style="border-radius: 26px;"></canvas>
+            <span>1024px</span>
+          </div>
+          <div class="icon-size">
+            <canvas id="icon4Small" width="60" height="60" style="border-radius: 14px;"></canvas>
+            <span>Home Screen</span>
+          </div>
+        </div>
+        <div class="pros">
+          <h4>Why It Works</h4>
+          <ul>
+            <li>Maximum visibility and impact</li>
+            <li>Neon trend is popular with younger users</li>
+            <li>Creates strong brand recognition</li>
+            <li>Memorable, impossible to miss</li>
+          </ul>
+        </div>
+        <button class="download-btn" onclick="downloadIcon('icon4Large', 'sonar-icon-neon.png')">Download PNG</button>
+      </div>
+      
+      <div class="proposal-card">
+        <div class="proposal-header">
+          <div class="proposal-number">5</div>
+          <h3>Minimal Dark</h3>
+        </div>
+        <p class="proposal-desc">
+          Refined, elegant take on current design. Keeps simplicity 
+          but adds dark background and subtle gradient for depth.
+        </p>
+        <div class="icon-preview">
+          <div class="icon-size">
+            <canvas id="icon5Large" width="120" height="120" style="border-radius: 26px;"></canvas>
+            <span>1024px</span>
+          </div>
+          <div class="icon-size">
+            <canvas id="icon5Small" width="60" height="60" style="border-radius: 14px;"></canvas>
+            <span>Home Screen</span>
+          </div>
+        </div>
+        <div class="pros">
+          <h4>Why It Works</h4>
+          <ul>
+            <li>Maintains current brand recognition</li>
+            <li>Dark background solves visibility</li>
+            <li>Clean, professional look</li>
+            <li>Safe evolution, not revolution</li>
+          </ul>
+        </div>
+        <button class="download-btn" onclick="downloadIcon('icon5Large', 'sonar-icon-minimal.png')">Download PNG</button>
+      </div>
+      
+      <div class="proposal-card">
+        <div class="proposal-header">
+          <div class="proposal-number">6</div>
+          <h3>Target Lock</h3>
+        </div>
+        <p class="proposal-desc">
+          Crosshair/target design that communicates precision finding.
+          Bold colors and sharp geometry for maximum recognition.
+        </p>
+        <div class="icon-preview">
+          <div class="icon-size">
+            <canvas id="icon6Large" width="120" height="120" style="border-radius: 26px;"></canvas>
+            <span>1024px</span>
+          </div>
+          <div class="icon-size">
+            <canvas id="icon6Small" width="60" height="60" style="border-radius: 14px;"></canvas>
+            <span>Home Screen</span>
+          </div>
+        </div>
+        <div class="pros">
+          <h4>Why It Works</h4>
+          <ul>
+            <li>Crosshair = "precision finding"</li>
+            <li>Unique among Bluetooth finder apps</li>
+            <li>Strong geometric design</li>
+            <li>Very recognizable silhouette</li>
+          </ul>
+        </div>
+        <button class="download-btn" onclick="downloadIcon('icon6Large', 'sonar-icon-target.png')">Download PNG</button>
+      </div>
+      
     </div>
-
-    <!-- App Icon Preview -->
-    <div class="preview-section">
-      <h2>APP ICON PREVIEW</h2>
-      <div class="preview-row">
-        <!-- Favorite: Option 5 as app icon -->
-        <div class="preview-box dark">
-          <svg width="80" height="80" viewBox="0 0 140 140" fill="none">
-            <circle cx="70" cy="70" r="40" stroke="#5ECFCF" stroke-width="2.5" stroke-opacity="0.3"/>
-            <circle cx="70" cy="70" r="25" stroke="#5ECFCF" stroke-width="3" stroke-opacity="0.5"/>
-            <circle cx="70" cy="70" r="14" fill="#5ECFCF"/>
-            <circle cx="70" cy="70" r="6" fill="#040A12"/>
-            <circle cx="98" cy="50" r="4" fill="#6EE7A8"/>
-          </svg>
-          <span class="wordmark">SONAR</span>
+    
+    <div class="home-screen-sim">
+      <h3>Home Screen Comparison (Proposal 1 vs Other Apps)</h3>
+      <div class="app-grid">
+        <div class="app-icon">
+          <div class="app-icon-img" style="background: linear-gradient(135deg, #667eea, #764ba2);">📱</div>
+          <span>Phone</span>
         </div>
-
-        <div class="preview-box light">
-          <svg width="80" height="80" viewBox="0 0 140 140" fill="none">
-            <circle cx="70" cy="70" r="40" stroke="#2A8A8A" stroke-width="2.5" stroke-opacity="0.3"/>
-            <circle cx="70" cy="70" r="25" stroke="#2A8A8A" stroke-width="3" stroke-opacity="0.5"/>
-            <circle cx="70" cy="70" r="14" fill="#2A8A8A"/>
-            <circle cx="70" cy="70" r="6" fill="#F5F7FA"/>
-            <circle cx="98" cy="50" r="4" fill="#34A853"/>
-          </svg>
-          <span class="wordmark">SONAR</span>
+        <div class="app-icon">
+          <div class="app-icon-img" style="background: linear-gradient(135deg, #11998e, #38ef7d);">💬</div>
+          <span>Messages</span>
         </div>
-      </div>
-    </div>
-
-    <!-- Wordmark Options -->
-    <div class="preview-section" style="margin-top: 40px;">
-      <h2>WORDMARK OPTIONS</h2>
-      <div style="display: flex; gap: 40px; justify-content: center; flex-wrap: wrap; margin-top: 24px;">
-        <div style="text-align: center;">
-          <div style="font-family: 'JetBrains Mono', monospace; font-size: 36px; font-weight: 700; letter-spacing: 12px; color: #5ECFCF;">SONAR</div>
-          <div style="font-size: 12px; color: #556677; margin-top: 8px;">JetBrains Mono Bold</div>
+        <div class="app-icon">
+          <div class="app-icon-img" style="background: linear-gradient(135deg, #ee0979, #ff6a00);">📷</div>
+          <span>Camera</span>
         </div>
-        <div style="text-align: center;">
-          <div style="font-family: 'Inter', sans-serif; font-size: 36px; font-weight: 300; letter-spacing: 16px; color: #5ECFCF;">SONAR</div>
-          <div style="font-size: 12px; color: #556677; margin-top: 8px;">Inter Light</div>
+        <div class="app-icon">
+          <canvas id="homeIcon" width="60" height="60" style="border-radius: 14px;"></canvas>
+          <span>Sonar</span>
         </div>
-        <div style="text-align: center;">
-          <div style="font-family: 'JetBrains Mono', monospace; font-size: 36px; font-weight: 400; letter-spacing: 8px; color: #5ECFCF;">S<span style="opacity: 0.5;">O</span>N<span style="opacity: 0.5;">A</span>R</div>
-          <div style="font-size: 12px; color: #556677; margin-top: 8px;">Alternating opacity</div>
+        <div class="app-icon">
+          <div class="app-icon-img" style="background: #fff;">
+            <span style="font-size: 20px; color: #1DB954;">🎵</span>
+          </div>
+          <span>Spotify</span>
+        </div>
+        <div class="app-icon">
+          <div class="app-icon-img" style="background: linear-gradient(135deg, #405DE6, #833AB4, #E1306C);">📸</div>
+          <span>Instagram</span>
+        </div>
+        <div class="app-icon">
+          <div class="app-icon-img" style="background: #25D366;">💬</div>
+          <span>WhatsApp</span>
+        </div>
+        <div class="app-icon">
+          <div class="app-icon-img" style="background: linear-gradient(135deg, #4267B2, #898F9C);">👤</div>
+          <span>Facebook</span>
         </div>
       </div>
     </div>
-
+    
+    <section class="splash-section">
+      <h2>Splash Screen Proposals</h2>
+      <div class="splash-grid">
+        <div class="splash-item">
+          <div class="splash-preview" style="background: linear-gradient(180deg, #040A12 0%, #0C1824 100%);">
+            <canvas id="splash1" width="120" height="120"></canvas>
+          </div>
+          <h4>Current Style</h4>
+          <p>Teal rings on dark</p>
+        </div>
+        <div class="splash-item">
+          <div class="splash-preview" style="background: linear-gradient(180deg, #0a1628 0%, #040A12 100%);">
+            <canvas id="splash2" width="140" height="140"></canvas>
+          </div>
+          <h4>Enhanced Glow</h4>
+          <p>Animated pulse effect</p>
+        </div>
+        <div class="splash-item">
+          <div class="splash-preview" style="background: radial-gradient(circle at center, #0C1824 0%, #040A12 100%);">
+            <canvas id="splash3" width="100" height="100"></canvas>
+          </div>
+          <h4>Minimal Center</h4>
+          <p>Just glowing dot</p>
+        </div>
+      </div>
+    </section>
+    
   </div>
+  
+  <script>
+    const PRIMARY = '#5ECFCF';
+    const PRIMARY_LIGHT = '#7EDDDD';
+    const PRIMARY_DIM = '#3BA8A8';
+    const BG_DARK = '#040A12';
+    const BG_SURFACE = '#0C1824';
+    const SIGNAL_STRONG = '#6EE7A8';
+    
+    function drawCurrentIcon(canvas) {
+      const ctx = canvas.getContext('2d');
+      const size = canvas.width;
+      const center = size / 2;
+      
+      ctx.fillStyle = '#F0F8F8';
+      ctx.fillRect(0, 0, size, size);
+      
+      const scale = 0.55;
+      ctx.save();
+      ctx.translate(center, center);
+      ctx.scale(scale, scale);
+      ctx.translate(-center, -center);
+      
+      ctx.strokeStyle = '#2A9D9D';
+      
+      ctx.globalAlpha = 0.25;
+      ctx.lineWidth = size * 0.028;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.40, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.globalAlpha = 0.45;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.28, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.globalAlpha = 0.7;
+      ctx.lineWidth = size * 0.032;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.16, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = '#2A9D9D';
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.08, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.restore();
+    }
+    
+    function drawIcon1(canvas) {
+      const ctx = canvas.getContext('2d');
+      const size = canvas.width;
+      const center = size / 2;
+      
+      const bgGrad = ctx.createLinearGradient(0, 0, size, size);
+      bgGrad.addColorStop(0, '#0a1628');
+      bgGrad.addColorStop(1, '#040A12');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, size, size);
+      
+      const glowGrad = ctx.createRadialGradient(center, center, 0, center, center, size * 0.5);
+      glowGrad.addColorStop(0, 'rgba(94, 207, 207, 0.3)');
+      glowGrad.addColorStop(0.5, 'rgba(94, 207, 207, 0.1)');
+      glowGrad.addColorStop(1, 'transparent');
+      ctx.fillStyle = glowGrad;
+      ctx.fillRect(0, 0, size, size);
+      
+      ctx.strokeStyle = PRIMARY;
+      
+      ctx.globalAlpha = 0.3;
+      ctx.lineWidth = size * 0.02;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.38, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.globalAlpha = 0.5;
+      ctx.lineWidth = size * 0.025;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.27, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.globalAlpha = 0.8;
+      ctx.lineWidth = size * 0.03;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.16, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.globalAlpha = 1;
+      const centerGrad = ctx.createRadialGradient(center, center, 0, center, center, size * 0.1);
+      centerGrad.addColorStop(0, PRIMARY_LIGHT);
+      centerGrad.addColorStop(1, PRIMARY);
+      ctx.fillStyle = centerGrad;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.09, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.shadowColor = PRIMARY;
+      ctx.shadowBlur = size * 0.1;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+    
+    function drawIcon2(canvas) {
+      const ctx = canvas.getContext('2d');
+      const size = canvas.width;
+      const center = size / 2;
+      
+      const bgGrad = ctx.createLinearGradient(0, 0, size, size);
+      bgGrad.addColorStop(0, '#1a2a3a');
+      bgGrad.addColorStop(1, '#0a1520');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, size, size);
+      
+      ctx.save();
+      ctx.translate(center, center);
+      ctx.rotate(-Math.PI / 6);
+      ctx.translate(-center, -center);
+      
+      const waveGrad = ctx.createLinearGradient(0, 0, size, size);
+      waveGrad.addColorStop(0, '#6EE7A8');
+      waveGrad.addColorStop(1, PRIMARY);
+      ctx.strokeStyle = waveGrad;
+      
+      for (let i = 3; i >= 0; i--) {
+        const radius = size * (0.12 + i * 0.09);
+        ctx.globalAlpha = 0.4 + (3 - i) * 0.15;
+        ctx.lineWidth = size * 0.025;
+        ctx.beginPath();
+        ctx.arc(center * 0.7, center, radius, -Math.PI * 0.7, Math.PI * 0.7);
+        ctx.stroke();
+      }
+      
+      ctx.restore();
+      
+      ctx.globalAlpha = 1;
+      const dotGrad = ctx.createRadialGradient(center * 0.7, center, 0, center * 0.7, center, size * 0.08);
+      dotGrad.addColorStop(0, '#fff');
+      dotGrad.addColorStop(1, SIGNAL_STRONG);
+      ctx.fillStyle = dotGrad;
+      ctx.beginPath();
+      ctx.arc(center * 0.7, center, size * 0.07, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    function drawIcon3(canvas) {
+      const ctx = canvas.getContext('2d');
+      const size = canvas.width;
+      const center = size / 2;
+      
+      const bgGrad = ctx.createLinearGradient(0, 0, size, size);
+      bgGrad.addColorStop(0, '#1a1a2e');
+      bgGrad.addColorStop(1, '#16213e');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, size, size);
+      
+      const pinGrad = ctx.createLinearGradient(center, size * 0.15, center, size * 0.75);
+      pinGrad.addColorStop(0, '#FF6B6B');
+      pinGrad.addColorStop(0.5, '#ee5a5a');
+      pinGrad.addColorStop(1, '#FF8E53');
+      ctx.fillStyle = pinGrad;
+      
+      ctx.beginPath();
+      ctx.moveTo(center, size * 0.75);
+      ctx.bezierCurveTo(
+        center - size * 0.25, size * 0.55,
+        center - size * 0.25, size * 0.25,
+        center, size * 0.18
+      );
+      ctx.bezierCurveTo(
+        center + size * 0.25, size * 0.25,
+        center + size * 0.25, size * 0.55,
+        center, size * 0.75
+      );
+      ctx.fill();
+      
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(center, size * 0.35, size * 0.1, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.lineWidth = size * 0.015;
+      
+      ctx.globalAlpha = 0.3;
+      ctx.beginPath();
+      ctx.arc(center, size * 0.35, size * 0.2, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.globalAlpha = 0.2;
+      ctx.beginPath();
+      ctx.arc(center, size * 0.35, size * 0.28, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.globalAlpha = 1;
+    }
+    
+    function drawIcon4(canvas) {
+      const ctx = canvas.getContext('2d');
+      const size = canvas.width;
+      const center = size / 2;
+      
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, size, size);
+      
+      ctx.shadowColor = '#00ffff';
+      ctx.shadowBlur = size * 0.15;
+      
+      ctx.strokeStyle = '#00ffff';
+      
+      ctx.globalAlpha = 0.4;
+      ctx.lineWidth = size * 0.015;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.4, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.globalAlpha = 0.6;
+      ctx.lineWidth = size * 0.02;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.28, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.globalAlpha = 0.9;
+      ctx.lineWidth = size * 0.025;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.16, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.globalAlpha = 1;
+      ctx.shadowBlur = size * 0.2;
+      ctx.fillStyle = '#00ffff';
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.07, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.shadowBlur = 0;
+    }
+    
+    function drawIcon5(canvas) {
+      const ctx = canvas.getContext('2d');
+      const size = canvas.width;
+      const center = size / 2;
+      
+      const bgGrad = ctx.createRadialGradient(center, center, 0, center, center, size * 0.7);
+      bgGrad.addColorStop(0, '#1a2530');
+      bgGrad.addColorStop(1, '#0a1015');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, size, size);
+      
+      const ringGrad = ctx.createLinearGradient(0, 0, size, size);
+      ringGrad.addColorStop(0, PRIMARY_LIGHT);
+      ringGrad.addColorStop(1, PRIMARY_DIM);
+      ctx.strokeStyle = ringGrad;
+      
+      ctx.globalAlpha = 0.25;
+      ctx.lineWidth = size * 0.02;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.38, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.globalAlpha = 0.45;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.27, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.globalAlpha = 0.7;
+      ctx.lineWidth = size * 0.025;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.16, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = PRIMARY;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.08, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    function drawIcon6(canvas) {
+      const ctx = canvas.getContext('2d');
+      const size = canvas.width;
+      const center = size / 2;
+      
+      const bgGrad = ctx.createLinearGradient(0, 0, size, size);
+      bgGrad.addColorStop(0, '#1e3a5f');
+      bgGrad.addColorStop(1, '#0d1b2a');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, size, size);
+      
+      ctx.strokeStyle = PRIMARY;
+      ctx.lineWidth = size * 0.02;
+      ctx.globalAlpha = 0.5;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.35, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.globalAlpha = 0.8;
+      ctx.lineWidth = size * 0.025;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.22, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.globalAlpha = 1;
+      ctx.lineWidth = size * 0.035;
+      
+      ctx.beginPath();
+      ctx.moveTo(center, size * 0.12);
+      ctx.lineTo(center, size * 0.32);
+      ctx.stroke();
+      
+      ctx.beginPath();
+      ctx.moveTo(center, size * 0.68);
+      ctx.lineTo(center, size * 0.88);
+      ctx.stroke();
+      
+      ctx.beginPath();
+      ctx.moveTo(size * 0.12, center);
+      ctx.lineTo(size * 0.32, center);
+      ctx.stroke();
+      
+      ctx.beginPath();
+      ctx.moveTo(size * 0.68, center);
+      ctx.lineTo(size * 0.88, center);
+      ctx.stroke();
+      
+      const dotGrad = ctx.createRadialGradient(center, center, 0, center, center, size * 0.08);
+      dotGrad.addColorStop(0, '#fff');
+      dotGrad.addColorStop(1, PRIMARY);
+      ctx.fillStyle = dotGrad;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.08, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    function drawSplash1(canvas) {
+      const ctx = canvas.getContext('2d');
+      const size = canvas.width;
+      const center = size / 2;
+      
+      ctx.clearRect(0, 0, size, size);
+      
+      ctx.strokeStyle = PRIMARY;
+      ctx.lineWidth = 3;
+      
+      ctx.globalAlpha = 0.3;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.45, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.globalAlpha = 0.5;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.32, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.globalAlpha = 0.8;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.19, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = PRIMARY;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.08, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    function drawSplash2(canvas) {
+      const ctx = canvas.getContext('2d');
+      const size = canvas.width;
+      const center = size / 2;
+      
+      ctx.clearRect(0, 0, size, size);
+      
+      const glowGrad = ctx.createRadialGradient(center, center, 0, center, center, size * 0.5);
+      glowGrad.addColorStop(0, 'rgba(94, 207, 207, 0.4)');
+      glowGrad.addColorStop(0.5, 'rgba(94, 207, 207, 0.1)');
+      glowGrad.addColorStop(1, 'transparent');
+      ctx.fillStyle = glowGrad;
+      ctx.fillRect(0, 0, size, size);
+      
+      ctx.strokeStyle = PRIMARY;
+      ctx.lineWidth = 2.5;
+      
+      ctx.globalAlpha = 0.3;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.45, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.globalAlpha = 0.55;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.32, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.globalAlpha = 0.85;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.19, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.globalAlpha = 1;
+      ctx.shadowColor = PRIMARY;
+      ctx.shadowBlur = 20;
+      ctx.fillStyle = PRIMARY_LIGHT;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.08, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+    
+    function drawSplash3(canvas) {
+      const ctx = canvas.getContext('2d');
+      const size = canvas.width;
+      const center = size / 2;
+      
+      ctx.clearRect(0, 0, size, size);
+      
+      const glowGrad = ctx.createRadialGradient(center, center, 0, center, center, size * 0.5);
+      glowGrad.addColorStop(0, 'rgba(94, 207, 207, 0.6)');
+      glowGrad.addColorStop(0.3, 'rgba(94, 207, 207, 0.2)');
+      glowGrad.addColorStop(1, 'transparent');
+      ctx.fillStyle = glowGrad;
+      ctx.fillRect(0, 0, size, size);
+      
+      ctx.fillStyle = PRIMARY_LIGHT;
+      ctx.shadowColor = PRIMARY;
+      ctx.shadowBlur = 30;
+      ctx.beginPath();
+      ctx.arc(center, center, size * 0.15, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    drawCurrentIcon(document.getElementById('currentIcon'));
+    drawCurrentIcon(document.getElementById('currentIconSmall'));
+    
+    drawIcon1(document.getElementById('icon1Large'));
+    drawIcon1(document.getElementById('icon1Small'));
+    drawIcon1(document.getElementById('homeIcon'));
+    
+    drawIcon2(document.getElementById('icon2Large'));
+    drawIcon2(document.getElementById('icon2Small'));
+    
+    drawIcon3(document.getElementById('icon3Large'));
+    drawIcon3(document.getElementById('icon3Small'));
+    
+    drawIcon4(document.getElementById('icon4Large'));
+    drawIcon4(document.getElementById('icon4Small'));
+    
+    drawIcon5(document.getElementById('icon5Large'));
+    drawIcon5(document.getElementById('icon5Small'));
+    
+    drawIcon6(document.getElementById('icon6Large'));
+    drawIcon6(document.getElementById('icon6Small'));
+    
+    drawSplash1(document.getElementById('splash1'));
+    drawSplash2(document.getElementById('splash2'));
+    drawSplash3(document.getElementById('splash3'));
+    
+    function downloadIcon(canvasId, filename) {
+      const canvas = document.getElementById(canvasId);
+      const highRes = document.createElement('canvas');
+      highRes.width = 1024;
+      highRes.height = 1024;
+      
+      const drawFn = {
+        'icon1Large': drawIcon1,
+        'icon2Large': drawIcon2,
+        'icon3Large': drawIcon3,
+        'icon4Large': drawIcon4,
+        'icon5Large': drawIcon5,
+        'icon6Large': drawIcon6,
+      }[canvasId];
+      
+      if (drawFn) {
+        drawFn(highRes);
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = highRes.toDataURL('image/png');
+        link.click();
+      }
+    }
+  </script>
 </body>
 </html>

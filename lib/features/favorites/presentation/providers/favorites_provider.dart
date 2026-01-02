@@ -39,7 +39,14 @@ class FavoritesNotifier extends StateNotifier<List<FavoriteDeviceModel>> {
   }
 }
 
-final isFavoriteProvider = Provider.family<bool, String>((ref, deviceId) {
+/// Optimized cached set of favorite IDs for O(1) lookups
+final favoriteIdsSetProvider = Provider<Set<String>>((ref) {
   final favorites = ref.watch(favoritesProvider);
-  return favorites.any((f) => f.id == deviceId);
+  return favorites.map((f) => f.id).toSet();
+});
+
+/// Efficient O(1) lookup for checking if a device is a favorite
+final isFavoriteProvider = Provider.family<bool, String>((ref, deviceId) {
+  final favoriteIds = ref.watch(favoriteIdsSetProvider);
+  return favoriteIds.contains(deviceId);
 });

@@ -31,8 +31,7 @@ final deviceRssiStreamProvider = StreamProvider.family<int, String>((ref, device
 /// "My devices" = bonded OR favorite, sorted by signal strength
 final myDevicesProvider = Provider<List<BluetoothDeviceModel>>((ref) {
   final devicesAsync = ref.watch(devicesStreamProvider);
-  final favorites = ref.watch(favoritesProvider);
-  final favoriteIds = favorites.map((f) => f.id).toSet();
+  final favoriteIds = ref.watch(favoriteIdsSetProvider);
 
   return devicesAsync.when(
     data: (devices) {
@@ -50,8 +49,7 @@ final myDevicesProvider = Provider<List<BluetoothDeviceModel>>((ref) {
 /// "Nearby devices" = NOT bonded AND NOT favorite, sorted by signal strength
 final nearbyDevicesProvider = Provider<List<BluetoothDeviceModel>>((ref) {
   final devicesAsync = ref.watch(devicesStreamProvider);
-  final favorites = ref.watch(favoritesProvider);
-  final favoriteIds = favorites.map((f) => f.id).toSet();
+  final favoriteIds = ref.watch(favoriteIdsSetProvider);
 
   return devicesAsync.when(
     data: (devices) {

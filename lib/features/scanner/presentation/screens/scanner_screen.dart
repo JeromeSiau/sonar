@@ -181,18 +181,17 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
                     title: l10n.myDevices,
                     count: myDevices.length,
                   ),
-                  ...myDevices.asMap().entries.map((entry) {
-                    return StaggeredListItem(
-                      index: entry.key,
+                  for (var i = 0; i < myDevices.length; i++)
+                    StaggeredListItem(
+                      index: i,
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 12),
                         child: DeviceCard(
-                          device: entry.value,
-                          onTap: () => _onDeviceTap(context, ref, entry.value),
+                          device: myDevices[i],
+                          onTap: () => _onDeviceTap(context, ref, myDevices[i]),
                         ),
                       ),
-                    );
-                  }),
+                    ),
                 ],
                 // Nearby devices section
                 if (nearbyDevices.isNotEmpty) ...[
@@ -201,19 +200,17 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
                     title: l10n.nearbyDevices,
                     count: nearbyDevices.length,
                   ),
-                  ...nearbyDevices.asMap().entries.map((entry) {
-                    final index = myDevices.length + entry.key;
-                    return StaggeredListItem(
-                      index: index,
+                  for (var i = 0; i < nearbyDevices.length; i++)
+                    StaggeredListItem(
+                      index: myDevices.length + i,
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 12),
                         child: DeviceCard(
-                          device: entry.value,
-                          onTap: () => _onDeviceTap(context, ref, entry.value),
+                          device: nearbyDevices[i],
+                          onTap: () => _onDeviceTap(context, ref, nearbyDevices[i]),
                         ),
                       ),
-                    );
-                  }),
+                    ),
                 ],
                 // Empty state
                 if (allDevicesEmpty && !isScanning)
@@ -406,26 +403,28 @@ class _SonarSearchAnimationState extends State<_SonarSearchAnimation>
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // Sonar display
-          SizedBox(
-            width: sonarSize,
-            height: sonarSize,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                // Grid
-                CustomPaint(
-                  size: Size(sonarSize, sonarSize),
-                  painter: _SonarGridPainter(),
-                ),
-                // Concentric circles
-                _buildConcentricCircles(sonarSize),
-                // Ping waves
-                _buildPingWaves(sonarSize),
-                // Sweep beam
-                _buildSweepBeam(sonarSize),
-                // Center pulse
-                _buildCenterPulse(),
-              ],
+          RepaintBoundary(
+            child: SizedBox(
+              width: sonarSize,
+              height: sonarSize,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Grid
+                  CustomPaint(
+                    size: Size(sonarSize, sonarSize),
+                    painter: _SonarGridPainter(),
+                  ),
+                  // Concentric circles
+                  _buildConcentricCircles(sonarSize),
+                  // Ping waves
+                  _buildPingWaves(sonarSize),
+                  // Sweep beam
+                  _buildSweepBeam(sonarSize),
+                  // Center pulse
+                  _buildCenterPulse(),
+                ],
+              ),
             ),
           ),
 
@@ -607,19 +606,21 @@ class _MiniSonarIndicatorState extends State<_MiniSonarIndicator>
       child: Row(
         children: [
           // Mini animated radar
-          SizedBox(
-            width: 32,
-            height: 32,
-            child: AnimatedBuilder(
-              animation: _controller,
-              builder: (context, child) {
-                return CustomPaint(
-                  painter: _MiniRadarPainter(
-                    progress: _controller.value,
-                    color: AppColors.primary,
-                  ),
-                );
-              },
+          RepaintBoundary(
+            child: SizedBox(
+              width: 32,
+              height: 32,
+              child: AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  return CustomPaint(
+                    painter: _MiniRadarPainter(
+                      progress: _controller.value,
+                      color: AppColors.primary,
+                    ),
+                  );
+                },
+              ),
             ),
           ),
           const SizedBox(width: 12),

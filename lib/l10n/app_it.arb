@@ -124,5 +124,20 @@
   "someDevicesDontBroadcastName": "Alcuni dispositivi non trasmettono il loro nome",
   "tipShowUnnamedDevices": "Consiglio: Attiva \"Mostra dispositivi senza nome\" per vedere tutti i dispositivi Bluetooth nelle vicinanze.",
   "understood": "Capito",
-  "pleaseEnableBluetoothSettings": "Per favore attiva il Bluetooth nelle impostazioni del dispositivo."
+  "pleaseEnableBluetoothSettings": "Per favore attiva il Bluetooth nelle impostazioni del dispositivo.",
+
+  "onboardingSkip": "Salta",
+  "onboardingNext": "Avanti",
+  "onboardingStart": "Inizia",
+  "onboardingTitle1": "Trova i tuoi dispositivi persi",
+  "onboardingDesc1": "Il nostro radar di precisione ti guida verso i tuoi auricolari, AirPods e dispositivi Bluetooth smarriti.",
+  "onboardingTitle2": "Salva i tuoi preferiti",
+  "onboardingDesc2": "Aggiungi i tuoi dispositivi importanti ai preferiti per trovarli subito ogni volta che usi l'app.",
+  "onboardingTitle3": "Servono alcune autorizzazioni",
+  "onboardingDesc3": "Per scansionare i dispositivi Bluetooth e aiutarti a localizzarli, abbiamo bisogno del tuo permesso.",
+
+  "lastSeenLocation": "Ultima posizione nota",
+  "noLocationHistory": "Nessuna posizione registrata",
+  "noLocationHistoryDescription": "La posizione verrà salvata quando troverai questo dispositivo.",
+  "showOnMap": "Mostra sulla mappa"
 }

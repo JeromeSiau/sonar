@@ -769,6 +769,84 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Veuillez activer le Bluetooth dans les réglages de votre appareil.'**
   String get pleaseEnableBluetoothSettings;
+
+  /// No description provided for @onboardingSkip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Passer'**
+  String get onboardingSkip;
+
+  /// No description provided for @onboardingNext.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suivant'**
+  String get onboardingNext;
+
+  /// No description provided for @onboardingStart.
+  ///
+  /// In fr, this message translates to:
+  /// **'Commencer'**
+  String get onboardingStart;
+
+  /// No description provided for @onboardingTitle1.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retrouvez vos appareils perdus'**
+  String get onboardingTitle1;
+
+  /// No description provided for @onboardingDesc1.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notre radar de précision vous guide vers vos écouteurs, AirPods et appareils Bluetooth égarés.'**
+  String get onboardingDesc1;
+
+  /// No description provided for @onboardingTitle2.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegardez vos favoris'**
+  String get onboardingTitle2;
+
+  /// No description provided for @onboardingDesc2.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajoutez vos appareils importants en favoris pour les retrouver instantanément à chaque utilisation.'**
+  String get onboardingDesc2;
+
+  /// No description provided for @onboardingTitle3.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quelques autorisations nécessaires'**
+  String get onboardingTitle3;
+
+  /// No description provided for @onboardingDesc3.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour scanner les appareils Bluetooth et vous aider à les localiser, nous avons besoin de votre permission.'**
+  String get onboardingDesc3;
+
+  /// No description provided for @lastSeenLocation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dernière position connue'**
+  String get lastSeenLocation;
+
+  /// No description provided for @noLocationHistory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune position enregistrée'**
+  String get noLocationHistory;
+
+  /// No description provided for @noLocationHistoryDescription.
+  ///
+  /// In fr, this message translates to:
+  /// **'La position sera enregistrée quand vous retrouverez cet appareil.'**
+  String get noLocationHistoryDescription;
+
+  /// No description provided for @showOnMap.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir sur la carte'**
+  String get showOnMap;
 }
 
 class _AppLocalizationsDelegate

@@ -124,5 +124,20 @@
   "someDevicesDontBroadcastName": "Some devices don't broadcast their name",
   "tipShowUnnamedDevices": "Tip: Enable \"Show unnamed devices\" to see all nearby Bluetooth devices.",
   "understood": "Got it",
-  "pleaseEnableBluetoothSettings": "Please enable Bluetooth in your device settings."
+  "pleaseEnableBluetoothSettings": "Please enable Bluetooth in your device settings.",
+
+  "onboardingSkip": "Skip",
+  "onboardingNext": "Next",
+  "onboardingStart": "Get Started",
+  "onboardingTitle1": "Find your lost devices",
+  "onboardingDesc1": "Our precision radar guides you to your lost earbuds, AirPods, and Bluetooth devices.",
+  "onboardingTitle2": "Save your favorites",
+  "onboardingDesc2": "Add your important devices to favorites to find them instantly every time you use the app.",
+  "onboardingTitle3": "A few permissions needed",
+  "onboardingDesc3": "To scan Bluetooth devices and help you locate them, we need your permission.",
+
+  "lastSeenLocation": "Last known location",
+  "noLocationHistory": "No location recorded",
+  "noLocationHistoryDescription": "Location will be saved when you find this device.",
+  "showOnMap": "Show on map"
 }

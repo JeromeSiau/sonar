@@ -365,4 +365,47 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get pleaseEnableBluetoothSettings =>
       'Please enable Bluetooth in your device settings.';
+
+  @override
+  String get onboardingSkip => 'Skip';
+
+  @override
+  String get onboardingNext => 'Next';
+
+  @override
+  String get onboardingStart => 'Get Started';
+
+  @override
+  String get onboardingTitle1 => 'Find your lost devices';
+
+  @override
+  String get onboardingDesc1 =>
+      'Our precision radar guides you to your lost earbuds, AirPods, and Bluetooth devices.';
+
+  @override
+  String get onboardingTitle2 => 'Save your favorites';
+
+  @override
+  String get onboardingDesc2 =>
+      'Add your important devices to favorites to find them instantly every time you use the app.';
+
+  @override
+  String get onboardingTitle3 => 'A few permissions needed';
+
+  @override
+  String get onboardingDesc3 =>
+      'To scan Bluetooth devices and help you locate them, we need your permission.';
+
+  @override
+  String get lastSeenLocation => 'Last known location';
+
+  @override
+  String get noLocationHistory => 'No location recorded';
+
+  @override
+  String get noLocationHistoryDescription =>
+      'Location will be saved when you find this device.';
+
+  @override
+  String get showOnMap => 'Show on map';
 }

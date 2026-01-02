@@ -149,5 +149,20 @@
   "someDevicesDontBroadcastName": "Certains appareils n'émettent pas leur nom",
   "tipShowUnnamedDevices": "Astuce : Activez \"Afficher les appareils sans nom\" pour voir tous les appareils Bluetooth à proximité.",
   "understood": "Compris",
-  "pleaseEnableBluetoothSettings": "Veuillez activer le Bluetooth dans les réglages de votre appareil."
+  "pleaseEnableBluetoothSettings": "Veuillez activer le Bluetooth dans les réglages de votre appareil.",
+
+  "onboardingSkip": "Passer",
+  "onboardingNext": "Suivant",
+  "onboardingStart": "Commencer",
+  "onboardingTitle1": "Retrouvez vos appareils perdus",
+  "onboardingDesc1": "Notre radar de précision vous guide vers vos écouteurs, AirPods et appareils Bluetooth égarés.",
+  "onboardingTitle2": "Sauvegardez vos favoris",
+  "onboardingDesc2": "Ajoutez vos appareils importants en favoris pour les retrouver instantanément à chaque utilisation.",
+  "onboardingTitle3": "Quelques autorisations nécessaires",
+  "onboardingDesc3": "Pour scanner les appareils Bluetooth et vous aider à les localiser, nous avons besoin de votre permission.",
+
+  "lastSeenLocation": "Dernière position connue",
+  "noLocationHistory": "Aucune position enregistrée",
+  "noLocationHistoryDescription": "La position sera enregistrée quand vous retrouverez cet appareil.",
+  "showOnMap": "Voir sur la carte"
 }

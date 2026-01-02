@@ -1,10 +1,11 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bluetooth_finder/core/theme/app_colors.dart';
 import 'package:bluetooth_finder/core/utils/rssi_utils.dart';
 import 'package:bluetooth_finder/features/scanner/data/models/bluetooth_device_model.dart';
+import 'package:bluetooth_finder/features/scanner/presentation/providers/scanner_provider.dart';
 import 'package:bluetooth_finder/features/favorites/presentation/providers/favorites_provider.dart';
 import 'package:bluetooth_finder/features/favorites/data/models/favorite_device_model.dart';
 import 'package:bluetooth_finder/shared/widgets/signal_indicator.dart';
@@ -22,6 +23,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _fabController;
   late Animation<double> _fabGlowAnimation;
+  bool _hasTriggeredScan = false;
 
   @override
   void initState() {
@@ -31,9 +33,37 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       vsync: this,
     )..repeat(reverse: true);
 
-    _fabGlowAnimation = Tween<double>(begin: 0.3, end: 0.7).animate(
-      CurvedAnimation(parent: _fabController, curve: Curves.easeInOut),
-    );
+    _fabGlowAnimation = Tween<double>(
+      begin: 0.3,
+      end: 0.7,
+    ).animate(CurvedAnimation(parent: _fabController, curve: Curves.easeInOut));
+
+    // Trigger a quick background scan to update favorite positions
+    Future.microtask(_triggerQuickScan);
+  }
+
+  /// Triggers a quick BLE scan to update favorite device positions.
+  /// This runs silently in the background without UI feedback.
+  Future<void> _triggerQuickScan() async {
+    if (_hasTriggeredScan) return;
+    _hasTriggeredScan = true;
+
+    // Check if we have favorites worth scanning for
+    final favorites = ref.read(favoritesProvider);
+    if (favorites.isEmpty) return;
+
+    // Check Bluetooth state
+    final bluetoothState = await FlutterBluePlus.adapterState.first;
+    if (bluetoothState != BluetoothAdapterState.on) return;
+
+    // Start a quick 5-second scan
+    try {
+      await ref.read(bluetoothRepositoryProvider).startScan();
+      // The favoriteLocationUpdaterProvider will automatically update positions
+      // when devices are found (it watches the device stream)
+    } catch (_) {
+      // Silently ignore scan errors on home screen
+    }
   }
 
   @override
@@ -46,6 +76,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   Widget build(BuildContext context) {
     final favorites = ref.watch(favoritesProvider);
     final l10n = AppLocalizations.of(context)!;
+
+    // Activate auto-update of favorite locations when scanning
+    // This ensures positions get updated when devices are found
+    ref.watch(favoriteLocationUpdaterProvider);
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -82,10 +116,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             children: [
               ShaderMask(
                 shaderCallback: (bounds) => LinearGradient(
-                  colors: [
-                    AppColors.primary,
-                    AppColors.primaryGlow,
-                  ],
+                  colors: [AppColors.primary, AppColors.primaryGlow],
                 ).createShader(bounds),
                 child: Text(
                   l10n.appName,
@@ -102,9 +133,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               Text(
                 l10n.appSubtitle,
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: AppColors.textMuted,
-                      letterSpacing: 1,
-                    ),
+                  color: AppColors.textMuted,
+                  letterSpacing: 1,
+                ),
               ),
             ],
           ),
@@ -150,9 +181,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             const SizedBox(height: 12),
             Text(
               l10n.noSavedDevicesDescription,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    height: 1.5,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(height: 1.5),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 80), // Space for FAB
@@ -201,8 +232,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary
-                    .withValues(alpha: 0.4 * _fabGlowAnimation.value),
+                color: AppColors.primary.withValues(
+                  alpha: 0.4 * _fabGlowAnimation.value,
+                ),
                 blurRadius: 24,
                 spreadRadius: 0,
               ),
@@ -340,7 +372,10 @@ class _FavoriteDeviceCard extends StatelessWidget {
     };
   }
 
-  String _formatLastSeenWithLocation(BuildContext context, FavoriteDeviceModel favorite) {
+  String _formatLastSeenWithLocation(
+    BuildContext context,
+    FavoriteDeviceModel favorite,
+  ) {
     final l10n = AppLocalizations.of(context)!;
     final diff = DateTime.now().difference(favorite.lastSeenAt);
 
@@ -356,7 +391,8 @@ class _FavoriteDeviceCard extends StatelessWidget {
     }
 
     // Add location if available
-    if (favorite.lastLocationName != null && favorite.lastLocationName!.isNotEmpty) {
+    if (favorite.lastLocationName != null &&
+        favorite.lastLocationName!.isNotEmpty) {
       return '$timeAgo • ${favorite.lastLocationName}';
     }
     return timeAgo;
@@ -383,112 +419,102 @@ class _FavoriteDeviceCard extends StatelessWidget {
           size: 28,
         ),
       ),
+      // Removed BackdropFilter for GPU performance - blur is expensive per card
       child: GestureDetector(
         onTap: onTap,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.surface.withValues(alpha: 0.6),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppColors.glassBorder),
-              ),
-              child: Row(
-                children: [
-                  // Icon
-                  Container(
-                    width: 52,
-                    height: 52,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          AppColors.surfaceGlow,
-                          AppColors.surfaceLight,
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Icon(
-                      _getDeviceIcon(),
-                      color: AppColors.primary,
-                      size: 26,
-                    ),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            // Solid color instead of blur for better performance
+            color: AppColors.surface.withValues(alpha: 0.85),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AppColors.glassBorder),
+          ),
+          child: Row(
+            children: [
+              // Icon
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [AppColors.surfaceGlow, AppColors.surfaceLight],
                   ),
-                  const SizedBox(width: 16),
-                  // Info
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(
+                  _getDeviceIcon(),
+                  color: AppColors.primary,
+                  size: 26,
+                ),
+              ),
+              const SizedBox(width: 16),
+              // Info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      favorite.customName,
+                      style: Theme.of(context).textTheme.titleLarge,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
                       children: [
-                        Text(
-                          favorite.customName,
-                          style: Theme.of(context).textTheme.titleLarge,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                        Container(
+                          width: 6,
+                          height: 6,
+                          decoration: BoxDecoration(
+                            color: signalColor.withValues(alpha: 0.7),
+                            shape: BoxShape.circle,
+                          ),
                         ),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Container(
-                              width: 6,
-                              height: 6,
-                              decoration: BoxDecoration(
-                                color: signalColor.withValues(alpha: 0.7),
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            Flexible(
-                              child: Text(
-                                _formatLastSeenWithLocation(context, favorite),
-                                style: Theme.of(context).textTheme.bodySmall,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: Text(
+                            _formatLastSeenWithLocation(context, favorite),
+                            style: Theme.of(context).textTheme.bodySmall,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                  // Map button if location available
-                  if (favorite.hasLastLocation)
-                    GestureDetector(
-                      onTap: () => context.push('/map/${favorite.id}'),
-                      child: Container(
-                        width: 36,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          color: AppColors.surfaceLight,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Icon(
-                          Icons.map_rounded,
-                          color: AppColors.primary,
-                          size: 18,
-                        ),
-                      ),
-                    ),
-                  if (favorite.hasLastLocation) const SizedBox(width: 8),
-                  // Signal
-                  SignalIndicator(
-                    rssi: favorite.lastRssi,
-                    showDistance: false,
-                  ),
-                  const SizedBox(width: 8),
-                  Icon(
-                    Icons.chevron_right_rounded,
-                    color: AppColors.textMuted,
-                    size: 24,
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+              // Map button if location available
+              if (favorite.hasLastLocation)
+                GestureDetector(
+                  onTap: () => context.push('/map/${favorite.id}'),
+                  child: Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: AppColors.surfaceLight,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(
+                      Icons.map_rounded,
+                      color: AppColors.primary,
+                      size: 18,
+                    ),
+                  ),
+                ),
+              if (favorite.hasLastLocation) const SizedBox(width: 8),
+              // Signal
+              SignalIndicator(rssi: favorite.lastRssi, showDistance: false),
+              const SizedBox(width: 8),
+              Icon(
+                Icons.chevron_right_rounded,
+                color: AppColors.textMuted,
+                size: 24,
+              ),
+            ],
           ),
         ),
       ),

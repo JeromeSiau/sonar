@@ -8,11 +8,12 @@ final favoritesRepositoryProvider = Provider<FavoritesRepository>((ref) {
   return FavoritesRepository.instance;
 });
 
-final favoritesProvider = StateNotifierProvider<FavoritesNotifier, List<FavoriteDeviceModel>>((ref) {
-  final repo = ref.watch(favoritesRepositoryProvider);
-  final locationService = ref.watch(locationServiceProvider);
-  return FavoritesNotifier(repo, locationService);
-});
+final favoritesProvider =
+    StateNotifierProvider<FavoritesNotifier, List<FavoriteDeviceModel>>((ref) {
+      final repo = ref.watch(favoritesRepositoryProvider);
+      final locationService = ref.watch(locationServiceProvider);
+      return FavoritesNotifier(repo, locationService);
+    });
 
 class FavoritesNotifier extends StateNotifier<List<FavoriteDeviceModel>> {
   final FavoritesRepository _repo;
@@ -49,15 +50,42 @@ class FavoritesNotifier extends StateNotifier<List<FavoriteDeviceModel>> {
     );
     _refresh();
   }
+
+  /// Updates multiple favorites from scan data with a pre-fetched location.
+  /// This is more efficient than calling updateFromScan for each device,
+  /// as it avoids N geocoding calls (only 1 is needed).
+  Future<void> updateManyFromScanWithLocation(
+    List<BluetoothDeviceModel> devices,
+    LocationData? location,
+  ) async {
+    for (final device in devices) {
+      await _repo.updateFromScan(
+        device,
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+        locationName: location?.placeName,
+      );
+    }
+    _refresh();
+  }
+
+  /// Updates only lastSeenAt for multiple devices (no location fetch).
+  /// Used for frequent scan updates to keep lastSeen fresh.
+  Future<void> updateManyLastSeen(List<BluetoothDeviceModel> devices) async {
+    for (final device in devices) {
+      await _repo.updateLastSeen(device.id, device.lastSeen);
+    }
+    _refresh();
+  }
 }
 
 /// Optimized cached set of favorite IDs for efficient O(1) lookups.
-/// 
+///
 /// Performance optimization: This provider caches the Set of favorite device IDs
-/// so that multiple providers can perform O(1) contains() checks without 
+/// so that multiple providers can perform O(1) contains() checks without
 /// recreating the Set on every access. This is significantly more efficient than
 /// calling favorites.any() which is O(n) linear search.
-/// 
+///
 /// Used by: myDevicesProvider, nearbyDevicesProvider, isFavoriteProvider
 final favoriteIdsSetProvider = Provider<Set<String>>((ref) {
   final favorites = ref.watch(favoritesProvider);
@@ -65,14 +93,17 @@ final favoriteIdsSetProvider = Provider<Set<String>>((ref) {
 });
 
 /// Efficient O(1) lookup for checking if a device is a favorite.
-/// 
+///
 /// Performance: Uses Set.contains() which is O(1) instead of List.any() which is O(n).
 final isFavoriteProvider = Provider.family<bool, String>((ref, deviceId) {
   final favoriteIds = ref.watch(favoriteIdsSetProvider);
   return favoriteIds.contains(deviceId);
 });
 
-final favoriteByIdProvider = Provider.family<FavoriteDeviceModel?, String>((ref, deviceId) {
+final favoriteByIdProvider = Provider.family<FavoriteDeviceModel?, String>((
+  ref,
+  deviceId,
+) {
   final favorites = ref.watch(favoritesProvider);
   try {
     return favorites.firstWhere((f) => f.id == deviceId);

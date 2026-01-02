@@ -1,6 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:bluetooth_finder/features/favorites/data/models/favorite_device_model.dart';
 import 'package:bluetooth_finder/features/scanner/data/models/bluetooth_device_model.dart';
+import 'package:bluetooth_finder/core/services/widget_service.dart';
 
 class FavoritesRepository {
   static const String _boxName = 'favorites';
@@ -30,10 +31,14 @@ class FavoritesRepository {
   Future<void> addFavorite(BluetoothDeviceModel device) async {
     final favorite = FavoriteDeviceModel.fromBluetoothDevice(device);
     await _box.put(device.id, favorite);
+    // Update home screen widget (non-blocking to avoid UI latency)
+    WidgetService.instance.updateWidget();
   }
 
   Future<void> removeFavorite(String deviceId) async {
     await _box.delete(deviceId);
+    // Update home screen widget (non-blocking to avoid UI latency)
+    WidgetService.instance.updateWidget();
   }
 
   Future<void> toggleFavorite(BluetoothDeviceModel device) async {
@@ -62,6 +67,20 @@ class FavoritesRepository {
         longitude: longitude,
         locationName: locationName,
       );
+      // Update home screen widget (non-blocking)
+      WidgetService.instance.updateWidget();
+    }
+  }
+
+  /// Updates only lastSeenAt for a favorite (no location).
+  /// Used for frequent scan updates where location isn't needed.
+  Future<void> updateLastSeen(String deviceId, DateTime lastSeen) async {
+    final favorite = _box.get(deviceId);
+    if (favorite != null) {
+      favorite.lastSeenAt = lastSeen;
+      await favorite.save();
+      // Update home screen widget
+      WidgetService.instance.updateWidget();
     }
   }
 

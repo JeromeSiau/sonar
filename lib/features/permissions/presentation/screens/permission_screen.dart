@@ -10,13 +10,17 @@ class PermissionScreen extends StatelessWidget {
   const PermissionScreen({super.key});
 
   Future<void> _requestPermissions(BuildContext context) async {
-    // First check if Bluetooth is enabled at system level
-    final btState = await FlutterBluePlus.adapterState.first;
+    final l10n = AppLocalizations.of(context)!;
 
-    if (btState != BluetoothAdapterState.on) {
-      // On iOS, we can't programmatically enable Bluetooth - show a dialog
+    // Check if Bluetooth adapter is OFF (applies to both platforms)
+    final btState = await FlutterBluePlus.adapterState.first.timeout(
+      const Duration(seconds: 2),
+      onTimeout: () => BluetoothAdapterState.unknown,
+    );
+
+    if (btState == BluetoothAdapterState.off) {
+      // Bluetooth is physically off - ask user to enable it in Settings
       if (context.mounted) {
-        final l10n = AppLocalizations.of(context)!;
         await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
@@ -37,10 +41,10 @@ class PermissionScreen extends StatelessWidget {
       return;
     }
 
-    // Platform-specific permissions
     if (Platform.isIOS) {
-      // iOS 13+: Bluetooth permission is enough, location not required for BLE
-      // If we got here with Bluetooth ON, we have all we need
+      // iOS: The Bluetooth permission dialog appears automatically when scanning.
+      // If we got here with BT not definitively OFF, let user proceed.
+      // They'll see the permission dialog when the scanner starts.
       if (context.mounted) {
         context.go('/');
       }
@@ -116,12 +120,13 @@ class PermissionScreen extends StatelessWidget {
                 l10n.bluetooth,
                 l10n.bluetoothPermissionDescription,
               ),
-              _buildPermissionItem(
-                context,
-                Icons.location_on,
-                l10n.location,
-                l10n.locationPermissionDescription,
-              ),
+              if (!Platform.isIOS)
+                _buildPermissionItem(
+                  context,
+                  Icons.location_on,
+                  l10n.location,
+                  l10n.locationPermissionDescription,
+                ),
               const SizedBox(height: 40),
               SizedBox(
                 width: double.infinity,

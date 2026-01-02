@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -182,13 +183,15 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
               const SizedBox(height: 8),
               Text(
                 l10n.locateAllDevices,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge
-                    ?.copyWith(color: AppColors.textSecondary),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
+              // Feature list
+              _buildFeatureList(l10n),
+              const SizedBox(height: 24),
               // Pricing tiers
               _isLoading
                   ? const SizedBox(
@@ -196,8 +199,8 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                       child: Center(child: CircularProgressIndicator()),
                     )
                   : _loadingError != null
-                      ? _buildErrorState(l10n)
-                      : _buildPricingTiers(l10n),
+                  ? _buildErrorState(l10n)
+                  : _buildPricingTiers(l10n),
               const SizedBox(height: 24),
               _buildPurchaseButton(l10n),
               const SizedBox(height: 12),
@@ -226,9 +229,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
       decoration: BoxDecoration(
         color: Colors.red.shade900.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Colors.red.shade700.withValues(alpha: 0.5),
-        ),
+        border: Border.all(color: Colors.red.shade700.withValues(alpha: 0.5)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -268,7 +269,8 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
           _PricingTierCard(
             tier: PricingTier.lifetime,
             title: l10n.lifetimePlan,
-            price: _packages[PricingTier.lifetime]?.storeProduct.priceString ??
+            price:
+                _packages[PricingTier.lifetime]?.storeProduct.priceString ??
                 l10n.lifetimePrice,
             period: l10n.oneTimePurchaseBadge,
             isSelected: _selectedTier == PricingTier.lifetime,
@@ -284,9 +286,8 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                 child: _PricingTierCard(
                   tier: PricingTier.weekly,
                   title: l10n.weekly,
-                  price: _packages[PricingTier.weekly]
-                          ?.storeProduct
-                          .priceString ??
+                  price:
+                      _packages[PricingTier.weekly]?.storeProduct.priceString ??
                       l10n.weeklyPrice,
                   period: l10n.perWeek,
                   isSelected: _selectedTier == PricingTier.weekly,
@@ -302,7 +303,8 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                 child: _PricingTierCard(
                   tier: PricingTier.monthly,
                   title: l10n.monthly,
-                  price: _packages[PricingTier.monthly]
+                  price:
+                      _packages[PricingTier.monthly]
                           ?.storeProduct
                           .priceString ??
                       l10n.monthlyPrice,
@@ -317,8 +319,8 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
         // Fallback if no tiers loaded (show single lifetime option)
         if (_packages.isEmpty ||
             (!_packages.containsKey(PricingTier.weekly) &&
-             !_packages.containsKey(PricingTier.monthly) &&
-             !_packages.containsKey(PricingTier.lifetime)))
+                !_packages.containsKey(PricingTier.monthly) &&
+                !_packages.containsKey(PricingTier.lifetime)))
           _buildFallbackPriceCard(l10n),
       ],
     );
@@ -337,18 +339,16 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
           Text(
             l10n.lifetimePrice,
             style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.bold,
-                ),
+              color: AppColors.primary,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 8),
           Container(
@@ -372,40 +372,70 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     );
   }
 
+  Widget _buildFeatureList(AppLocalizations l10n) {
+    final features = [
+      (l10n.featureUnlimitedRadar, Icons.radar_rounded),
+      (l10n.featureFindAllDevices, Icons.devices_rounded),
+      (l10n.featureAudioAlerts, Icons.volume_up_rounded),
+      (l10n.featureNoAds, Icons.block_rounded),
+      (l10n.featureLifetimeUpdates, Icons.update_rounded),
+    ];
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surface.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.glassBorder),
+      ),
+      child: Column(
+        children: features.map((feature) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              children: [
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    color: AppColors.signalStrong.withValues(alpha: 0.15),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.check_rounded,
+                    size: 16,
+                    color: AppColors.signalStrong,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    feature.$1,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                Icon(feature.$2, size: 18, color: AppColors.textMuted),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
   Widget _buildPurchaseButton(AppLocalizations l10n) {
     final hasPackage = _packages[_selectedTier] != null;
 
-    return SizedBox(
-      width: double.infinity,
-      height: 56,
-      child: ElevatedButton(
-        onPressed: (hasPackage || _packages.isEmpty) && !_isPurchasing
-            ? _purchase
-            : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: Colors.black,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-        child: _isPurchasing
-            ? const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Colors.black,
-                ),
-              )
-            : Text(
-                l10n.unlockNow,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-      ),
+    return _ShimmerButton(
+      onPressed: (hasPackage || _packages.isEmpty) && !_isPurchasing
+          ? _purchase
+          : null,
+      isLoading: _isPurchasing,
+      text: l10n.unlockNow,
     );
   }
 }
@@ -431,20 +461,23 @@ class _PricingTierCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(16),
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           gradient: isSelected
               ? LinearGradient(
-                  colors: [
-                    AppColors.primary.withValues(alpha: 0.2),
-                    AppColors.primary.withValues(alpha: 0.1),
-                  ],
+                  colors: isBestValue
+                      ? [
+                          const Color(0xFFFFD700).withValues(alpha: 0.15),
+                          const Color(0xFFFF8C00).withValues(alpha: 0.08),
+                        ]
+                      : [
+                          AppColors.primary.withValues(alpha: 0.2),
+                          AppColors.primary.withValues(alpha: 0.1),
+                        ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 )
@@ -452,82 +485,238 @@ class _PricingTierCard extends StatelessWidget {
           color: isSelected ? null : AppColors.surface.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.glassBorder,
-            width: isSelected ? 2 : 1,
+            color: isBestValue
+                ? const Color(0xFFFFD700)
+                : isSelected
+                ? AppColors.primary
+                : AppColors.glassBorder,
+            width: isSelected || isBestValue ? 2 : 1,
           ),
         ),
-        child: Column(
+        child: Stack(
+          clipBehavior: Clip.none,
           children: [
-            // Best Value badge
+            // Diagonal ribbon for Best Value
             if (isBestValue)
-              Container(
-                margin: const EdgeInsets.only(bottom: 8),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                decoration: BoxDecoration(
-                  color: AppColors.signalStrong,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  l10n.bestValue,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 10,
-                    letterSpacing: 1,
+              Positioned(
+                top: -4,
+                right: -28,
+                child: Transform.rotate(
+                  angle: math.pi / 4,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 28,
+                      vertical: 4,
+                    ),
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFFFFD700), Color(0xFFFF8C00)],
+                      ),
+                    ),
+                    child: const Text(
+                      'BEST VALUE',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 8,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            // Title
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: isSelected
-                        ? AppColors.textPrimary
-                        : AppColors.textSecondary,
+            // Main content
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  if (isBestValue) const SizedBox(height: 4),
+                  // Title
+                  Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: isSelected
+                          ? AppColors.textPrimary
+                          : AppColors.textSecondary,
+                    ),
                   ),
-            ),
-            const SizedBox(height: 8),
-            // Price
-            Text(
-              price,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color:
-                        isSelected ? AppColors.primary : AppColors.textPrimary,
-                    fontWeight: FontWeight.bold,
+                  const SizedBox(height: 8),
+                  // Price
+                  Text(
+                    price,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: isSelected
+                          ? AppColors.primary
+                          : AppColors.textPrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-            ),
-            const SizedBox(height: 4),
-            // Period
-            Text(
-              period,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.textMuted,
-                    fontSize: 11,
+                  const SizedBox(height: 4),
+                  // Period
+                  Text(
+                    period,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppColors.textMuted,
+                      fontSize: 11,
+                    ),
                   ),
-            ),
-            // Selection indicator
-            const SizedBox(height: 12),
-            Container(
-              width: 24,
-              height: 24,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: isSelected ? AppColors.primary : AppColors.textMuted,
-                  width: 2,
-                ),
-                color: isSelected ? AppColors.primary : Colors.transparent,
+                  // Selection indicator
+                  const SizedBox(height: 12),
+                  Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: isSelected
+                            ? AppColors.primary
+                            : AppColors.textMuted,
+                        width: 2,
+                      ),
+                      color: isSelected
+                          ? AppColors.primary
+                          : Colors.transparent,
+                    ),
+                    child: isSelected
+                        ? const Icon(Icons.check, size: 16, color: Colors.black)
+                        : null,
+                  ),
+                ],
               ),
-              child: isSelected
-                  ? const Icon(
-                      Icons.check,
-                      size: 16,
-                      color: Colors.black,
-                    )
-                  : null,
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Shimmer button with animated shine effect
+class _ShimmerButton extends StatefulWidget {
+  final VoidCallback? onPressed;
+  final bool isLoading;
+  final String text;
+
+  const _ShimmerButton({
+    required this.onPressed,
+    required this.isLoading,
+    required this.text,
+  });
+
+  @override
+  State<_ShimmerButton> createState() => _ShimmerButtonState();
+}
+
+class _ShimmerButtonState extends State<_ShimmerButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 2500),
+      vsync: this,
+    )..repeat();
+
+    _animation = Tween<double>(
+      begin: -1.5,
+      end: 1.5,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      height: 56,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: widget.onPressed,
+          borderRadius: BorderRadius.circular(16),
+          child: AnimatedBuilder(
+            animation: _animation,
+            builder: (context, child) {
+              return Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      AppColors.primary,
+                      AppColors.primary.withValues(alpha: 0.9),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.3),
+                      blurRadius: 12,
+                      spreadRadius: 0,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Stack(
+                  children: [
+                    // Shimmer effect
+                    if (!widget.isLoading)
+                      Positioned.fill(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Transform.translate(
+                            offset: Offset(_animation.value * 200, 0),
+                            child: Container(
+                              width: 80,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.transparent,
+                                    Colors.white.withValues(alpha: 0.15),
+                                    Colors.white.withValues(alpha: 0.25),
+                                    Colors.white.withValues(alpha: 0.15),
+                                    Colors.transparent,
+                                  ],
+                                  stops: const [0.0, 0.3, 0.5, 0.7, 1.0],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    // Content
+                    Center(
+                      child: widget.isLoading
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.black,
+                              ),
+                            )
+                          : Text(
+                              widget.text,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

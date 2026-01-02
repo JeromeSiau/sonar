@@ -2,6 +2,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:bluetooth_finder/core/theme/app_colors.dart';
 import 'package:bluetooth_finder/features/favorites/data/models/favorite_device_model.dart';
@@ -51,8 +52,8 @@ class DeviceMapScreen extends ConsumerWidget {
                   Text(
                     l10n.noLocationHistoryDescription,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
+                      color: AppColors.textSecondary,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -63,12 +64,13 @@ class DeviceMapScreen extends ConsumerWidget {
       );
     }
 
-    final deviceLocation = LatLng(favorite.lastLatitude!, favorite.lastLongitude!);
+    final deviceLocation = LatLng(
+      favorite.lastLatitude!,
+      favorite.lastLongitude!,
+    );
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(favorite.customName),
-      ),
+      appBar: AppBar(title: Text(favorite.customName)),
       body: Stack(
         children: [
           // Map
@@ -108,7 +110,11 @@ class DeviceMapScreen extends ConsumerWidget {
             left: 16,
             right: 16,
             bottom: 16,
-            child: _LocationInfoCard(favorite: favorite, l10n: l10n),
+            child: _LocationInfoCard(
+              favorite: favorite,
+              l10n: l10n,
+              onOpenRadar: () => context.push('/radar/${favorite.id}'),
+            ),
           ),
         ],
       ),
@@ -120,10 +126,7 @@ class _DeviceMarker extends StatelessWidget {
   final String deviceName;
   final dynamic deviceType;
 
-  const _DeviceMarker({
-    required this.deviceName,
-    required this.deviceType,
-  });
+  const _DeviceMarker({required this.deviceName, required this.deviceType});
 
   @override
   Widget build(BuildContext context) {
@@ -143,11 +146,7 @@ class _DeviceMarker extends StatelessWidget {
               ),
             ],
           ),
-          child: Icon(
-            _getDeviceIcon(),
-            color: Colors.black,
-            size: 24,
-          ),
+          child: Icon(_getDeviceIcon(), color: Colors.black, size: 24),
         ),
         // Triangle pointer
         CustomPaint(
@@ -203,10 +202,12 @@ class _TrianglePainter extends CustomPainter {
 class _LocationInfoCard extends StatelessWidget {
   final FavoriteDeviceModel favorite;
   final AppLocalizations l10n;
+  final VoidCallback onOpenRadar;
 
   const _LocationInfoCard({
     required this.favorite,
     required this.l10n,
+    required this.onOpenRadar,
   });
 
   @override
@@ -249,17 +250,79 @@ class _LocationInfoCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             favorite.lastLocationName ?? _formatCoordinates(),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 4),
           Text(
             _formatDate(favorite.lastSeenAt),
-            style: TextStyle(
-              color: AppColors.textMuted,
-              fontSize: 13,
-            ),
+            style: TextStyle(color: AppColors.textMuted, fontSize: 13),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceLight.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.info_outline_rounded,
+                        size: 14,
+                        color: AppColors.textSecondary,
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          l10n.gpsAccuracyNotice,
+                          style: TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              GestureDetector(
+                onTap: onOpenRadar,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.radar_rounded, size: 16, color: Colors.black),
+                      const SizedBox(width: 6),
+                      Text(
+                        l10n.openRadar,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

@@ -1,16 +1,19 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart' as classic;
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart'
+    as classic;
 import 'package:bluetooth_finder/features/scanner/data/models/bluetooth_device_model.dart';
 
 class BluetoothRepository {
   final Map<String, BluetoothDeviceModel> _devices = {};
-  final _devicesController = StreamController<List<BluetoothDeviceModel>>.broadcast();
+  final _devicesController =
+      StreamController<List<BluetoothDeviceModel>>.broadcast();
   // Real-time RSSI stream for radar (not debounced)
   final _rssiController = StreamController<Map<String, int>>.broadcast();
   StreamSubscription<List<ScanResult>>? _bleScanSubscription;
-  StreamSubscription<classic.BluetoothDiscoveryResult>? _classicScanSubscription;
+  StreamSubscription<classic.BluetoothDiscoveryResult>?
+  _classicScanSubscription;
   Timer? _cleanupTimer;
   Timer? _rssiPollingTimer;
   Timer? _updateDebounceTimer;
@@ -24,7 +27,8 @@ class BluetoothRepository {
   // Debounce interval for UI updates (prevents constant jumping)
   static const _updateInterval = Duration(milliseconds: 1500);
 
-  Stream<List<BluetoothDeviceModel>> get devicesStream => _devicesController.stream;
+  Stream<List<BluetoothDeviceModel>> get devicesStream =>
+      _devicesController.stream;
 
   /// Real-time RSSI stream for radar - emits immediately without debouncing
   Stream<Map<String, int>> get rssiStream => _rssiController.stream;
@@ -69,8 +73,8 @@ class BluetoothRepository {
       if (a.isBonded && !b.isBonded) return -1;
       if (!a.isBonded && b.isBonded) return 1;
       // Then named devices
-      final aHasName = a.name != 'Appareil inconnu';
-      final bHasName = b.name != 'Appareil inconnu';
+      final aHasName = a.name.isNotEmpty;
+      final bHasName = b.name.isNotEmpty;
       if (aHasName && !bHasName) return -1;
       if (!aHasName && bHasName) return 1;
       // Then by signal strength (higher RSSI = closer)
@@ -111,9 +115,12 @@ class BluetoothRepository {
         final cachedName = _bondedDeviceNames[deviceId];
         final isBonded = cachedName != null;
 
-        var device = BluetoothDeviceModel.fromScanResult(result, isBonded: isBonded);
+        var device = BluetoothDeviceModel.fromScanResult(
+          result,
+          isBonded: isBonded,
+        );
         // Use cached name if scan didn't provide one
-        if (device.name == 'Appareil inconnu' && cachedName != null) {
+        if (device.name.isEmpty && cachedName != null) {
           device = device.copyWith(name: cachedName);
         }
         _mergeDevice(device);
@@ -137,23 +144,23 @@ class BluetoothRepository {
     _classicScanSubscription = classic.FlutterBluetoothSerial.instance
         .startDiscovery()
         .listen((result) {
-      final deviceId = result.device.address.toUpperCase();
-      final cachedName = _bondedDeviceNames[deviceId];
-      final isBonded = cachedName != null;
-      var model = BluetoothDeviceModel.fromClassicDevice(
-        result.device,
-        rssi: result.rssi,
-        isBonded: isBonded,
-      );
-      // Use cached name if scan didn't provide one
-      if (model.name == 'Appareil inconnu' && cachedName != null) {
-        model = model.copyWith(name: cachedName);
-      }
-      _mergeDevice(model);
-      // Emit real-time RSSI for radar
-      _emitRssi(model.id, model.rssi);
-      _emitUpdate();
-    });
+          final deviceId = result.device.address.toUpperCase();
+          final cachedName = _bondedDeviceNames[deviceId];
+          final isBonded = cachedName != null;
+          var model = BluetoothDeviceModel.fromClassicDevice(
+            result.device,
+            rssi: result.rssi,
+            isBonded: isBonded,
+          );
+          // Use cached name if scan didn't provide one
+          if (model.name.isEmpty && cachedName != null) {
+            model = model.copyWith(name: cachedName);
+          }
+          _mergeDevice(model);
+          // Emit real-time RSSI for radar
+          _emitRssi(model.id, model.rssi);
+          _emitUpdate();
+        });
   }
 
   /// Merge a device into the map, preferring named devices over unknown
@@ -166,8 +173,8 @@ class BluetoothRepository {
     }
 
     // Prefer device with a name
-    final existingHasName = existing.name != 'Appareil inconnu';
-    final newHasName = device.name != 'Appareil inconnu';
+    final existingHasName = existing.name.isNotEmpty;
+    final newHasName = device.name.isNotEmpty;
 
     if (newHasName && !existingHasName) {
       // New device has name, existing doesn't - use new but keep bonded status
@@ -240,7 +247,8 @@ class BluetoothRepository {
     // Collect Classic bonded device names (Android only)
     if (Platform.isAndroid) {
       try {
-        final classicBonded = await classic.FlutterBluetoothSerial.instance.getBondedDevices();
+        final classicBonded = await classic.FlutterBluetoothSerial.instance
+            .getBondedDevices();
         for (final device in classicBonded) {
           final name = device.name;
           final id = device.address.toUpperCase();
@@ -315,7 +323,8 @@ class BluetoothRepository {
 
         // Skip if already has recent RSSI (was found via scan or connected devices)
         final existing = _devices[id];
-        if (existing != null && existing.rssi > -90 &&
+        if (existing != null &&
+            existing.rssi > -90 &&
             DateTime.now().difference(existing.lastSeen).inSeconds < 5) {
           continue;
         }
@@ -323,7 +332,10 @@ class BluetoothRepository {
         // Only try to connect if device reports as connectable
         if (!device.isConnected) {
           try {
-            await device.connect(timeout: const Duration(seconds: 3), autoConnect: true);
+            await device.connect(
+              timeout: const Duration(seconds: 3),
+              autoConnect: true,
+            );
           } catch (_) {
             // Connection failed - device might not be reachable
           }

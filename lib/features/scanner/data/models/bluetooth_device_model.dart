@@ -39,7 +39,7 @@ class BluetoothDeviceModel {
         ? advertisedName
         : platformName.isNotEmpty
         ? platformName
-        : 'Appareil inconnu';
+        : '';
 
     return BluetoothDeviceModel(
       id: result.device.remoteId.str,
@@ -55,9 +55,7 @@ class BluetoothDeviceModel {
 
   /// Create from a bonded/paired BLE device (has cached name)
   factory BluetoothDeviceModel.fromBondedDevice(fbp.BluetoothDevice device) {
-    final name = device.platformName.isNotEmpty
-        ? device.platformName
-        : 'Appareil inconnu';
+    final name = device.platformName.isNotEmpty ? device.platformName : '';
 
     return BluetoothDeviceModel(
       id: device.remoteId.str,
@@ -76,7 +74,7 @@ class BluetoothDeviceModel {
     required int rssi,
     bool isBonded = false,
   }) {
-    final name = device.name ?? 'Appareil inconnu';
+    final name = device.name ?? '';
 
     return BluetoothDeviceModel(
       id: device.address,

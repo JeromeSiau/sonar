@@ -61,6 +61,9 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
     final bluetoothState = ref.watch(bluetoothAdapterStateProvider);
     final l10n = AppLocalizations.of(context)!;
 
+    // Activate auto-update of favorite locations when scanning
+    ref.watch(favoriteLocationUpdaterProvider);
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -80,7 +83,8 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
               }
               return _buildScannerContent(context, isScanning, isPremium, l10n);
             },
-            loading: () => _SonarSearchAnimation(isScanning: isScanning, l10n: l10n),
+            loading: () =>
+                _SonarSearchAnimation(isScanning: isScanning, l10n: l10n),
             error: (_, __) => _buildErrorState(l10n),
           ),
         ),
@@ -152,44 +156,47 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
     return Column(
       children: [
         // Mini sonar at top when scanning with results
-        if (isScanning && !isEmpty)
-          _MiniSonarIndicator(l10n: l10n),
+        if (isScanning && !isEmpty) _MiniSonarIndicator(l10n: l10n),
         // Show trial status for free users
-        if (!isPremium)
-          _buildTrialBanner(context, trialUsed, l10n),
+        if (!isPremium) _buildTrialBanner(context, trialUsed, l10n),
         Expanded(
           child: RefreshIndicator(
             onRefresh: _startScan,
             color: AppColors.primary,
             backgroundColor: AppColors.surface,
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
-              children: [
-                // All devices sorted by proximity
-                if (devices.isNotEmpty) ...[
-                  SectionHeader(
-                    icon: Icons.radar_rounded,
-                    title: l10n.nearbyDevices,
-                    count: devices.length,
-                  ),
-                  // Performance: Use for loop instead of asMap().entries.map()
-                  for (var i = 0; i < devices.length; i++)
-                    StaggeredListItem(
-                      index: i,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: DeviceCard(
-                          device: devices[i],
-                          onTap: () => _onDeviceTap(context, ref, devices[i]),
+            child: devices.isNotEmpty
+                ? ListView.builder(
+                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
+                    // +1 for the header
+                    itemCount: devices.length + 1,
+                    itemBuilder: (context, index) {
+                      // First item is the section header
+                      if (index == 0) {
+                        return SectionHeader(
+                          icon: Icons.radar_rounded,
+                          title: l10n.nearbyDevices,
+                          count: devices.length,
+                        );
+                      }
+                      // Device cards (index - 1 because of header)
+                      final deviceIndex = index - 1;
+                      final device = devices[deviceIndex];
+                      return StaggeredListItem(
+                        index: deviceIndex,
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: DeviceCard(
+                            device: device,
+                            onTap: () => _onDeviceTap(context, ref, device),
+                          ),
                         ),
-                      ),
-                    ),
-                ],
-                // Empty state
-                if (isEmpty && !isScanning)
-                  _buildEmptyState(l10n),
-              ],
-            ),
+                      );
+                    },
+                  )
+                : ListView(
+                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
+                    children: [if (!isScanning) _buildEmptyState(l10n)],
+                  ),
           ),
         ),
         // Floating bottom panel
@@ -227,7 +234,8 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
                 child: Checkbox(
                   value: showUnnamed,
                   onChanged: (value) {
-                    ref.read(showUnnamedDevicesProvider.notifier).state = value ?? false;
+                    ref.read(showUnnamedDevicesProvider.notifier).state =
+                        value ?? false;
                   },
                   activeColor: AppColors.primary,
                 ),
@@ -302,24 +310,158 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
   }
 
   Widget _buildEmptyState(AppLocalizations l10n) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          children: [
-            Icon(
-              Icons.bluetooth_searching_rounded,
-              size: 48,
-              color: AppColors.textSecondary,
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        children: [
+          const SizedBox(height: 24),
+          // Static radar icon (no animation)
+          Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: AppColors.primary.withValues(alpha: 0.2),
+                width: 2,
+              ),
             ),
-            const SizedBox(height: 16),
-            Text(
-              l10n.noDevicesFound,
-              style: TextStyle(color: AppColors.textSecondary),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Static concentric circles
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: AppColors.primary.withValues(alpha: 0.15),
+                      width: 1,
+                    ),
+                  ),
+                ),
+                Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: AppColors.primary.withValues(alpha: 0.2),
+                      width: 1,
+                    ),
+                  ),
+                ),
+                // Center dot
+                Container(
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            l10n.noDevicesFound,
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            l10n.checkBluetoothEnabled,
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          // Troubleshooting tips
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppColors.surface.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.glassBorder),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.lightbulb_outline_rounded,
+                      size: 18,
+                      color: AppColors.signalMedium,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      l10n.deviceVisibleConditions,
+                      style: TextStyle(
+                        color: AppColors.signalMedium,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                _buildTipItem(
+                  Icons.power_settings_new_rounded,
+                  l10n.deviceMustBeOn,
+                ),
+                const SizedBox(height: 8),
+                _buildTipItem(
+                  Icons.bluetooth_rounded,
+                  l10n.bluetoothMustBeEnabledOnDevice,
+                ),
+                const SizedBox(height: 8),
+                _buildTipItem(Icons.near_me_rounded, l10n.deviceMustBeInRange),
+                const SizedBox(height: 8),
+                _buildTipItem(
+                  Icons.visibility_off_rounded,
+                  l10n.someDevicesDontBroadcastName,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          // Retry button
+          ElevatedButton.icon(
+            onPressed: _startScan,
+            icon: const Icon(Icons.refresh_rounded),
+            label: Text(l10n.retry),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.black,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            ),
+          ),
+        ],
       ),
+    );
+  }
+
+  Widget _buildTipItem(IconData icon, String text) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 16, color: AppColors.primary),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 12,
+              height: 1.3,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -365,46 +507,40 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
     );
   }
 
-  Widget _buildTrialBanner(BuildContext context, bool trialUsed, AppLocalizations l10n) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: trialUsed
-            ? AppColors.surface
-            : AppColors.signalStrong.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: trialUsed
-              ? AppColors.textSecondary.withValues(alpha: 0.2)
-              : AppColors.signalStrong.withValues(alpha: 0.3),
-        ),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            trialUsed ? Icons.radar : Icons.card_giftcard_rounded,
-            color: trialUsed ? AppColors.textSecondary : AppColors.signalStrong,
-            size: 20,
+  Widget _buildTrialBanner(
+    BuildContext context,
+    bool trialUsed,
+    AppLocalizations l10n,
+  ) {
+    if (trialUsed) {
+      // Trial used - show upgrade prompt
+      return Container(
+        margin: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: AppColors.textSecondary.withValues(alpha: 0.2),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              trialUsed
-                  ? l10n.trialUsed
-                  : l10n.trialAvailable,
-              style: TextStyle(
-                color: trialUsed ? AppColors.textSecondary : AppColors.signalStrong,
-                fontWeight: trialUsed ? FontWeight.normal : FontWeight.w600,
-                fontSize: 14,
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.radar, color: AppColors.textSecondary, size: 20),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                l10n.trialUsed,
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
               ),
             ),
-          ),
-          if (trialUsed)
             TextButton(
               onPressed: () => context.push('/paywall'),
               style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 backgroundColor: AppColors.primary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -419,11 +555,108 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
                 ),
               ),
             ),
+          ],
+        ),
+      );
+    }
+
+    // Free trial available - enhanced two-line banner
+    return Container(
+      margin: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppColors.signalStrong.withValues(alpha: 0.15),
+            AppColors.primary.withValues(alpha: 0.1),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppColors.signalStrong.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Row(
+        children: [
+          // Gift icon with glow
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppColors.signalStrong.withValues(alpha: 0.2),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.card_giftcard_rounded,
+              color: AppColors.signalStrong,
+              size: 22,
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // FREE badge + title row
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.signalStrong,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        l10n.free,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 9,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        l10n.trialAvailable,
+                        style: TextStyle(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                // Subtitle
+                Text(
+                  l10n.tapDeviceToLocate,
+                  style: TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.arrow_forward_ios_rounded,
+            size: 14,
+            color: AppColors.signalStrong,
+          ),
         ],
       ),
     );
   }
-
 }
 
 // === SONAR SEARCH ANIMATION ===
@@ -476,63 +709,70 @@ class _SonarSearchAnimationState extends State<_SonarSearchAnimation>
     final screenWidth = MediaQuery.of(context).size.width;
     final sonarSize = math.min(screenWidth * 0.8, 300.0);
 
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Sonar display
-          RepaintBoundary(
-            child: SizedBox(
-              width: sonarSize,
-              height: sonarSize,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Grid
-                  CustomPaint(
-                    size: Size(sonarSize, sonarSize),
-                    painter: _SonarGridPainter(),
+    return Semantics(
+      // Accessibility: announce scanning status to screen readers
+      label: '${widget.l10n.scanning}. ${widget.l10n.searchingDevices}',
+      liveRegion: true,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Sonar display - exclude visual elements from semantics
+            ExcludeSemantics(
+              child: RepaintBoundary(
+                child: SizedBox(
+                  width: sonarSize,
+                  height: sonarSize,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      // Grid
+                      CustomPaint(
+                        size: Size(sonarSize, sonarSize),
+                        painter: _SonarGridPainter(),
+                      ),
+                      // Concentric circles
+                      _buildConcentricCircles(sonarSize),
+                      // Ping waves
+                      _buildPingWaves(sonarSize),
+                      // Sweep beam
+                      _buildSweepBeam(sonarSize),
+                      // Center pulse
+                      _buildCenterPulse(),
+                    ],
                   ),
-                  // Concentric circles
-                  _buildConcentricCircles(sonarSize),
-                  // Ping waves
-                  _buildPingWaves(sonarSize),
-                  // Sweep beam
-                  _buildSweepBeam(sonarSize),
-                  // Center pulse
-                  _buildCenterPulse(),
-                ],
+                ),
               ),
             ),
-          ),
 
-          const SizedBox(height: 48),
+            const SizedBox(height: 48),
 
-          // Status text
-          Text(
-            widget.l10n.scanning,
-            style: TextStyle(
-              fontFamily: 'SF Mono',
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 6,
-              color: AppColors.primary,
+            // Status text
+            Text(
+              widget.l10n.scanning,
+              style: TextStyle(
+                fontFamily: 'SF Mono',
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 6,
+                color: AppColors.primary,
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          AnimatedBuilder(
-            animation: _pulseController,
-            builder: (context, child) {
-              return Opacity(
-                opacity: 0.5 + (_pulseController.value * 0.5),
-                child: Text(
-                  widget.l10n.searchingDevices,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              );
-            },
-          ),
-        ],
+            const SizedBox(height: 8),
+            AnimatedBuilder(
+              animation: _pulseController,
+              builder: (context, child) {
+                return Opacity(
+                  opacity: 0.5 + (_pulseController.value * 0.5),
+                  child: Text(
+                    widget.l10n.searchingDevices,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -659,41 +899,57 @@ class _MiniSonarIndicator extends StatefulWidget {
 }
 
 class _MiniSonarIndicatorState extends State<_MiniSonarIndicator>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
+    with TickerProviderStateMixin {
+  late AnimationController _radarController;
+  late AnimationController _dotsController;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
+    _radarController = AnimationController(
       duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    )..repeat();
+
+    _dotsController = AnimationController(
+      duration: const Duration(milliseconds: 1200),
       vsync: this,
     )..repeat();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _radarController.dispose();
+    _dotsController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
+      ),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // Mini animated radar
+          // Spinning radar icon
           RepaintBoundary(
             child: SizedBox(
-              width: 32,
-              height: 32,
+              width: 24,
+              height: 24,
               child: AnimatedBuilder(
-                animation: _controller,
+                animation: _radarController,
                 builder: (context, child) {
-                  return CustomPaint(
-                    painter: _MiniRadarPainter(
-                      progress: _controller.value,
+                  return Transform.rotate(
+                    angle: _radarController.value * 2 * math.pi,
+                    child: Icon(
+                      Icons.radar_rounded,
+                      size: 24,
                       color: AppColors.primary,
                     ),
                   );
@@ -701,15 +957,45 @@ class _MiniSonarIndicatorState extends State<_MiniSonarIndicator>
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           Text(
-            widget.l10n.scanInProgress,
+            widget.l10n.scanning,
             style: TextStyle(
               color: AppColors.primary,
               fontFamily: 'SF Mono',
               fontSize: 12,
+              fontWeight: FontWeight.w600,
               letterSpacing: 1,
             ),
+          ),
+          const SizedBox(width: 4),
+          // Animated dots
+          AnimatedBuilder(
+            animation: _dotsController,
+            builder: (context, child) {
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: List.generate(3, (index) {
+                  final delay = index * 0.25;
+                  final progress = (_dotsController.value + delay) % 1.0;
+                  final opacity = (math.sin(
+                    progress * math.pi,
+                  )).clamp(0.3, 1.0);
+
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 2),
+                    child: Container(
+                      width: 4,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: opacity),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  );
+                }),
+              );
+            },
           ),
         ],
       ),
@@ -729,7 +1015,11 @@ class _SonarGridPainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     // Cross lines
-    canvas.drawLine(Offset(center.dx, 0), Offset(center.dx, size.height), paint);
+    canvas.drawLine(
+      Offset(center.dx, 0),
+      Offset(center.dx, size.height),
+      paint,
+    );
     canvas.drawLine(Offset(0, center.dy), Offset(size.width, center.dy), paint);
 
     // Diagonal lines
@@ -806,49 +1096,4 @@ class _SweepBeamPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _SweepBeamPainter oldDelegate) => false;
-}
-
-class _MiniRadarPainter extends CustomPainter {
-  final double progress;
-  final Color color;
-
-  _MiniRadarPainter({required this.progress, required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2;
-
-    // Draw circles
-    final circlePaint = Paint()
-      ..color = color.withValues(alpha: 0.3)
-      ..strokeWidth = 1
-      ..style = PaintingStyle.stroke;
-
-    canvas.drawCircle(center, radius * 0.5, circlePaint);
-    canvas.drawCircle(center, radius, circlePaint);
-
-    // Draw sweep line
-    final angle = progress * 2 * math.pi;
-    final endX = center.dx + radius * math.cos(angle);
-    final endY = center.dy + radius * math.sin(angle);
-
-    final linePaint = Paint()
-      ..color = color
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
-
-    canvas.drawLine(center, Offset(endX, endY), linePaint);
-
-    // Center dot
-    final dotPaint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
-
-    canvas.drawCircle(center, 3, dotPaint);
-  }
-
-  @override
-  bool shouldRepaint(covariant _MiniRadarPainter oldDelegate) =>
-      progress != oldDelegate.progress;
 }

@@ -34,6 +34,12 @@ class LocaleNotifier extends StateNotifier<Locale?> {
     Locale('es'),
     Locale('de'),
     Locale('it'),
+    Locale('pt'),
+    Locale('ja'),
+    Locale('ko'),
+    Locale('nl'),
+    Locale('pl'),
+    Locale('tr'),
   ];
 
   static String getLanguageName(String languageCode) {
@@ -48,6 +54,18 @@ class LocaleNotifier extends StateNotifier<Locale?> {
         return 'Deutsch';
       case 'it':
         return 'Italiano';
+      case 'pt':
+        return 'Português';
+      case 'ja':
+        return '日本語';
+      case 'ko':
+        return '한국어';
+      case 'nl':
+        return 'Nederlands';
+      case 'pl':
+        return 'Polski';
+      case 'tr':
+        return 'Türkçe';
       default:
         return languageCode;
     }

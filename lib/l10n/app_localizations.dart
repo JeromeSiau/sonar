@@ -10,6 +10,12 @@ import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
 import 'app_localizations_fr.dart';
 import 'app_localizations_it.dart';
+import 'app_localizations_ja.dart';
+import 'app_localizations_ko.dart';
+import 'app_localizations_nl.dart';
+import 'app_localizations_pl.dart';
+import 'app_localizations_pt.dart';
+import 'app_localizations_tr.dart';
 
 // ignore_for_file: type=lint
 
@@ -102,6 +108,12 @@ abstract class AppLocalizations {
     Locale('es'),
     Locale('fr'),
     Locale('it'),
+    Locale('ja'),
+    Locale('ko'),
+    Locale('nl'),
+    Locale('pl'),
+    Locale('pt'),
+    Locale('tr'),
   ];
 
   /// No description provided for @appName.
@@ -626,6 +638,42 @@ abstract class AppLocalizations {
   /// **'Italiano'**
   String get italian;
 
+  /// No description provided for @portuguese.
+  ///
+  /// In fr, this message translates to:
+  /// **'Português'**
+  String get portuguese;
+
+  /// No description provided for @japanese.
+  ///
+  /// In fr, this message translates to:
+  /// **'日本語'**
+  String get japanese;
+
+  /// No description provided for @korean.
+  ///
+  /// In fr, this message translates to:
+  /// **'한국어'**
+  String get korean;
+
+  /// No description provided for @dutch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nederlands'**
+  String get dutch;
+
+  /// No description provided for @polish.
+  ///
+  /// In fr, this message translates to:
+  /// **'Polski'**
+  String get polish;
+
+  /// No description provided for @turkish.
+  ///
+  /// In fr, this message translates to:
+  /// **'Türkçe'**
+  String get turkish;
+
   /// No description provided for @bluetoothDisabled.
   ///
   /// In fr, this message translates to:
@@ -925,8 +973,19 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['de', 'en', 'es', 'fr', 'it'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+    'de',
+    'en',
+    'es',
+    'fr',
+    'it',
+    'ja',
+    'ko',
+    'nl',
+    'pl',
+    'pt',
+    'tr',
+  ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -945,6 +1004,18 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsFr();
     case 'it':
       return AppLocalizationsIt();
+    case 'ja':
+      return AppLocalizationsJa();
+    case 'ko':
+      return AppLocalizationsKo();
+    case 'nl':
+      return AppLocalizationsNl();
+    case 'pl':
+      return AppLocalizationsPl();
+    case 'pt':
+      return AppLocalizationsPt();
+    case 'tr':
+      return AppLocalizationsTr();
   }
 
   throw FlutterError(

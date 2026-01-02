@@ -97,6 +97,12 @@
   "spanish": "Español",
   "german": "Deutsch",
   "italian": "Italiano",
+  "portuguese": "Português",
+  "japanese": "日本語",
+  "korean": "한국어",
+  "dutch": "Nederlands",
+  "polish": "Polski",
+  "turkish": "Türkçe",
 
   "bluetoothDisabled": "Bluetooth disattivato",
   "enableBluetoothDescription": "Attiva il Bluetooth per scansionare i dispositivi nelle vicinanze",

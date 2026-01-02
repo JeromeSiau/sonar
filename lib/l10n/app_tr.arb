@@ -1,0 +1,186 @@
+{
+  "@@locale": "tr",
+
+  "appName": "SONAR",
+  "appSubtitle": "AirPods ve Kulaklıkları Bul",
+
+  "scanner": "TARAMA",
+  "settings": "AYARLAR",
+
+  "noSavedDevices": "Kayıtlı cihaz yok",
+  "noSavedDevicesDescription": "Yakındaki Bluetooth cihazlarını tarayın\nve favorilerinize ekleyin",
+
+  "justNow": "şimdi",
+  "minutesAgo": "{minutes} dk önce",
+  "@minutesAgo": {
+    "placeholders": {
+      "minutes": {"type": "int"}
+    }
+  },
+  "hoursAgo": "{hours} sa önce",
+  "@hoursAgo": {
+    "placeholders": {
+      "hours": {"type": "int"}
+    }
+  },
+  "daysAgo": "{days} gün önce",
+  "@daysAgo": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+
+  "permissionsRequired": "İzinler gerekli",
+  "permissionsDescription": "Bluetooth cihazlarınızı bulmak için Bluetooth ve konum erişimine ihtiyacımız var.",
+  "bluetooth": "Bluetooth",
+  "bluetoothPermissionDescription": "Yakındaki cihazları tara",
+  "location": "Konum",
+  "locationPermissionDescription": "Bluetooth taraması için gerekli",
+  "authorize": "İzin Ver",
+
+  "scanError": "Tarama hatası",
+  "checkBluetoothEnabled": "Bluetooth'un açık olduğundan emin olun",
+  "retry": "TEKRAR DENE",
+  "trialUsed": "Ücretsiz deneme kullanıldı",
+  "trialAvailable": "1 ücretsiz radar denemesi mevcut",
+  "unlock": "KİLİDİ AÇ",
+  "devicesFound": "{count} cihaz bulundu",
+  "@devicesFound": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "premium": "PREMİUM",
+  "scanning": "TARANIYOR",
+  "searchingDevices": "Bluetooth cihazları aranıyor...",
+  "scanInProgress": "Tarama devam ediyor...",
+
+  "deviceNotFound": "Cihaz bulunamadı",
+  "searchingForDevice": "Cihaz aranıyor...",
+  "deviceNotInRange": "Cihaz menzil dışında",
+  "deviceNotInRangeDescription": "Cihaz algılanamıyor. Açık ve yakında olduğundan emin olun.",
+  "backToHome": "Geri",
+  "radarInstruction": "Hareket edin ve cihazınızı bulmak için sinyal gücünü takip edin",
+  "signalLost": "Sinyal kayboldu",
+  "found": "Bulundu!",
+  "cancel": "İptal",
+  "playSound": "Ses çal",
+  "stopSound": "Sesi durdur",
+  "playSoundDescription": "Bağlıysa cihazda ses çalar",
+  "soundPlaying": "Ses çalıyor...",
+  "deviceMustBeConnected": "Cihaz bağlı olmalıdır (sadece görünür değil)",
+
+  "subscription": "ABONELİK",
+  "goPremium": "Premium'a Geç",
+  "unlockAllFeatures": "Tüm özelliklerin kilidini aç",
+  "restorePurchases": "Satın alımları geri yükle",
+  "restorePurchasesDescription": "Mevcut aboneliği kurtar",
+  "restoringPurchases": "Geri yükleniyor...",
+  "about": "HAKKINDA",
+  "termsOfService": "Kullanım Şartları",
+  "privacyPolicy": "Gizlilik Politikası",
+  "contactUs": "Bize Ulaşın",
+  "version": "Sürüm {version}",
+  "@version": {
+    "placeholders": {
+      "version": {"type": "String"}
+    }
+  },
+  "premiumStatus": "Premium",
+  "freeStatus": "Ücretsiz",
+  "premiumDescription": "Tüm özelliklere sınırsız erişim",
+  "freeDescription": "Sınırlı özellikler",
+
+  "unlockRadar": "Radar'ın Kilidini Aç",
+  "locateAllDevices": "Tüm Bluetooth cihazlarınızı bulun",
+  "unlimitedRadar": "Sınırsız radar",
+  "unlimitedRadarDescription": "Cihazlarınızı sınırsız bulun",
+  "fullScan": "Tam tarama",
+  "fullScanDescription": "Yakındaki tüm cihazları görün",
+  "favorites": "Favoriler",
+  "favoritesDescription": "Önemli cihazlarınızı kaydedin",
+  "oneTimePurchase": "Tek seferlik satın alma",
+  "oneTimePurchaseDescription": "Bir kez öde, sonsuza kadar kullan",
+  "oneTimePurchaseBadge": "TEK SEFERLİK",
+  "unlockNow": "Şimdi kilidi aç",
+  "defaultPrice": "149,99 ₺",
+  "weekly": "Haftalık",
+  "monthly": "Aylık",
+  "lifetimePlan": "Ömür boyu",
+  "bestValue": "EN İYİ DEĞER",
+  "perWeek": "/hafta",
+  "perMonth": "/ay",
+  "weeklyPrice": "79,99 ₺",
+  "monthlyPrice": "179,99 ₺",
+  "lifetimePrice": "449,99 ₺",
+
+  "language": "Dil",
+  "languageDescription": "Uygulama dilini seçin",
+  "systemLanguage": "Sistem dili",
+  "french": "Français",
+  "english": "English",
+  "spanish": "Español",
+  "german": "Deutsch",
+  "italian": "Italiano",
+  "portuguese": "Português",
+  "japanese": "日本語",
+  "korean": "한국어",
+  "dutch": "Nederlands",
+  "polish": "Polski",
+  "turkish": "Türkçe",
+
+  "bluetoothDisabled": "Bluetooth kapalı",
+  "enableBluetoothDescription": "Cihazları taramak için Bluetooth'u açın",
+  "openSettings": "AYARLARI AÇ",
+
+  "myDevices": "Cihazlarım",
+  "nearbyDevices": "Yakında",
+  "noDevicesFound": "Cihaz bulunamadı",
+
+  "purchaseError": "Satın alma hatası",
+  "purchaseErrorDescription": "Satın alma sırasında bir hata oluştu. Lütfen tekrar deneyin.",
+  "purchaseCancelled": "Satın alma iptal edildi",
+  "networkError": "Ağ hatası",
+  "networkErrorDescription": "İnternet bağlantınızı kontrol edin ve tekrar deneyin.",
+  "loadingError": "Teklifler yüklenemedi",
+  "loadingErrorDescription": "Bağlantınızı kontrol edin ve tekrar deneyin.",
+  "ok": "Tamam",
+
+  "showUnnamedDevices": "İsimsiz cihazları göster",
+  "whyDeviceNotVisible": "Cihazımı neden göremiyorum?",
+  "deviceVisibleConditions": "Bir cihazın görünür olması için:",
+  "deviceMustBeOn": "Cihaz açık olmalı",
+  "bluetoothMustBeEnabledOnDevice": "Cihazda Bluetooth açık olmalı",
+  "deviceMustBeInRange": "Cihaz menzilde olmalı (< 10 metre)",
+  "someDevicesDontBroadcastName": "Bazı cihazlar adlarını yayınlamaz",
+  "tipShowUnnamedDevices": "İpucu: Tüm Bluetooth cihazlarını görmek için \"İsimsiz cihazları göster\"i açın.",
+  "understood": "Anladım",
+  "pleaseEnableBluetoothSettings": "Lütfen cihaz ayarlarından Bluetooth'u açın.",
+
+  "onboardingSkip": "Atla",
+  "onboardingNext": "İleri",
+  "onboardingStart": "Başla",
+  "onboardingTitle1": "Kayıp cihazlarınızı bulun",
+  "onboardingDesc1": "Hassas radarımız sizi kulaklıklarınıza, AirPods'larınıza ve kayıp Bluetooth cihazlarınıza yönlendirir.",
+  "onboardingTitle2": "Favorilerinizi kaydedin",
+  "onboardingDesc2": "Önemli cihazlarınızı favorilere ekleyerek anında bulun.",
+  "onboardingTitle3": "Birkaç izin gerekli",
+  "onboardingDesc3": "Bluetooth cihazlarını taramak ve bulmak için izninize ihtiyacımız var.",
+
+  "lastSeenLocation": "Son bilinen konum",
+  "noLocationHistory": "Konum geçmişi yok",
+  "noLocationHistoryDescription": "Bu cihazı bulduğunuzda konum kaydedilecektir.",
+  "showOnMap": "Haritada göster",
+  "gpsAccuracyNotice": "Genel alan (~100m). Kesin konum için radarı kullanın.",
+  "openRadar": "Radarı Aç",
+
+  "unknownDevice": "Bilinmeyen cihaz",
+  "featureUnlimitedRadar": "Sınırsız radar konumlandırma",
+  "featureFindAllDevices": "Tüm cihazlarınızı bulun",
+  "featureAudioAlerts": "Yaklaşma sesli uyarıları",
+  "featureNoAds": "Reklamsız",
+  "featureLifetimeUpdates": "Ömür boyu güncellemeler",
+  "free": "ÜCRETSİZ",
+  "tapDeviceToLocate": "Bulmak için bir cihaza dokunun",
+  "signal": "SİNYAL"
+}

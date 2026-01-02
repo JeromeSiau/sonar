@@ -1,0 +1,186 @@
+{
+  "@@locale": "nl",
+
+  "appName": "SONAR",
+  "appSubtitle": "Vind AirPods & Koptelefoons",
+
+  "scanner": "SCANNER",
+  "settings": "INSTELLINGEN",
+
+  "noSavedDevices": "Geen opgeslagen apparaten",
+  "noSavedDevicesDescription": "Scan Bluetooth-apparaten in de buurt\nen voeg je favorieten toe",
+
+  "justNow": "zojuist",
+  "minutesAgo": "{minutes} min geleden",
+  "@minutesAgo": {
+    "placeholders": {
+      "minutes": {"type": "int"}
+    }
+  },
+  "hoursAgo": "{hours}u geleden",
+  "@hoursAgo": {
+    "placeholders": {
+      "hours": {"type": "int"}
+    }
+  },
+  "daysAgo": "{days}d geleden",
+  "@daysAgo": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+
+  "permissionsRequired": "Machtigingen vereist",
+  "permissionsDescription": "Om je Bluetooth-apparaten te vinden, hebben we toegang nodig tot Bluetooth en je locatie.",
+  "bluetooth": "Bluetooth",
+  "bluetoothPermissionDescription": "Apparaten in de buurt scannen",
+  "location": "Locatie",
+  "locationPermissionDescription": "Vereist voor Bluetooth-scan",
+  "authorize": "Toestaan",
+
+  "scanError": "Scanfout",
+  "checkBluetoothEnabled": "Controleer of Bluetooth is ingeschakeld",
+  "retry": "OPNIEUW",
+  "trialUsed": "Gratis proefperiode gebruikt",
+  "trialAvailable": "1 gratis radar proefperiode beschikbaar",
+  "unlock": "ONTGRENDELEN",
+  "devicesFound": "{count} apparaten gevonden",
+  "@devicesFound": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "premium": "PREMIUM",
+  "scanning": "SCANNEN",
+  "searchingDevices": "Zoeken naar Bluetooth-apparaten...",
+  "scanInProgress": "Scan bezig...",
+
+  "deviceNotFound": "Apparaat niet gevonden",
+  "searchingForDevice": "Apparaat zoeken...",
+  "deviceNotInRange": "Apparaat buiten bereik",
+  "deviceNotInRangeDescription": "Het apparaat wordt niet gedetecteerd. Zorg ervoor dat het aan staat en dichtbij is.",
+  "backToHome": "Terug",
+  "radarInstruction": "Beweeg je en volg de signaalsterkte om je apparaat te vinden",
+  "signalLost": "Signaal verloren",
+  "found": "Gevonden!",
+  "cancel": "Annuleren",
+  "playSound": "Geluid afspelen",
+  "stopSound": "Geluid stoppen",
+  "playSoundDescription": "Speelt een geluid af op het apparaat indien verbonden",
+  "soundPlaying": "Geluid speelt...",
+  "deviceMustBeConnected": "Het apparaat moet verbonden zijn (niet alleen zichtbaar)",
+
+  "subscription": "ABONNEMENT",
+  "goPremium": "Ga Premium",
+  "unlockAllFeatures": "Ontgrendel alle functies",
+  "restorePurchases": "Aankopen herstellen",
+  "restorePurchasesDescription": "Een bestaand abonnement herstellen",
+  "restoringPurchases": "Herstellen...",
+  "about": "OVER",
+  "termsOfService": "Gebruiksvoorwaarden",
+  "privacyPolicy": "Privacybeleid",
+  "contactUs": "Contact",
+  "version": "Versie {version}",
+  "@version": {
+    "placeholders": {
+      "version": {"type": "String"}
+    }
+  },
+  "premiumStatus": "Premium",
+  "freeStatus": "Gratis",
+  "premiumDescription": "Onbeperkte toegang tot alle functies",
+  "freeDescription": "Beperkte functies",
+
+  "unlockRadar": "Ontgrendel de Radar",
+  "locateAllDevices": "Vind al je Bluetooth-apparaten",
+  "unlimitedRadar": "Onbeperkte radar",
+  "unlimitedRadarDescription": "Vind je apparaten zonder beperkingen",
+  "fullScan": "Volledige scan",
+  "fullScanDescription": "Zie alle apparaten in de buurt",
+  "favorites": "Favorieten",
+  "favoritesDescription": "Sla je belangrijke apparaten op",
+  "oneTimePurchase": "Eenmalige aankoop",
+  "oneTimePurchaseDescription": "Betaal eenmalig, gebruik voor altijd",
+  "oneTimePurchaseBadge": "EENMALIG",
+  "unlockNow": "Nu ontgrendelen",
+  "defaultPrice": "€ 4,99",
+  "weekly": "Wekelijks",
+  "monthly": "Maandelijks",
+  "lifetimePlan": "Levenslang",
+  "bestValue": "BESTE WAARDE",
+  "perWeek": "/week",
+  "perMonth": "/maand",
+  "weeklyPrice": "€ 2,99",
+  "monthlyPrice": "€ 5,99",
+  "lifetimePrice": "€ 14,99",
+
+  "language": "Taal",
+  "languageDescription": "Kies de app-taal",
+  "systemLanguage": "Systeemtaal",
+  "french": "Français",
+  "english": "English",
+  "spanish": "Español",
+  "german": "Deutsch",
+  "italian": "Italiano",
+  "portuguese": "Português",
+  "japanese": "日本語",
+  "korean": "한국어",
+  "dutch": "Nederlands",
+  "polish": "Polski",
+  "turkish": "Türkçe",
+
+  "bluetoothDisabled": "Bluetooth uitgeschakeld",
+  "enableBluetoothDescription": "Schakel Bluetooth in om apparaten te scannen",
+  "openSettings": "INSTELLINGEN OPENEN",
+
+  "myDevices": "Mijn apparaten",
+  "nearbyDevices": "In de buurt",
+  "noDevicesFound": "Geen apparaten gevonden",
+
+  "purchaseError": "Aankoopfout",
+  "purchaseErrorDescription": "Er is een fout opgetreden tijdens de aankoop. Probeer het opnieuw.",
+  "purchaseCancelled": "Aankoop geannuleerd",
+  "networkError": "Netwerkfout",
+  "networkErrorDescription": "Controleer je internetverbinding en probeer het opnieuw.",
+  "loadingError": "Kan aanbiedingen niet laden",
+  "loadingErrorDescription": "Controleer je verbinding en probeer het opnieuw.",
+  "ok": "OK",
+
+  "showUnnamedDevices": "Naamloze apparaten tonen",
+  "whyDeviceNotVisible": "Waarom zie ik mijn apparaat niet?",
+  "deviceVisibleConditions": "Om een apparaat te zien:",
+  "deviceMustBeOn": "Het apparaat moet aan staan",
+  "bluetoothMustBeEnabledOnDevice": "Bluetooth moet ingeschakeld zijn op het apparaat",
+  "deviceMustBeInRange": "Het apparaat moet binnen bereik zijn (< 10 meter)",
+  "someDevicesDontBroadcastName": "Sommige apparaten zenden hun naam niet uit",
+  "tipShowUnnamedDevices": "Tip: Schakel \"Naamloze apparaten tonen\" in om alle Bluetooth-apparaten te zien.",
+  "understood": "Begrepen",
+  "pleaseEnableBluetoothSettings": "Schakel Bluetooth in via je apparaatinstellingen.",
+
+  "onboardingSkip": "Overslaan",
+  "onboardingNext": "Volgende",
+  "onboardingStart": "Starten",
+  "onboardingTitle1": "Vind je verloren apparaten",
+  "onboardingDesc1": "Onze precisieradar leidt je naar je oordopjes, AirPods en verloren Bluetooth-apparaten.",
+  "onboardingTitle2": "Sla je favorieten op",
+  "onboardingDesc2": "Voeg je belangrijke apparaten toe aan favorieten om ze direct te vinden.",
+  "onboardingTitle3": "Enkele machtigingen nodig",
+  "onboardingDesc3": "Om Bluetooth-apparaten te scannen en te vinden, hebben we je toestemming nodig.",
+
+  "lastSeenLocation": "Laatst bekende locatie",
+  "noLocationHistory": "Geen locatiegeschiedenis",
+  "noLocationHistoryDescription": "De locatie wordt opgeslagen wanneer je dit apparaat vindt.",
+  "showOnMap": "Op kaart bekijken",
+  "gpsAccuracyNotice": "Algemene zone (~100m). Gebruik de radar voor precieze locatie.",
+  "openRadar": "Radar openen",
+
+  "unknownDevice": "Onbekend apparaat",
+  "featureUnlimitedRadar": "Onbeperkte radarlocatie",
+  "featureFindAllDevices": "Vind al je apparaten",
+  "featureAudioAlerts": "Audio-waarschuwingen bij nadering",
+  "featureNoAds": "Geen advertenties",
+  "featureLifetimeUpdates": "Levenslange updates",
+  "free": "GRATIS",
+  "tapDeviceToLocate": "Tik op een apparaat om te vinden",
+  "signal": "SIGNAAL"
+}

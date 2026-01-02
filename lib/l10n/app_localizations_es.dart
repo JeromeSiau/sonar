@@ -289,6 +289,24 @@ class AppLocalizationsEs extends AppLocalizations {
   String get italian => 'Italiano';
 
   @override
+  String get portuguese => 'Português';
+
+  @override
+  String get japanese => '日本語';
+
+  @override
+  String get korean => '한국어';
+
+  @override
+  String get dutch => 'Nederlands';
+
+  @override
+  String get polish => 'Polski';
+
+  @override
+  String get turkish => 'Türkçe';
+
+  @override
   String get bluetoothDisabled => 'Bluetooth desactivado';
 
   @override

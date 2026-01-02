@@ -1,0 +1,186 @@
+{
+  "@@locale": "ja",
+
+  "appName": "SONAR",
+  "appSubtitle": "AirPods・イヤホンを探す",
+
+  "scanner": "スキャン",
+  "settings": "設定",
+
+  "noSavedDevices": "保存済みデバイスがありません",
+  "noSavedDevicesDescription": "近くのBluetoothデバイスをスキャンして\nお気に入りに追加しましょう",
+
+  "justNow": "たった今",
+  "minutesAgo": "{minutes}分前",
+  "@minutesAgo": {
+    "placeholders": {
+      "minutes": {"type": "int"}
+    }
+  },
+  "hoursAgo": "{hours}時間前",
+  "@hoursAgo": {
+    "placeholders": {
+      "hours": {"type": "int"}
+    }
+  },
+  "daysAgo": "{days}日前",
+  "@daysAgo": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+
+  "permissionsRequired": "許可が必要です",
+  "permissionsDescription": "Bluetoothデバイスを探すには、Bluetoothと位置情報へのアクセスが必要です。",
+  "bluetooth": "Bluetooth",
+  "bluetoothPermissionDescription": "近くのデバイスをスキャン",
+  "location": "位置情報",
+  "locationPermissionDescription": "Bluetoothスキャンに必要",
+  "authorize": "許可する",
+
+  "scanError": "スキャンエラー",
+  "checkBluetoothEnabled": "Bluetoothが有効か確認してください",
+  "retry": "再試行",
+  "trialUsed": "無料トライアル使用済み",
+  "trialAvailable": "レーダー無料トライアル1回利用可能",
+  "unlock": "解除",
+  "devicesFound": "{count}台のデバイスが見つかりました",
+  "@devicesFound": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "premium": "プレミアム",
+  "scanning": "スキャン中",
+  "searchingDevices": "Bluetoothデバイスを検索中...",
+  "scanInProgress": "スキャン中...",
+
+  "deviceNotFound": "デバイスが見つかりません",
+  "searchingForDevice": "デバイスを検索中...",
+  "deviceNotInRange": "デバイスが範囲外です",
+  "deviceNotInRangeDescription": "デバイスが検出されません。電源が入っていて近くにあることを確認してください。",
+  "backToHome": "戻る",
+  "radarInstruction": "移動しながら信号強度を追って、デバイスを見つけましょう",
+  "signalLost": "信号が途切れました",
+  "found": "見つかりました！",
+  "cancel": "キャンセル",
+  "playSound": "音を鳴らす",
+  "stopSound": "音を停止",
+  "playSoundDescription": "接続中のデバイスで音を鳴らします",
+  "soundPlaying": "再生中...",
+  "deviceMustBeConnected": "デバイスが接続されている必要があります（表示されているだけでは不可）",
+
+  "subscription": "サブスクリプション",
+  "goPremium": "プレミアムにアップグレード",
+  "unlockAllFeatures": "すべての機能を解除",
+  "restorePurchases": "購入を復元",
+  "restorePurchasesDescription": "既存のサブスクリプションを復元",
+  "restoringPurchases": "復元中...",
+  "about": "アプリについて",
+  "termsOfService": "利用規約",
+  "privacyPolicy": "プライバシーポリシー",
+  "contactUs": "お問い合わせ",
+  "version": "バージョン {version}",
+  "@version": {
+    "placeholders": {
+      "version": {"type": "String"}
+    }
+  },
+  "premiumStatus": "プレミアム",
+  "freeStatus": "無料",
+  "premiumDescription": "すべての機能に無制限アクセス",
+  "freeDescription": "機能制限あり",
+
+  "unlockRadar": "レーダーを解除",
+  "locateAllDevices": "すべてのBluetoothデバイスを探す",
+  "unlimitedRadar": "無制限レーダー",
+  "unlimitedRadarDescription": "制限なくデバイスを探索",
+  "fullScan": "フルスキャン",
+  "fullScanDescription": "近くのすべてのデバイスを表示",
+  "favorites": "お気に入り",
+  "favoritesDescription": "大切なデバイスを保存",
+  "oneTimePurchase": "買い切り",
+  "oneTimePurchaseDescription": "一度のお支払いで永久に使用可能",
+  "oneTimePurchaseBadge": "買い切り",
+  "unlockNow": "今すぐ解除",
+  "defaultPrice": "¥980",
+  "weekly": "週額",
+  "monthly": "月額",
+  "lifetimePlan": "永久版",
+  "bestValue": "おすすめ",
+  "perWeek": "/週",
+  "perMonth": "/月",
+  "weeklyPrice": "¥480",
+  "monthlyPrice": "¥980",
+  "lifetimePrice": "¥2,980",
+
+  "language": "言語",
+  "languageDescription": "アプリの言語を選択",
+  "systemLanguage": "システム言語",
+  "french": "Français",
+  "english": "English",
+  "spanish": "Español",
+  "german": "Deutsch",
+  "italian": "Italiano",
+  "portuguese": "Português",
+  "japanese": "日本語",
+  "korean": "한국어",
+  "dutch": "Nederlands",
+  "polish": "Polski",
+  "turkish": "Türkçe",
+
+  "bluetoothDisabled": "Bluetoothが無効です",
+  "enableBluetoothDescription": "Bluetoothを有効にしてデバイスをスキャンしてください",
+  "openSettings": "設定を開く",
+
+  "myDevices": "マイデバイス",
+  "nearbyDevices": "近くのデバイス",
+  "noDevicesFound": "デバイスが見つかりません",
+
+  "purchaseError": "購入エラー",
+  "purchaseErrorDescription": "購入中にエラーが発生しました。もう一度お試しください。",
+  "purchaseCancelled": "購入がキャンセルされました",
+  "networkError": "ネットワークエラー",
+  "networkErrorDescription": "インターネット接続を確認して、もう一度お試しください。",
+  "loadingError": "オファーを読み込めません",
+  "loadingErrorDescription": "接続を確認して、もう一度お試しください。",
+  "ok": "OK",
+
+  "showUnnamedDevices": "名前のないデバイスを表示",
+  "whyDeviceNotVisible": "デバイスが見つからない場合",
+  "deviceVisibleConditions": "デバイスが表示されるには：",
+  "deviceMustBeOn": "デバイスの電源が入っている",
+  "bluetoothMustBeEnabledOnDevice": "デバイスのBluetoothが有効になっている",
+  "deviceMustBeInRange": "デバイスが範囲内にある（10メートル以内）",
+  "someDevicesDontBroadcastName": "一部のデバイスは名前を送信しません",
+  "tipShowUnnamedDevices": "ヒント：「名前のないデバイスを表示」を有効にすると、すべてのBluetoothデバイスが表示されます。",
+  "understood": "了解",
+  "pleaseEnableBluetoothSettings": "デバイスの設定でBluetoothを有効にしてください。",
+
+  "onboardingSkip": "スキップ",
+  "onboardingNext": "次へ",
+  "onboardingStart": "始める",
+  "onboardingTitle1": "なくしたデバイスを見つける",
+  "onboardingDesc1": "高精度レーダーで、イヤホンやAirPods、Bluetoothデバイスの場所を特定します。",
+  "onboardingTitle2": "お気に入りに保存",
+  "onboardingDesc2": "大切なデバイスをお気に入りに追加して、いつでもすぐに見つけられます。",
+  "onboardingTitle3": "いくつかの許可が必要です",
+  "onboardingDesc3": "Bluetoothデバイスをスキャンして探すために、許可が必要です。",
+
+  "lastSeenLocation": "最後に検出された場所",
+  "noLocationHistory": "位置情報の履歴がありません",
+  "noLocationHistoryDescription": "デバイスを検出した時に位置情報が記録されます。",
+  "showOnMap": "地図で見る",
+  "gpsAccuracyNotice": "おおよその範囲（約100m）。正確な場所はレーダーをご使用ください。",
+  "openRadar": "レーダーを開く",
+
+  "unknownDevice": "不明なデバイス",
+  "featureUnlimitedRadar": "無制限のレーダー探索",
+  "featureFindAllDevices": "すべてのデバイスを探す",
+  "featureAudioAlerts": "接近時のオーディオアラート",
+  "featureNoAds": "広告なし",
+  "featureLifetimeUpdates": "永久アップデート",
+  "free": "無料",
+  "tapDeviceToLocate": "デバイスをタップして探す",
+  "signal": "信号"
+}

@@ -1,0 +1,186 @@
+{
+  "@@locale": "pl",
+
+  "appName": "SONAR",
+  "appSubtitle": "Znajdź AirPods i słuchawki",
+
+  "scanner": "SKANER",
+  "settings": "USTAWIENIA",
+
+  "noSavedDevices": "Brak zapisanych urządzeń",
+  "noSavedDevicesDescription": "Skanuj pobliskie urządzenia Bluetooth\ni dodaj ulubione, aby łatwo je znaleźć",
+
+  "justNow": "przed chwilą",
+  "minutesAgo": "{minutes} min temu",
+  "@minutesAgo": {
+    "placeholders": {
+      "minutes": {"type": "int"}
+    }
+  },
+  "hoursAgo": "{hours} godz. temu",
+  "@hoursAgo": {
+    "placeholders": {
+      "hours": {"type": "int"}
+    }
+  },
+  "daysAgo": "{days} dni temu",
+  "@daysAgo": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+
+  "permissionsRequired": "Wymagane uprawnienia",
+  "permissionsDescription": "Aby zlokalizować urządzenia Bluetooth, potrzebujemy dostępu do Bluetooth i lokalizacji.",
+  "bluetooth": "Bluetooth",
+  "bluetoothPermissionDescription": "Skanowanie pobliskich urządzeń",
+  "location": "Lokalizacja",
+  "locationPermissionDescription": "Wymagane do skanowania Bluetooth",
+  "authorize": "Zezwól",
+
+  "scanError": "Błąd skanowania",
+  "checkBluetoothEnabled": "Sprawdź, czy Bluetooth jest włączony",
+  "retry": "PONÓW",
+  "trialUsed": "Wykorzystano bezpłatną próbę",
+  "trialAvailable": "Dostępna 1 bezpłatna próba radaru",
+  "unlock": "ODBLOKUJ",
+  "devicesFound": "Znaleziono {count} urządzeń",
+  "@devicesFound": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "premium": "PREMIUM",
+  "scanning": "SKANOWANIE",
+  "searchingDevices": "Wyszukiwanie urządzeń Bluetooth...",
+  "scanInProgress": "Skanowanie w toku...",
+
+  "deviceNotFound": "Nie znaleziono urządzenia",
+  "searchingForDevice": "Szukanie urządzenia...",
+  "deviceNotInRange": "Urządzenie poza zasięgiem",
+  "deviceNotInRangeDescription": "Urządzenie nie zostało wykryte. Upewnij się, że jest włączone i w pobliżu.",
+  "backToHome": "Wróć",
+  "radarInstruction": "Poruszaj się i śledź siłę sygnału, aby znaleźć urządzenie",
+  "signalLost": "Utracono sygnał",
+  "found": "Znaleziono!",
+  "cancel": "Anuluj",
+  "playSound": "Odtwórz dźwięk",
+  "stopSound": "Zatrzymaj dźwięk",
+  "playSoundDescription": "Odtwarza dźwięk na urządzeniu, jeśli jest połączone",
+  "soundPlaying": "Odtwarzanie...",
+  "deviceMustBeConnected": "Urządzenie musi być połączone (nie tylko widoczne)",
+
+  "subscription": "SUBSKRYPCJA",
+  "goPremium": "Przejdź na Premium",
+  "unlockAllFeatures": "Odblokuj wszystkie funkcje",
+  "restorePurchases": "Przywróć zakupy",
+  "restorePurchasesDescription": "Odzyskaj istniejącą subskrypcję",
+  "restoringPurchases": "Przywracanie...",
+  "about": "O APLIKACJI",
+  "termsOfService": "Regulamin",
+  "privacyPolicy": "Polityka prywatności",
+  "contactUs": "Kontakt",
+  "version": "Wersja {version}",
+  "@version": {
+    "placeholders": {
+      "version": {"type": "String"}
+    }
+  },
+  "premiumStatus": "Premium",
+  "freeStatus": "Bezpłatny",
+  "premiumDescription": "Nieograniczony dostęp do wszystkich funkcji",
+  "freeDescription": "Ograniczone funkcje",
+
+  "unlockRadar": "Odblokuj Radar",
+  "locateAllDevices": "Zlokalizuj wszystkie urządzenia Bluetooth",
+  "unlimitedRadar": "Nieograniczony radar",
+  "unlimitedRadarDescription": "Lokalizuj urządzenia bez ograniczeń",
+  "fullScan": "Pełne skanowanie",
+  "fullScanDescription": "Zobacz wszystkie pobliskie urządzenia",
+  "favorites": "Ulubione",
+  "favoritesDescription": "Zapisz ważne urządzenia",
+  "oneTimePurchase": "Jednorazowy zakup",
+  "oneTimePurchaseDescription": "Zapłać raz, używaj na zawsze",
+  "oneTimePurchaseBadge": "JEDNORAZOWO",
+  "unlockNow": "Odblokuj teraz",
+  "defaultPrice": "19,99 zł",
+  "weekly": "Tygodniowo",
+  "monthly": "Miesięcznie",
+  "lifetimePlan": "Na zawsze",
+  "bestValue": "NAJLEPSZA WARTOŚĆ",
+  "perWeek": "/tydzień",
+  "perMonth": "/miesiąc",
+  "weeklyPrice": "11,99 zł",
+  "monthlyPrice": "24,99 zł",
+  "lifetimePrice": "59,99 zł",
+
+  "language": "Język",
+  "languageDescription": "Wybierz język aplikacji",
+  "systemLanguage": "Język systemowy",
+  "french": "Français",
+  "english": "English",
+  "spanish": "Español",
+  "german": "Deutsch",
+  "italian": "Italiano",
+  "portuguese": "Português",
+  "japanese": "日本語",
+  "korean": "한국어",
+  "dutch": "Nederlands",
+  "polish": "Polski",
+  "turkish": "Türkçe",
+
+  "bluetoothDisabled": "Bluetooth wyłączony",
+  "enableBluetoothDescription": "Włącz Bluetooth, aby skanować urządzenia",
+  "openSettings": "OTWÓRZ USTAWIENIA",
+
+  "myDevices": "Moje urządzenia",
+  "nearbyDevices": "W pobliżu",
+  "noDevicesFound": "Nie znaleziono urządzeń",
+
+  "purchaseError": "Błąd zakupu",
+  "purchaseErrorDescription": "Wystąpił błąd podczas zakupu. Spróbuj ponownie.",
+  "purchaseCancelled": "Zakup anulowany",
+  "networkError": "Błąd sieci",
+  "networkErrorDescription": "Sprawdź połączenie internetowe i spróbuj ponownie.",
+  "loadingError": "Nie można załadować ofert",
+  "loadingErrorDescription": "Sprawdź połączenie i spróbuj ponownie.",
+  "ok": "OK",
+
+  "showUnnamedDevices": "Pokaż urządzenia bez nazwy",
+  "whyDeviceNotVisible": "Dlaczego nie widzę mojego urządzenia?",
+  "deviceVisibleConditions": "Aby urządzenie było widoczne:",
+  "deviceMustBeOn": "Urządzenie musi być włączone",
+  "bluetoothMustBeEnabledOnDevice": "Bluetooth musi być włączony na urządzeniu",
+  "deviceMustBeInRange": "Urządzenie musi być w zasięgu (< 10 metrów)",
+  "someDevicesDontBroadcastName": "Niektóre urządzenia nie nadają swojej nazwy",
+  "tipShowUnnamedDevices": "Wskazówka: Włącz \"Pokaż urządzenia bez nazwy\", aby zobaczyć wszystkie urządzenia Bluetooth.",
+  "understood": "Rozumiem",
+  "pleaseEnableBluetoothSettings": "Włącz Bluetooth w ustawieniach urządzenia.",
+
+  "onboardingSkip": "Pomiń",
+  "onboardingNext": "Dalej",
+  "onboardingStart": "Rozpocznij",
+  "onboardingTitle1": "Znajdź zgubione urządzenia",
+  "onboardingDesc1": "Nasz precyzyjny radar prowadzi Cię do słuchawek, AirPods i zgubionych urządzeń Bluetooth.",
+  "onboardingTitle2": "Zapisz ulubione",
+  "onboardingDesc2": "Dodaj ważne urządzenia do ulubionych, aby natychmiast je znaleźć.",
+  "onboardingTitle3": "Potrzebne kilka uprawnień",
+  "onboardingDesc3": "Aby skanować i lokalizować urządzenia Bluetooth, potrzebujemy Twojej zgody.",
+
+  "lastSeenLocation": "Ostatnia znana lokalizacja",
+  "noLocationHistory": "Brak historii lokalizacji",
+  "noLocationHistoryDescription": "Lokalizacja zostanie zapisana po znalezieniu tego urządzenia.",
+  "showOnMap": "Pokaż na mapie",
+  "gpsAccuracyNotice": "Ogólny obszar (~100m). Użyj radaru dla dokładnej lokalizacji.",
+  "openRadar": "Otwórz Radar",
+
+  "unknownDevice": "Nieznane urządzenie",
+  "featureUnlimitedRadar": "Nieograniczona lokalizacja radarowa",
+  "featureFindAllDevices": "Znajdź wszystkie urządzenia",
+  "featureAudioAlerts": "Alerty dźwiękowe zbliżenia",
+  "featureNoAds": "Bez reklam",
+  "featureLifetimeUpdates": "Dożywotnie aktualizacje",
+  "free": "BEZPŁATNIE",
+  "tapDeviceToLocate": "Dotknij urządzenia, aby zlokalizować",
+  "signal": "SYGNAŁ"
+}

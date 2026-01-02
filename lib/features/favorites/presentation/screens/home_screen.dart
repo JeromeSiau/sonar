@@ -456,6 +456,25 @@ class _FavoriteDeviceCard extends StatelessWidget {
                       ],
                     ),
                   ),
+                  // Map button if location available
+                  if (favorite.hasLastLocation)
+                    GestureDetector(
+                      onTap: () => context.push('/map/${favorite.id}'),
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceLight,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(
+                          Icons.map_rounded,
+                          color: AppColors.primary,
+                          size: 18,
+                        ),
+                      ),
+                    ),
+                  if (favorite.hasLastLocation) const SizedBox(width: 8),
                   // Signal
                   SignalIndicator(
                     rssi: favorite.lastRssi,

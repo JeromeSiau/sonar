@@ -164,5 +164,17 @@
   "lastSeenLocation": "Dernière position connue",
   "noLocationHistory": "Aucune position enregistrée",
   "noLocationHistoryDescription": "La position sera enregistrée quand vous retrouverez cet appareil.",
-  "showOnMap": "Voir sur la carte"
+  "showOnMap": "Voir sur la carte",
+  "gpsAccuracyNotice": "Zone générale (~100m). Utilisez le radar pour localiser précisément.",
+  "openRadar": "Ouvrir le Radar",
+
+  "unknownDevice": "Appareil inconnu",
+  "featureUnlimitedRadar": "Localisation radar illimitée",
+  "featureFindAllDevices": "Retrouvez tous vos appareils",
+  "featureAudioAlerts": "Alertes audio de proximité",
+  "featureNoAds": "Sans publicité",
+  "featureLifetimeUpdates": "Mises à jour à vie",
+  "free": "GRATUIT",
+  "tapDeviceToLocate": "Appuyez sur un appareil pour le localiser",
+  "signal": "SIGNAL"
 }

@@ -139,5 +139,17 @@
   "lastSeenLocation": "Letzter bekannter Standort",
   "noLocationHistory": "Kein Standort aufgezeichnet",
   "noLocationHistoryDescription": "Der Standort wird gespeichert, wenn Sie dieses Gerät finden.",
-  "showOnMap": "Auf Karte anzeigen"
+  "showOnMap": "Auf Karte anzeigen",
+  "gpsAccuracyNotice": "Allgemeiner Bereich (~100m). Radar für genaue Ortung nutzen.",
+  "openRadar": "Radar öffnen",
+
+  "unknownDevice": "Unbekanntes Gerät",
+  "featureUnlimitedRadar": "Unbegrenzte Radar-Ortung",
+  "featureFindAllDevices": "Finden Sie alle Ihre Geräte",
+  "featureAudioAlerts": "Audio-Näherungsalarme",
+  "featureNoAds": "Keine Werbung",
+  "featureLifetimeUpdates": "Lebenslange Updates",
+  "free": "GRATIS",
+  "tapDeviceToLocate": "Tippen Sie auf ein Gerät, um es zu orten",
+  "signal": "SIGNAL"
 }

@@ -847,6 +847,72 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Voir sur la carte'**
   String get showOnMap;
+
+  /// No description provided for @gpsAccuracyNotice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Zone générale (~100m). Utilisez le radar pour localiser précisément.'**
+  String get gpsAccuracyNotice;
+
+  /// No description provided for @openRadar.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir le Radar'**
+  String get openRadar;
+
+  /// No description provided for @unknownDevice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appareil inconnu'**
+  String get unknownDevice;
+
+  /// No description provided for @featureUnlimitedRadar.
+  ///
+  /// In fr, this message translates to:
+  /// **'Localisation radar illimitée'**
+  String get featureUnlimitedRadar;
+
+  /// No description provided for @featureFindAllDevices.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retrouvez tous vos appareils'**
+  String get featureFindAllDevices;
+
+  /// No description provided for @featureAudioAlerts.
+  ///
+  /// In fr, this message translates to:
+  /// **'Alertes audio de proximité'**
+  String get featureAudioAlerts;
+
+  /// No description provided for @featureNoAds.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sans publicité'**
+  String get featureNoAds;
+
+  /// No description provided for @featureLifetimeUpdates.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mises à jour à vie'**
+  String get featureLifetimeUpdates;
+
+  /// No description provided for @free.
+  ///
+  /// In fr, this message translates to:
+  /// **'GRATUIT'**
+  String get free;
+
+  /// No description provided for @tapDeviceToLocate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appuyez sur un appareil pour le localiser'**
+  String get tapDeviceToLocate;
+
+  /// No description provided for @signal.
+  ///
+  /// In fr, this message translates to:
+  /// **'SIGNAL'**
+  String get signal;
 }
 
 class _AppLocalizationsDelegate

@@ -408,4 +408,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get showOnMap => 'Show on map';
+
+  @override
+  String get gpsAccuracyNotice =>
+      'General area (~100m). Use radar for precise tracking.';
+
+  @override
+  String get openRadar => 'Open Radar';
+
+  @override
+  String get unknownDevice => 'Unknown device';
+
+  @override
+  String get featureUnlimitedRadar => 'Unlimited radar tracking';
+
+  @override
+  String get featureFindAllDevices => 'Find all your devices';
+
+  @override
+  String get featureAudioAlerts => 'Audio proximity alerts';
+
+  @override
+  String get featureNoAds => 'No ads, ever';
+
+  @override
+  String get featureLifetimeUpdates => 'Lifetime updates';
+
+  @override
+  String get free => 'FREE';
+
+  @override
+  String get tapDeviceToLocate => 'Tap a device to locate it';
+
+  @override
+  String get signal => 'SIGNAL';
 }

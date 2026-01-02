@@ -411,4 +411,38 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get showOnMap => 'Mostra sulla mappa';
+
+  @override
+  String get gpsAccuracyNotice =>
+      'Area generale (~100m). Usa il radar per localizzare con precisione.';
+
+  @override
+  String get openRadar => 'Apri Radar';
+
+  @override
+  String get unknownDevice => 'Dispositivo sconosciuto';
+
+  @override
+  String get featureUnlimitedRadar => 'Localizzazione radar illimitata';
+
+  @override
+  String get featureFindAllDevices => 'Trova tutti i tuoi dispositivi';
+
+  @override
+  String get featureAudioAlerts => 'Avvisi audio di prossimità';
+
+  @override
+  String get featureNoAds => 'Nessuna pubblicità';
+
+  @override
+  String get featureLifetimeUpdates => 'Aggiornamenti a vita';
+
+  @override
+  String get free => 'GRATIS';
+
+  @override
+  String get tapDeviceToLocate => 'Tocca un dispositivo per localizzarlo';
+
+  @override
+  String get signal => 'SEGNALE';
 }

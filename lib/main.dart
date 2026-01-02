@@ -5,6 +5,8 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:bluetooth_finder/app.dart';
 import 'package:bluetooth_finder/features/favorites/data/models/favorite_device_model.dart';
 import 'package:bluetooth_finder/features/favorites/data/repositories/favorites_repository.dart';
+import 'package:bluetooth_finder/core/services/review_service.dart';
+import 'package:bluetooth_finder/features/onboarding/data/repositories/onboarding_repository.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +18,12 @@ Future<void> main() async {
 
   // Initialize Favorites Repository
   await FavoritesRepository.instance.init();
+
+  // Initialize Review Service
+  await ReviewService.instance.init();
+
+  // Initialize Onboarding Repository
+  await OnboardingRepository.instance.init();
 
   // Initialize RevenueCat (skip if no valid key)
   // TODO: Replace with your actual API keys

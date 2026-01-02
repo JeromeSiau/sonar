@@ -172,18 +172,18 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
                     title: l10n.nearbyDevices,
                     count: devices.length,
                   ),
-                  ...devices.asMap().entries.map((entry) {
-                    return StaggeredListItem(
-                      index: entry.key,
+                  // Performance: Use for loop instead of asMap().entries.map()
+                  for (var i = 0; i < devices.length; i++)
+                    StaggeredListItem(
+                      index: i,
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 12),
                         child: DeviceCard(
-                          device: entry.value,
-                          onTap: () => _onDeviceTap(context, ref, entry.value),
+                          device: devices[i],
+                          onTap: () => _onDeviceTap(context, ref, devices[i]),
                         ),
                       ),
-                    );
-                  }),
+                    ),
                 ],
                 // Empty state
                 if (isEmpty && !isScanning)
@@ -481,26 +481,28 @@ class _SonarSearchAnimationState extends State<_SonarSearchAnimation>
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // Sonar display
-          SizedBox(
-            width: sonarSize,
-            height: sonarSize,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                // Grid
-                CustomPaint(
-                  size: Size(sonarSize, sonarSize),
-                  painter: _SonarGridPainter(),
-                ),
-                // Concentric circles
-                _buildConcentricCircles(sonarSize),
-                // Ping waves
-                _buildPingWaves(sonarSize),
-                // Sweep beam
-                _buildSweepBeam(sonarSize),
-                // Center pulse
-                _buildCenterPulse(),
-              ],
+          RepaintBoundary(
+            child: SizedBox(
+              width: sonarSize,
+              height: sonarSize,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Grid
+                  CustomPaint(
+                    size: Size(sonarSize, sonarSize),
+                    painter: _SonarGridPainter(),
+                  ),
+                  // Concentric circles
+                  _buildConcentricCircles(sonarSize),
+                  // Ping waves
+                  _buildPingWaves(sonarSize),
+                  // Sweep beam
+                  _buildSweepBeam(sonarSize),
+                  // Center pulse
+                  _buildCenterPulse(),
+                ],
+              ),
             ),
           ),
 
@@ -682,19 +684,21 @@ class _MiniSonarIndicatorState extends State<_MiniSonarIndicator>
       child: Row(
         children: [
           // Mini animated radar
-          SizedBox(
-            width: 32,
-            height: 32,
-            child: AnimatedBuilder(
-              animation: _controller,
-              builder: (context, child) {
-                return CustomPaint(
-                  painter: _MiniRadarPainter(
-                    progress: _controller.value,
-                    color: AppColors.primary,
-                  ),
-                );
-              },
+          RepaintBoundary(
+            child: SizedBox(
+              width: 32,
+              height: 32,
+              child: AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  return CustomPaint(
+                    painter: _MiniRadarPainter(
+                      progress: _controller.value,
+                      color: AppColors.primary,
+                    ),
+                  );
+                },
+              ),
             ),
           ),
           const SizedBox(width: 12),

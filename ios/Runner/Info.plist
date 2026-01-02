@@ -2,10 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 	<dict>
+		<key>CADisableMinimumFrameDurationOnPhone</key>
+		<true/>
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>
-		<string>Sonar - Find AirPods &amp; Headphones</string>
+		<string>Sonar</string>
 		<key>CFBundleExecutable</key>
 		<string>$(EXECUTABLE_NAME)</string>
 		<key>CFBundleIdentifier</key>
@@ -24,10 +26,46 @@
 		<string>$(FLUTTER_BUILD_NUMBER)</string>
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
+		<key>NSBluetoothAlwaysUsageDescription</key>
+		<string>Cette app utilise le Bluetooth pour localiser vos appareils perdus</string>
+		<key>NSBluetoothPeripheralUsageDescription</key>
+		<string>Cette app utilise le Bluetooth pour localiser vos appareils perdus</string>
+		<key>NSLocationAlwaysUsageDescription</key>
+		<string>La localisation permet de mémoriser où vos appareils ont été vus pour la dernière fois</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>La localisation permet de mémoriser où vos appareils ont été vus pour la dernière fois</string>
+		<key>UIApplicationSupportsIndirectInputEvents</key>
+		<true/>
+		<key>UIBackgroundModes</key>
+		<array>
+			<string>bluetooth-central</string>
+			<string>fetch</string>
+			<string>processing</string>
+			<string>location</string>
+		</array>
+		<key>BGTaskSchedulerPermittedIdentifiers</key>
+		<array>
+			<string>com.levelup.sonarapp.backgroundScan</string>
+		</array>
+		<key>CFBundleURLTypes</key>
+		<array>
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLName</key>
+				<string>com.levelup.sonarapp</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>sonar</string>
+				</array>
+			</dict>
+		</array>
 		<key>UILaunchStoryboardName</key>
 		<string>LaunchScreen</string>
 		<key>UIMainStoryboardFile</key>
 		<string>Main</string>
+		<key>UIStatusBarHidden</key>
+		<false/>
 		<key>UISupportedInterfaceOrientations</key>
 		<array>
 			<string>UIInterfaceOrientationPortrait</string>
@@ -41,23 +79,5 @@
 			<string>UIInterfaceOrientationLandscapeLeft</string>
 			<string>UIInterfaceOrientationLandscapeRight</string>
 		</array>
-		<key>CADisableMinimumFrameDurationOnPhone</key>
-		<true/>
-		<key>UIApplicationSupportsIndirectInputEvents</key>
-		<true/>
-		<key>NSBluetoothAlwaysUsageDescription</key>
-		<string>Cette app utilise le Bluetooth pour localiser vos appareils perdus</string>
-		<key>NSBluetoothPeripheralUsageDescription</key>
-		<string>Cette app utilise le Bluetooth pour localiser vos appareils perdus</string>
-		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>La localisation permet de mémoriser où vos appareils ont été vus pour la dernière fois</string>
-		<key>NSLocationAlwaysUsageDescription</key>
-		<string>La localisation permet de mémoriser où vos appareils ont été vus pour la dernière fois</string>
-		<key>UIBackgroundModes</key>
-		<array>
-			<string>bluetooth-central</string>
-		</array>
-		<key>UIStatusBarHidden</key>
-		<false/>
 	</dict>
 </plist>
